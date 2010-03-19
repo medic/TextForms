@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<tab i18n="true" icon="/icons/big_rmapper.png" name="resourcemapper_tab"
+	text="i18n.resourcemapper.tab.title">
+	<panel name="resourcemapper_main_panel" weightx="1" weighty="1" top="6" left="6" right="6" bottom="6">
+	</panel>
+</tab>

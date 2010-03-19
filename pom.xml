@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.frontlinesms.plugins</groupId>
+	<artifactId>plugin-resource-mapper</artifactId>
+	<name>Resource Mapper</name>
+	<description>An SMS gateway to the web for sharing information about hospital status</description>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.frontlinesms.core</groupId>
+			<artifactId>frontlinesms</artifactId>
+			<version>1.6.08-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.frontlinesms.core</groupId>
+			<artifactId>frontlinesms-test</artifactId>
+			<version>0.01.00</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+</project>
