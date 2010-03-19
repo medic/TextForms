@@ -16,7 +16,7 @@ public class HospitalContactQueryGenerator extends QueryGenerator{
 	
 	@Override
 	public void startSearch(String name){
-		String query = "select hos from HospitalContact hos where lower(hos.name) like lower('%"+name+"%')";
+		String query = "select hos from HospitalContact hos where lower(hos.name) like lower('%"+name+"%') or lower(hos.emailAddress) like lower('%"+name+"%') or lower(hos.phoneNumber) like lower('%"+name+"%') or lower(hos.hospitalId) like lower('%"+name+"%')";
 		super.runQuery(query);
 	}
 
