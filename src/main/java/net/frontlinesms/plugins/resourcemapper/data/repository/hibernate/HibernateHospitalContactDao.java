@@ -7,12 +7,17 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 
+import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateHospitalContactDao extends
-		BaseHibernateDao<HospitalContact> implements HospitalContactDao {
+public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContact> implements HospitalContactDao {
 
+	private static final String HOSPITAL_ID_QUERY = "select hosp.hospitalId from HospitalContact hosp";
+	
+	public List<HospitalContact> getAlHospitalContacts(){
+		return super.getAll();
+	}
 	protected HibernateHospitalContactDao() {
 		super(HospitalContact.class);
 	}
@@ -28,7 +33,7 @@ public class HibernateHospitalContactDao extends
 	public HospitalContact getHospitalContactByPhoneNumber(String phoneNumber) {
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("phoneNumber", phoneNumber));
-		return null;
+		return super.getUnique(c);
 	}
 
 	public List<HospitalContact> getHospitalContactsByName(String name) {
@@ -67,5 +72,9 @@ public class HibernateHospitalContactDao extends
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("isBlacklisted", false));
 		return super.getList(c);
+	}
+	public List<String> getAllHospitalIds() {
+		Query q = super.getSession().createQuery(HOSPITAL_ID_QUERY);
+		return q.list();
 	}
 }

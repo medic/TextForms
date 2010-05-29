@@ -1,0 +1,18 @@
+<atom:entry xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:have="urn:oasis:names:tc:emergency:EDXL:HAVE:1.0">
+	<atom:author>
+		<atom:email>8854874315</atom:email>
+	</atom:author>
+	<atom:update>2010-03-23T06:59:49.042Z</atom:update>
+	<have:Hospital>
+		<have:Organization>
+			<have:OrganizationInformation>
+				<have:OrganizationID>99860.org</have:OrganizationID>
+				<have:BuildingDamage>
+					<have:DamageType>water</have:DamageType>
+				</have:BuildingDamage>
+			</have:OrganizationInformation>
+			<have:OrganizationTypeText>Public Hospital</have:OrganizationTypeText>
+		</have:Organization>
+	</have:Hospital>
+</atom:entry>

@@ -2,15 +2,34 @@ package net.frontlinesms.plugins.resourcemapper;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.repository.BooleanMappingDao;
+import net.frontlinesms.plugins.resourcemapper.data.repository.CodedMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
+import net.frontlinesms.plugins.resourcemapper.data.repository.PlainTextMappingDao;
+import net.frontlinesms.plugins.resourcemapper.handler.InfoHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.fields.BooleanHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.fields.CodedHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.fields.PlainTextHandler;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -19,14 +38,20 @@ import org.springframework.context.ApplicationContext;
 @PluginControllerProperties(name="Resource Mapper", iconPath="/icons/small_rmapper.png",
 		springConfigLocation="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper-spring-hibernate.xml",
 		hibernateConfigPath="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper.hibernate.cfg.xml")
-public class ResourceMapperPluginController extends BasePluginController{
+public class ResourceMapperPluginController extends BasePluginController implements IncomingMessageListener{
 
 	private FrontlineSMS frontlineController;
 	
 	/** The Application Context for fetching daos and other Spring stuff */
 	private ApplicationContext appCon;
 	
+	HospitalContactDao contactDao;
+	
 	private Object mainTab;
+	
+	private List<MessageHandler> listeners;
+	
+	private static ArrayList<CallbackInfo> callbacks;
 	
 	private ResourceMapperThinletTabController tabController;
 	
@@ -50,8 +75,60 @@ public class ResourceMapperPluginController extends BasePluginController{
 	
 	public void init(FrontlineSMS frontlineController, ApplicationContext applicationContext)	throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
+		frontlineController.addIncomingMessageListener(this);
 		this.appCon = applicationContext;
+		contactDao = (HospitalContactDao) appCon.getBean("hospitalContactDao");
 		createDummyData();
+		initListeners();
+		try{
+		if(ResourceMapperProperties.getInstance().isInDebugMode()){
+			startDebugTerminal();
+		}
+		}catch(Throwable t){
+			System.out.println("Error in the debug terminal");
+			t.printStackTrace();
+		}
+	}
+	
+	private void startDebugTerminal() {
+		boolean cont = true;
+		System.out.println("Enter a message for the system");
+		Scanner s = new Scanner(System.in);
+		int i = getRandomContactNumber();
+		int j = getRandomContactNumber();
+		int k = getRandomContactNumber();
+		int[] numbers = new int[]{i,j,k};
+		int pointer = 0;
+		while(cont){
+			String message = s.nextLine();
+			if(message.equalsIgnoreCase("exit") ||message.equalsIgnoreCase("quit") ||message.equalsIgnoreCase("q") ||message.equalsIgnoreCase("x")){
+				cont=false;
+			}else if(message.contains("change number")){
+				pointer++;
+				pointer %=numbers.length;
+				System.out.println("Number changed to "+contactDao.getAllHospitalContacts().get(numbers[pointer]).getPhoneNumber());
+			}else{
+				try{
+					Message m = Message.createIncomingMessage(new Date().getTime(), contactDao.getAllHospitalContacts().get(numbers[pointer]).getPhoneNumber(), "1234567891", message);
+					this.incomingMessageEvent(m);
+				}catch(Throwable t){
+					System.out.println("Error handling the message");
+					t.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private int getRandomContactNumber(){
+		return rand.nextInt(contactDao.getAllHospitalContacts().size());
+	}
+
+	private void initListeners(){
+		listeners = new ArrayList<MessageHandler>();
+		listeners.add(new PlainTextHandler(frontlineController,appCon));
+		listeners.add(new BooleanHandler(frontlineController,appCon));
+		listeners.add(new InfoHandler(frontlineController,appCon));
+		listeners.add(new CodedHandler(frontlineController,appCon));
 	}
 		
 	/** @return {@link #frontlineController} */
@@ -65,7 +142,7 @@ public class ResourceMapperPluginController extends BasePluginController{
 	}
 	
 	private void createDummyData(){
-		HospitalContactDao contactDao = (HospitalContactDao) appCon.getBean("hospitalContactDao");
+		try{
 		if(contactDao.getAllHospitalContacts().size() == 0){
 			System.out.println("Creating dummy data");
 			for(int i = 0; i < 43; i++){
@@ -79,8 +156,46 @@ public class ResourceMapperPluginController extends BasePluginController{
 					System.out.println(i + " contacts created");
 				}
 			}
+			//Plain text mappings
+			PlainTextMappingDao mappingDao = (PlainTextMappingDao) appCon.getBean("plainTextMappingDao");
+			PlainTextMapping mapping = new PlainTextMapping("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
+			//bed totals
+			PlainTextMapping mapping2 = new PlainTextMapping("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+			mapping2.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+			PlainTextMapping mapping3 = new PlainTextMapping("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+			mapping3.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
+			//bed availables
+			PlainTextMapping mapping4 = new PlainTextMapping("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+			mapping4.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+			PlainTextMapping mapping5 = new PlainTextMapping("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+			mapping5.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
+			//geolocation
+			PlainTextMapping mapping6 = new PlainTextMapping("organization.geolocation","have:Hospital/have:Organization/have:OrganizationGeoLocation");
+			
+			BooleanMapping bmapping = new BooleanMapping("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
+			bmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
+			
+			
+			CodedMapping cmapping = new CodedMapping("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
+			cmapping.setPossibleResponses(new String[]{"Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility"});
+			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping2);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping3);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping4);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping5);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping6);
+			
+			BooleanMappingDao bMappingDao = (BooleanMappingDao) appCon.getBean("booleanMappingDao" ); 
+			bMappingDao.saveBooleanMappingWithoutDuplicateHandling(bmapping);
+			
+			CodedMappingDao cMappingDao = (CodedMappingDao) appCon.getBean("codedMappingDao" ); 
+			cMappingDao.saveCodedMappingWithoutDuplicateHandling(cmapping);
 		}
-		
+		}catch(Throwable t){
+			System.out.println("Error creating dummy data");
+			t.printStackTrace();
+		}
 	}
 	
 	public String getRandomName(){
@@ -123,5 +238,82 @@ public class ResourceMapperPluginController extends BasePluginController{
 			"Yip", "Fiars", "Trunch", "Whelp", "Schy", "Munificent",
 			"Coyote","Brown","Black","Ames","Chavez","Richards","Swanson","Ballard"
 			,"Roosevelt","Jackson","Trueblood","Wachowsky","Corleogne" };
+
+	public void incomingMessageEvent(Message message) {
+		if(callbacks == null){
+			callbacks = new ArrayList<CallbackInfo>();
+		}
+		//first, remove all callbacks that have timed out
+		ArrayList<CallbackInfo> toRemove = new ArrayList<CallbackInfo>();
+		for(CallbackInfo info:callbacks){
+			if(info.hasTimedOut()){
+				info.getHandler().callBackTimedOut(info.getPhoneNumber());
+				toRemove.add(info);
+			}
+		}
+		callbacks.removeAll(toRemove);
+		
+		//see if there is a handler that wants to handle the message
+		MessageHandler handler = null;
+		String keyword = message.getTextContent().split(" ")[0];
+		for(MessageHandler m: listeners){
+			Collection<String> keywords = m.getKeywords();
+			if(m.getKeywords().contains(keyword)){
+				handler = m;
+			}
+		}
+		
+		//now, see if there is a callback out on that message
+		CallbackHandler callbackHandler = null;
+		for(CallbackInfo info: callbacks){
+			if(info.getPhoneNumber().equalsIgnoreCase(message.getSenderMsisdn())){
+				callbackHandler=info.getHandler();
+			}
+		}
+		
+		//if there is a keyword in the message and the callback handler doesn't seem
+		//to know what to do with it, give the message to the keyword handler as opposed
+		//to the callback handler and remove the callback.
+		if(handler !=null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false){
+			handler.handleMessage(message);
+			unregisterCallback(message.getSenderMsisdn());
+		//otherwise, if there is a callback out on the message, pass the message to the callback handler
+		}else if(callbackHandler != null){
+			callbackHandler.handleCallback(message);
+		//if there is no callback out on the message, give it to a keyword handler
+		}else if(handler != null){
+			handler.handleMessage(message);
+		}
+
+	}
+	
+	public static void registerCallback(String msisdn, CallbackHandler handler){
+		if(callbacks == null){
+			callbacks = new ArrayList<CallbackInfo>();
+		}
+		//if there is already a callback out on that phone number, do nothing
+		for(CallbackInfo info:callbacks){
+			if(info.getPhoneNumber().equalsIgnoreCase(msisdn)){
+				return;
+			}
+		}
+		callbacks.add(new CallbackInfo(msisdn,handler));
+		
+	}
+	
+	public static void unregisterCallback(String msisdn){
+		ArrayList<CallbackInfo> toRemove = new ArrayList<CallbackInfo>();
+		for(CallbackInfo info:callbacks){
+			if(info.getPhoneNumber().equalsIgnoreCase(msisdn)){
+				info.getHandler().callBackTimedOut(msisdn);
+				toRemove.add(info);
+			}
+		}
+		callbacks.removeAll(toRemove);
+	}
+	
+	public static void unregisterCallback(CallbackInfo info){
+		unregisterCallback(info.getPhoneNumber());
+	}
 
 }

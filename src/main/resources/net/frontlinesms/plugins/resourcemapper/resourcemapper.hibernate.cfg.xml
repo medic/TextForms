@@ -3,5 +3,10 @@
 <hibernate-configuration>
 	<session-factory>
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanMapping" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistMapping" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedMapping" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse" />
 	</session-factory>
 </hibernate-configuration>

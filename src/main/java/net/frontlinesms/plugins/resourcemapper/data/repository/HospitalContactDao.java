@@ -6,9 +6,9 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 
 public interface HospitalContactDao {
-	/** @return all countacts in the system */
-	public List<HospitalContact> getAllHospitalContacts();
+
 	
+	public List<HospitalContact> getAllHospitalContacts();
 	/**
 	 * Retrieves the contact with the specified msisdn, or returns NULL if none exists.
 	 * @param phoneNumber a phone number
@@ -50,4 +50,6 @@ public interface HospitalContactDao {
 	public List<HospitalContact> getWhitelistedContacts();
 	
 	public List<HospitalContact> getHospitalContactsByHospitalId(String hopsitalId);
+	
+	public List<String> getAllHospitalIds();
 }
