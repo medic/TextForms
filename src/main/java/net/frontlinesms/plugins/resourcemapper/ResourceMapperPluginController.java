@@ -3,15 +3,18 @@ package net.frontlinesms.plugins.resourcemapper;
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
@@ -81,9 +84,9 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		createDummyData();
 		initListeners();
 		try{
-		if(ResourceMapperProperties.getInstance().isInDebugMode()){
-			startDebugTerminal();
-		}
+			if(ResourceMapperProperties.getInstance().isInDebugMode()){
+				startDebugTerminal();
+			}
 		}catch(Throwable t){
 			System.out.println("Error in the debug terminal");
 			t.printStackTrace();
@@ -109,7 +112,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				System.out.println("Number changed to "+contactDao.getAllHospitalContacts().get(numbers[pointer]).getPhoneNumber());
 			}else{
 				try{
-					Message m = Message.createIncomingMessage(new Date().getTime(), contactDao.getAllHospitalContacts().get(numbers[pointer]).getPhoneNumber(), "1234567891", message);
+					FrontlineMessage m = FrontlineMessage.createIncomingMessage(new Date().getTime(), contactDao.getAllHospitalContacts().get(numbers[pointer]).getPhoneNumber(), "1234567891", message);
 					this.incomingMessageEvent(m);
 				}catch(Throwable t){
 					System.out.println("Error handling the message");
@@ -175,9 +178,8 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			BooleanField bmapping = new BooleanField("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
 			bmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
 			
-			
 			CodedField cmapping = new CodedField("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
-			cmapping.setPossibleResponses(new String[]{"Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility"});
+			cmapping.setPossibleResponses(new HashSet<String>(Arrays.asList("Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility")));
 			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping);
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping2);
@@ -239,7 +241,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			"Coyote","Brown","Black","Ames","Chavez","Richards","Swanson","Ballard"
 			,"Roosevelt","Jackson","Trueblood","Wachowsky","Corleogne" };
 
-	public void incomingMessageEvent(Message message) {
+	public void incomingMessageEvent(FrontlineMessage message) {
 		if(callbacks == null){
 			callbacks = new ArrayList<CallbackInfo>();
 		}

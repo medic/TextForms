@@ -13,7 +13,7 @@ import org.hibernate.annotations.PolymorphismType;
 public class BooleanField extends CodedField {
 	
 	@ManyToOne(cascade={},targetEntity=ChecklistField.class)
-	private ChecklistField parentList;
+	private ChecklistField list;
 	
 	public BooleanField(String fullName, String abbreviation) {
 		super(fullName, abbreviation, null);
@@ -27,14 +27,14 @@ public class BooleanField extends CodedField {
 	public BooleanField(){super();}
 
 	public void setList(ChecklistField list) {
-		this.parentList = list;
+		this.list = list;
 	}
 
 	public ChecklistField getList() {
-		return parentList;
+		return list;
 	}
 	
 	public boolean isOnChecklist(){
-		return parentList !=null;
+		return list !=null;
 	}
 }

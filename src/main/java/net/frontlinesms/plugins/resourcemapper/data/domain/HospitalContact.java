@@ -11,7 +11,9 @@ public class HospitalContact extends Contact {
 	
 	private String hospitalId;
 		
-	protected HospitalContact(){}
+	protected HospitalContact() {
+		super(null, null, null, null, null, true);
+	}
 	
 	public HospitalContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
 		super(name, phoneNumber, null, emailAddress, null, active);

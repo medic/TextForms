@@ -11,7 +11,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 
@@ -21,7 +21,7 @@ public abstract class FieldResponse<M extends PlainTextField> {
 
 	public FieldResponse() {}
 
-	public FieldResponse(Message message, HospitalContact submitter, Date dateSubmitted, String hospitalId, M mapping) {
+	public FieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, M mapping) {
 		this.message = message;
 		this.submitter = submitter;
 		this.dateSubmitted = dateSubmitted.getTime();
@@ -34,8 +34,8 @@ public abstract class FieldResponse<M extends PlainTextField> {
 	@Column(unique=true,nullable=false,updatable=false)
 	private long fid;
 
-	@OneToOne(cascade={},targetEntity=Message.class)
-	protected Message message;
+	@OneToOne(cascade={},targetEntity=FrontlineMessage.class)
+	protected FrontlineMessage message;
 
 	@OneToOne(cascade={},targetEntity=HospitalContact.class)
 	protected HospitalContact submitter;
@@ -47,11 +47,11 @@ public abstract class FieldResponse<M extends PlainTextField> {
 	@OneToOne(targetEntity=PlainTextField.class)
 	M mapping;
 
-	public Message getMessage() {
+	public FrontlineMessage getMessage() {
 		return message;
 	}
 
-	public void setMessage(Message message) {
+	public void setMessage(FrontlineMessage message) {
 		this.message = message;
 	}
 

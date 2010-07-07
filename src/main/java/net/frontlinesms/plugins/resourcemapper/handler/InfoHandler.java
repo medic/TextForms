@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 
@@ -23,7 +23,7 @@ public class InfoHandler implements MessageHandler {
 		return results;
 	}
 
-	public void handleMessage(Message m) {
+	public void handleMessage(FrontlineMessage m) {
 		//if it's valid, send the requested info snippet
 		if(messageIsValid(m.getTextContent())){
 			output(m.getSenderMsisdn(), ShortCodeProperties.getInstance().getInfoSnippetForShortCode(m.getTextContent().split(" ")[m.getTextContent().split(" ").length -1]));

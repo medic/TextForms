@@ -89,4 +89,18 @@ public class PlainTextField {
 	public void setSchemaName(String schemaName) {
 		this.schemaName = schemaName;
 	}
+	
+	public String getPathToElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String [] getAdditionalInstructions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addInstruction(String string) {
+		// TODO Auto-generated method stub
+	}
 }

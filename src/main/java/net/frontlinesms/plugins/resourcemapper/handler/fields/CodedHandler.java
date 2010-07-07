@@ -3,9 +3,10 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
@@ -40,24 +41,25 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	}
 
 	@SuppressWarnings("static-access")
-	public void handleMessage(Message m) {
+	public void handleMessage(FrontlineMessage m) {
 		String content = m.getTextContent().trim();
 		content.replaceAll("[\\s]", " ");
-		String[] commands = content.split(" ");
-		if(messageIsValid(content)){
+		//String[] commands = content.split(" ");
+		if (messageIsValid(content)){
 			String message = content + " " +ShortCodeProperties.getInstance().getValueForKey("coded.answer.prefix");
-			String[] possibleResponses = mappingDao.getMappingForShortCode(content).getPossibleResponses();
-			for(int i = 0; i < possibleResponses.length; i++){
-				message += "\n"+(i+1)+" - " + possibleResponses[i];
+			Set<String> possibleResponses = mappingDao.getMappingForShortCode(content).getPossibleResponses();
+			int index = 1;
+			for (String possibleResponse: possibleResponses) {
+				message += "\n" + index + " - " + possibleResponse;
+				index++;		
 			}
 			output(m.getSenderMsisdn(),message);
 			ResourceMapperPluginController.registerCallback(m.getSenderMsisdn(), this);
 			this.callbacks.put(m.getSenderMsisdn(), mappingDao.getMappingForShortCode(content));
-			
-		}else{
+		}
+		else{
 			output(m.getSenderMsisdn(),ShortCodeProperties.getInstance().getValueForKey(ShortCodeProperties.CODED_VALIDATION_ERROR));
 		}
-		
 	}
 	
 	/**
@@ -75,8 +77,10 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	 * @param content
 	 * @return
 	 */
-	public String getResponseForContent(String content, CodedField mapping){
-		return mapping.getPossibleResponses()[Integer.parseInt(content)-1];
+	public String getResponseForContent(String content, CodedField mapping) {
+		//TODO Does this really need to be a set?
+		Set<String> possibleResponses = mapping.getPossibleResponses();
+		return possibleResponses.toArray(new String[possibleResponses.size()])[Integer.parseInt(content)-1];
 	}
 
 	public void generateAndPublishXML(FieldResponse<CodedField> response) {
@@ -91,14 +95,15 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	}
 	
 	protected void output(String msisdn, String text){
-		if(ResourceMapperProperties.getInstance().isInDebugMode()){
+		if (ResourceMapperProperties.getInstance().isInDebugMode()){
 			System.out.println(text);
-		}else{
+		}
+		else {
 			frontline.sendTextMessage(msisdn, text);
 		}
 	}
 
-	public void handleCallback(Message m) {
+	public void handleCallback(FrontlineMessage m) {
 		if(callbackMessageIsValid(m.getTextContent(),callbacks.get(m.getSenderMsisdn()))){
 			CodedField mapping = callbacks.get(m.getSenderMsisdn());
 			HospitalContact contact = contactDao.getHospitalContactByPhoneNumber(m.getSenderMsisdn());
@@ -113,7 +118,7 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	
 	private boolean callbackMessageIsValid(String content, CodedField mapping){
 		if(shouldHandleCallbackMessage(content)){
-			int max = mapping.getPossibleResponses().length;
+			int max = mapping.getPossibleResponses().size();
 			if(Integer.parseInt(content) <= max && Integer.parseInt(content) > 0) {
 				return true;
 			}
@@ -121,12 +126,11 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 		return false;
 	}
 
-	
 	/**
 	 * this handler wants to handle the callback message if it contains only 1 number
 	 * @see net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler#shouldHandleCallbackMessage(net.frontlinesms.data.domain.Message)
 	 */
-	public boolean shouldHandleCallbackMessage(Message m) {
+	public boolean shouldHandleCallbackMessage(FrontlineMessage m) {
 		return shouldHandleCallbackMessage(m.getTextContent());
 	}
 	
@@ -143,7 +147,5 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	public void callBackTimedOut(String msisdn) {
 		callbacks.remove(msisdn);
 	}
-	
-
 
 }

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.domain.Message;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -37,7 +37,7 @@ public class BooleanHandler implements FieldMessageHandler<BooleanField> {
 	}
 
 	@SuppressWarnings("static-access")
-	public void handleMessage(Message m) {
+	public void handleMessage(FrontlineMessage m) {
 		String content = m.getTextContent().trim();
 		content.replaceAll("[\\s]", " ");
 		String[] commands = content.split(" ");
