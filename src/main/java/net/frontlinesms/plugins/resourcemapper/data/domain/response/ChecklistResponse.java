@@ -6,10 +6,10 @@ import javax.persistence.Entity;
 
 import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField;
 
 @Entity
-public class ChecklistResponse extends FieldResponse<ChecklistMapping> {
+public class ChecklistResponse extends FieldResponse<ChecklistField> {
 
 	public ChecklistResponse() {
 		super();
@@ -17,7 +17,7 @@ public class ChecklistResponse extends FieldResponse<ChecklistMapping> {
 	}
 
 	public ChecklistResponse(Message message, HospitalContact submitter,
-			Date dateSubmitted, String hospitalId, ChecklistMapping mapping) {
+			Date dateSubmitted, String hospitalId, ChecklistField mapping) {
 		super(message, submitter, dateSubmitted, hospitalId, mapping);
 		// TODO Auto-generated constructor stub
 	}

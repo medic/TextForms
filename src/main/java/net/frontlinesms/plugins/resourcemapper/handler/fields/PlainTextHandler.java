@@ -8,7 +8,7 @@ import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.PlainTextResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
@@ -19,7 +19,7 @@ import net.frontlinesms.plugins.resourcemapper.xml.XMLUtils;
 import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
-public class PlainTextHandler implements FieldMessageHandler<PlainTextMapping> {
+public class PlainTextHandler implements FieldMessageHandler<PlainTextField> {
 	
 	private FrontlineSMS frontline;
 	private PlainTextMappingDao mappingDao;
@@ -49,14 +49,14 @@ public class PlainTextHandler implements FieldMessageHandler<PlainTextMapping> {
 				frontline.sendTextMessage(m.getSenderMsisdn(), ShortCodeProperties.getInstance().getInfoSnippetForShortCode(commands[0]));
 			}
 		}else{
-			PlainTextMapping mapping= mappingDao.getMappingForShortCode(commands[0]);
+			PlainTextField mapping= mappingDao.getMappingForShortCode(commands[0]);
 			HospitalContact contact = contactDao.getHospitalContactByPhoneNumber(m.getSenderMsisdn());
 			PlainTextResponse response = new PlainTextResponse(m,contact,new Date(),contact.getHospitalId(),mapping);
 			generateAndPublishXML(response);
 		}
 	}
 	
-	public void generateAndPublishXML(FieldResponse<PlainTextMapping> response){
+	public void generateAndPublishXML(FieldResponse<PlainTextField> response){
 		Document doc = XMLUtils.getInitializedDocument(response);
 		String text = response.getMessage().getTextContent().split(" ", 2)[1];
 		String path = response.getMapping().getPathToElement() +"=" + text;

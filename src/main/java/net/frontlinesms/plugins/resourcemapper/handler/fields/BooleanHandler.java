@@ -8,7 +8,7 @@ import net.frontlinesms.data.domain.Message;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.BooleanMappingDao;
@@ -19,7 +19,7 @@ import net.frontlinesms.plugins.resourcemapper.xml.XMLUtils;
 import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
-public class BooleanHandler implements FieldMessageHandler<BooleanMapping> {
+public class BooleanHandler implements FieldMessageHandler<BooleanField> {
 
 	private FrontlineSMS frontline;
 	private BooleanMappingDao mappingDao;
@@ -51,7 +51,7 @@ public class BooleanHandler implements FieldMessageHandler<BooleanMapping> {
 					frontline.sendTextMessage(m.getSenderMsisdn(), ShortCodeProperties.getInstance().getInfoSnippetForShortCode(commands[0]));
 				}
 			} else if(commands.length == 2){
-				BooleanMapping mapping = mappingDao.getMappingForShortCode(commands[0]);
+				BooleanField mapping = mappingDao.getMappingForShortCode(commands[0]);
 				HospitalContact contact = contactDao.getHospitalContactByPhoneNumber(m.getSenderMsisdn());
 				BooleanResponse response = new BooleanResponse(m, contact, new Date(), contact.getHospitalId(), mapping);
 				generateAndPublishXML(response);
@@ -109,7 +109,7 @@ public class BooleanHandler implements FieldMessageHandler<BooleanMapping> {
 		return trueResponse?"True":"False";
 	}
 
-	public void generateAndPublishXML(FieldResponse<BooleanMapping> response) {
+	public void generateAndPublishXML(FieldResponse<BooleanField> response) {
 		Document doc = XMLUtils.getInitializedDocument(response);
 		String textResponse = getResponseForContent(response.getMessage().getTextContent());
 		String path = response.getMapping().getPathToElement() + "=" + textResponse;

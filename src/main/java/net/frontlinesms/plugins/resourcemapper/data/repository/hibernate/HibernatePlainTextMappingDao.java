@@ -5,49 +5,49 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 import net.frontlinesms.plugins.resourcemapper.data.repository.PlainTextMappingDao;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernatePlainTextMappingDao extends BaseHibernateDao<PlainTextMapping> implements PlainTextMappingDao {
+public class HibernatePlainTextMappingDao extends BaseHibernateDao<PlainTextField> implements PlainTextMappingDao {
 
 	protected HibernatePlainTextMappingDao() {
-		super(PlainTextMapping.class);
+		super(PlainTextField.class);
 	}
 	
-	private static final String MAPPING_FOR_SHORT_CODE = "select * from PlainTextMapping p where p.DTYPE='PlainTextMapping' and p.shortCode=";
+	private static final String MAPPING_FOR_SHORT_CODE = "from PlainTextMapping p where p.class=PlainTextMapping and p.shortCode=";
 	
-	public PlainTextMapping getMappingForShortCode(String shortcode) {
+	public PlainTextField getMappingForShortCode(String shortcode) {
 		String code = ShortCodeProperties.getInstance().getKeyForShortCode(shortcode);
 		Query q = super.getSession().createQuery(MAPPING_FOR_SHORT_CODE+"'"+code+"'");
-		return (PlainTextMapping) q.uniqueResult();
+		return (PlainTextField) q.uniqueResult();
 	}
 
-	public void savePlainTextMapping(PlainTextMapping mapping) throws DuplicateKeyException {
+	public void savePlainTextMapping(PlainTextField mapping) throws DuplicateKeyException {
 		super.save(mapping);
 	}
 
-	public void savePlainTextMappingWithoutDuplicateHandling(PlainTextMapping mapping) {
+	public void savePlainTextMappingWithoutDuplicateHandling(PlainTextField mapping) {
 		super.saveWithoutDuplicateHandling(mapping);
 	}
 
-	public void updatePlainTextMapping(PlainTextMapping mapping) throws DuplicateKeyException {
+	public void updatePlainTextMapping(PlainTextField mapping) throws DuplicateKeyException {
 		super.update(mapping);
 	}
 
-	public void updatePlainTextMappingWithoutDuplicateHandling( PlainTextMapping mapping) {
+	public void updatePlainTextMappingWithoutDuplicateHandling( PlainTextField mapping) {
 		super.updateWithoutDuplicateHandling(mapping);
 
 	}
 
-	public void deletePlainTextMapping(PlainTextMapping mapping) {
+	public void deletePlainTextMapping(PlainTextField mapping) {
 		super.delete(mapping);
 	}
 
-	public List<PlainTextMapping> getAllPlainTextMappings() {
+	public List<PlainTextField> getAllPlainTextMappings() {
 		return super.getAll();
 	}
 	
@@ -66,7 +66,7 @@ public class HibernatePlainTextMappingDao extends BaseHibernateDao<PlainTextMapp
 		return super.getSession().createQuery(ALL_SHORT_CODES_QUERY).list();
 	}
 
-	public PlainTextMapping searchAllMappingsForForCode(String shortcode) {
+	public PlainTextField searchAllMappingsForForCode(String shortcode) {
 		DetachedCriteria c = super.getCriterion();
 		String code = ShortCodeProperties.getInstance().getKeyForShortCode(shortcode);
 		c.add(Restrictions.eq("shortCode", code));

@@ -5,47 +5,47 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 import net.frontlinesms.plugins.resourcemapper.data.repository.CodedMappingDao;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateCodedMappingDao extends BaseHibernateDao<CodedMapping> implements CodedMappingDao {
+public class HibernateCodedMappingDao extends BaseHibernateDao<CodedField> implements CodedMappingDao {
 
 	protected HibernateCodedMappingDao() {
-		super(CodedMapping.class);
+		super(CodedField.class);
 	}
 
-	public void deleteCodedMapping(CodedMapping mapping) {
+	public void deleteCodedMapping(CodedField mapping) {
 		super.delete(mapping);
 	}
 	
-	public CodedMapping getMappingForShortCode(String shortcode) {
+	public CodedField getMappingForShortCode(String shortcode) {
 		String code = ShortCodeProperties.getInstance().getKeyForShortCode(shortcode);
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("shortCode", code));
 		return super.getUnique(c);
 	}
 
-	public void saveCodedMapping(CodedMapping mapping) throws DuplicateKeyException {
+	public void saveCodedMapping(CodedField mapping) throws DuplicateKeyException {
 		super.save(mapping);
 	}
 
-	public void saveCodedMappingWithoutDuplicateHandling(CodedMapping mapping) {
+	public void saveCodedMappingWithoutDuplicateHandling(CodedField mapping) {
 		super.saveWithoutDuplicateHandling(mapping);
 	}
 
-	public void updateCodedMapping(CodedMapping mapping) throws DuplicateKeyException {
+	public void updateCodedMapping(CodedField mapping) throws DuplicateKeyException {
 		super.update(mapping);
 	}
 
-	public void updateCodedMappingWithoutDuplicateHandling(CodedMapping mapping) {
+	public void updateCodedMappingWithoutDuplicateHandling(CodedField mapping) {
 		super.updateWithoutDuplicateHandling(mapping);
 	}
 
-	public List<CodedMapping> getAllCodedMappings() {
+	public List<CodedField> getAllCodedMappings() {
 		return super.getAll();
 	}
 	

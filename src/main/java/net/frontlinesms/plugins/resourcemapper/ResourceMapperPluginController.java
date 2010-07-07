@@ -17,9 +17,9 @@ import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanMapping;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedMapping;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 import net.frontlinesms.plugins.resourcemapper.data.repository.BooleanMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.CodedMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
@@ -158,25 +158,25 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			}
 			//Plain text mappings
 			PlainTextMappingDao mappingDao = (PlainTextMappingDao) appCon.getBean("plainTextMappingDao");
-			PlainTextMapping mapping = new PlainTextMapping("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
+			PlainTextField mapping = new PlainTextField("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
 			//bed totals
-			PlainTextMapping mapping2 = new PlainTextMapping("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+			PlainTextField mapping2 = new PlainTextField("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
 			mapping2.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
-			PlainTextMapping mapping3 = new PlainTextMapping("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+			PlainTextField mapping3 = new PlainTextField("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
 			mapping3.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
 			//bed availables
-			PlainTextMapping mapping4 = new PlainTextMapping("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+			PlainTextField mapping4 = new PlainTextField("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
 			mapping4.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
-			PlainTextMapping mapping5 = new PlainTextMapping("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+			PlainTextField mapping5 = new PlainTextField("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
 			mapping5.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
 			//geolocation
-			PlainTextMapping mapping6 = new PlainTextMapping("organization.geolocation","have:Hospital/have:Organization/have:OrganizationGeoLocation");
+			PlainTextField mapping6 = new PlainTextField("organization.geolocation","have:Hospital/have:Organization/have:OrganizationGeoLocation");
 			
-			BooleanMapping bmapping = new BooleanMapping("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
+			BooleanField bmapping = new BooleanField("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
 			bmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
 			
 			
-			CodedMapping cmapping = new CodedMapping("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
+			CodedField cmapping = new CodedField("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
 			cmapping.setPossibleResponses(new String[]{"Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility"});
 			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping);

@@ -10,8 +10,8 @@ public class HospitalContact extends Contact {
 	private boolean isBlacklisted;
 	
 	private String hospitalId;
-	
-	public HospitalContact(){}
+		
+	protected HospitalContact(){}
 	
 	public HospitalContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
 		super(name, phoneNumber, null, emailAddress, null, active);

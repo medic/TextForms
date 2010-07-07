@@ -5,7 +5,7 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 
@@ -43,7 +43,7 @@ public class HibernateFieldResponseDao extends BaseHibernateDao<FieldResponse> i
 		super.updateWithoutDuplicateHandling(response);
 	}
 
-	public List<FieldResponse> getFieldResponsesForMapping(PlainTextMapping mapping) {
+	public List<FieldResponse> getFieldResponsesForMapping(PlainTextField mapping) {
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("mapping", mapping));
 		return super.getList(c);

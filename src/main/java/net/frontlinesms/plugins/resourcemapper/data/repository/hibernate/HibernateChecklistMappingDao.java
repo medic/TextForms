@@ -7,43 +7,43 @@ import org.hibernate.criterion.Restrictions;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField;
 import net.frontlinesms.plugins.resourcemapper.data.repository.ChecklistMappingDao;
 
-public class HibernateChecklistMappingDao extends BaseHibernateDao<ChecklistMapping> implements ChecklistMappingDao {
+public class HibernateChecklistMappingDao extends BaseHibernateDao<ChecklistField> implements ChecklistMappingDao {
 
 	protected HibernateChecklistMappingDao() {
-		super(ChecklistMapping.class);
+		super(ChecklistField.class);
 	}
 
-	public void deleteChecklistMapping(ChecklistMapping mapping) {
+	public void deleteChecklistMapping(ChecklistField mapping) {
 		super.delete(mapping);
 	}
 
-	public List<ChecklistMapping> getMappingForShortCode(String shortcode) {
+	public List<ChecklistField> getMappingForShortCode(String shortcode) {
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("shortCode", shortcode));
 		return super.getList(c);
 	}
 
-	public void saveChecklistMapping(ChecklistMapping mapping) throws DuplicateKeyException {
+	public void saveChecklistMapping(ChecklistField mapping) throws DuplicateKeyException {
 		super.save(mapping);
 
 	}
 
-	public void saveChecklistMappingWithoutDuplicateHandling(ChecklistMapping mapping) {
+	public void saveChecklistMappingWithoutDuplicateHandling(ChecklistField mapping) {
 		super.saveWithoutDuplicateHandling(mapping);
 	}
 
-	public void updateChecklistMapping(ChecklistMapping mapping) throws DuplicateKeyException {
+	public void updateChecklistMapping(ChecklistField mapping) throws DuplicateKeyException {
 		super.update(mapping);
 	}
 
-	public void updateChecklistMappingWithoutDuplicateHandling(ChecklistMapping mapping) {
+	public void updateChecklistMappingWithoutDuplicateHandling(ChecklistField mapping) {
 		super.updateWithoutDuplicateHandling(mapping);
 	}
 
-	public List<ChecklistMapping> getAllChecklistMappings() {
+	public List<ChecklistField> getAllChecklistMappings() {
 		return super.getAll();
 	}
 	

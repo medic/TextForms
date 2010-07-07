@@ -5,46 +5,46 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
 import net.frontlinesms.plugins.resourcemapper.data.repository.BooleanMappingDao;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateBooleanMappingDao extends BaseHibernateDao<BooleanMapping> implements BooleanMappingDao {
+public class HibernateBooleanMappingDao extends BaseHibernateDao<BooleanField> implements BooleanMappingDao {
 	
 	protected HibernateBooleanMappingDao() {
-		super(BooleanMapping.class);
+		super(BooleanField.class);
 	}
 
-	public void deleteBooleanMapping(BooleanMapping mapping) {
+	public void deleteBooleanMapping(BooleanField mapping) {
 		super.delete(mapping);
 	}
 
-	public BooleanMapping getMappingForShortCode(String shortcode) {
+	public BooleanField getMappingForShortCode(String shortcode) {
 		DetachedCriteria c = super.getCriterion();
 		String code = ShortCodeProperties.getInstance().getKeyForShortCode(shortcode);
 		c.add(Restrictions.eq("shortCode", code));
 		return super.getUnique(c);
 	}
 
-	public void saveBooleanMapping(BooleanMapping mapping) throws DuplicateKeyException {
+	public void saveBooleanMapping(BooleanField mapping) throws DuplicateKeyException {
 		super.save(mapping);
 	}
 
-	public void saveBooleanMappingWithoutDuplicateHandling(BooleanMapping mapping) {
+	public void saveBooleanMappingWithoutDuplicateHandling(BooleanField mapping) {
 		super.saveWithoutDuplicateHandling(mapping);
 	}
 
-	public void updateBooleanMapping(BooleanMapping mapping) throws DuplicateKeyException {
+	public void updateBooleanMapping(BooleanField mapping) throws DuplicateKeyException {
 		super.update(mapping);
 	}
 
-	public void updateBooleanMappingWithoutDuplicateHandling(BooleanMapping mapping) {
+	public void updateBooleanMappingWithoutDuplicateHandling(BooleanField mapping) {
 		super.updateWithoutDuplicateHandling(mapping);
 	}
 
-	public List<BooleanMapping> getAllBooleanMappings() {
+	public List<BooleanField> getAllBooleanMappings() {
 		return super.getAll();
 	}
 

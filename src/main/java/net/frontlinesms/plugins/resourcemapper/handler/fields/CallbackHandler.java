@@ -1,9 +1,9 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import net.frontlinesms.data.domain.Message;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 
-public interface CallbackHandler<M extends PlainTextMapping> extends FieldMessageHandler<M> {
+public interface CallbackHandler<M extends PlainTextField> extends FieldMessageHandler<M> {
 
 	public void callBackTimedOut(String msisdn);
 	

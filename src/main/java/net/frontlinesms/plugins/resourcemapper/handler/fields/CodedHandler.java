@@ -10,7 +10,7 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedMapping;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.CodedResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.CodedMappingDao;
@@ -21,18 +21,18 @@ import net.frontlinesms.plugins.resourcemapper.xml.XMLUtils;
 import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
-public class CodedHandler implements CallbackHandler<CodedMapping> {
+public class CodedHandler implements CallbackHandler<CodedField> {
 
 	private FrontlineSMS frontline;
 	private CodedMappingDao mappingDao;
 	private HospitalContactDao contactDao;
-	private HashMap<String,CodedMapping> callbacks;
+	private HashMap<String,CodedField> callbacks;
 	
 	public CodedHandler(FrontlineSMS frontline, ApplicationContext appCon) {
 		this.frontline = frontline;
 		mappingDao = (CodedMappingDao) appCon.getBean("codedMappingDao");
 		contactDao = (HospitalContactDao) appCon.getBean("hospitalContactDao");
-		callbacks = new HashMap<String, CodedMapping>();
+		callbacks = new HashMap<String, CodedField>();
 	}
 
 	public Collection<String> getKeywords() {
@@ -75,11 +75,11 @@ public class CodedHandler implements CallbackHandler<CodedMapping> {
 	 * @param content
 	 * @return
 	 */
-	public String getResponseForContent(String content, CodedMapping mapping){
+	public String getResponseForContent(String content, CodedField mapping){
 		return mapping.getPossibleResponses()[Integer.parseInt(content)-1];
 	}
 
-	public void generateAndPublishXML(FieldResponse<CodedMapping> response) {
+	public void generateAndPublishXML(FieldResponse<CodedField> response) {
 		Document doc = XMLUtils.getInitializedDocument(response);
 		String textResponse = getResponseForContent(response.getMessage().getTextContent(), response.getMapping());
 		String path = response.getMapping().getPathToElement() + "=" + textResponse;
@@ -100,7 +100,7 @@ public class CodedHandler implements CallbackHandler<CodedMapping> {
 
 	public void handleCallback(Message m) {
 		if(callbackMessageIsValid(m.getTextContent(),callbacks.get(m.getSenderMsisdn()))){
-			CodedMapping mapping = callbacks.get(m.getSenderMsisdn());
+			CodedField mapping = callbacks.get(m.getSenderMsisdn());
 			HospitalContact contact = contactDao.getHospitalContactByPhoneNumber(m.getSenderMsisdn());
 			CodedResponse response = new CodedResponse(m, contact, new Date(), contact.getHospitalId(), mapping);
 			generateAndPublishXML(response);
@@ -111,7 +111,7 @@ public class CodedHandler implements CallbackHandler<CodedMapping> {
 		}
 	}
 	
-	private boolean callbackMessageIsValid(String content, CodedMapping mapping){
+	private boolean callbackMessageIsValid(String content, CodedField mapping){
 		if(shouldHandleCallbackMessage(content)){
 			int max = mapping.getPossibleResponses().length;
 			if(Integer.parseInt(content) <= max && Integer.parseInt(content) > 0) {
