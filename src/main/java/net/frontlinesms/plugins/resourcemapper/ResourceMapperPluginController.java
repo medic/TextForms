@@ -88,8 +88,8 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				startDebugTerminal();
 			}
 		}catch(Throwable t){
-			System.out.println("Error in the debug terminal");
-			t.printStackTrace();
+//			System.out.println("Error in the debug terminal");
+//			t.printStackTrace();
 		}
 	}
 	
@@ -161,15 +161,17 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			}
 			//Plain text mappings
 			PlainTextMappingDao mappingDao = (PlainTextMappingDao) appCon.getBean("plainTextMappingDao");
-			PlainTextField mapping = new PlainTextField("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
+			PlainTextField mapping1 = new PlainTextField("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
 			//bed totals
 			PlainTextField mapping2 = new PlainTextField("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
 			mapping2.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+			
 			PlainTextField mapping3 = new PlainTextField("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
 			mapping3.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
 			//bed availables
 			PlainTextField mapping4 = new PlainTextField("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
 			mapping4.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+			
 			PlainTextField mapping5 = new PlainTextField("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
 			mapping5.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
 			//geolocation
@@ -181,7 +183,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			CodedField cmapping = new CodedField("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
 			cmapping.setPossibleResponses(new HashSet<String>(Arrays.asList("Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility")));
 			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping);
+			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping1);
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping2);
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping3);
 			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping4);
