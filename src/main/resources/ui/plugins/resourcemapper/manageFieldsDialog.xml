@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="manageFieldDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.fields" modal="true" resizable="true" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
+
+	<label name="labelName" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.fieldname" for="textName" valign="top"/>
+	<textarea name="textName" rows="1" columns="50" weightx="1"/>
+	
+	<label name="labelAbbreviation" text="i18n.plugins.resourcemapper.abbreviation" icon="/icons/description.png" for="textAbbreviation" valign="top" />
+	<textarea name="textAbbreviation"  rows="1" columns="50" weightx="1" />
+	
+	<label name="labelType" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" for="comboTypes" valign="top" />
+	<combobox name="comboTypes" editable="false" selected="3" action="typeChanged(this, listChoices)" weightx="1">
+		<choice text="i18n.plugins.resourcemapper.type.plaintext" property="value=plaintext" />
+		<choice text="i18n.plugins.resourcemapper.type.boolean" property="value=boolean" />
+		<choice text="i18n.plugins.resourcemapper.type.checklist" property="value=checklist" />
+		<choice text="i18n.plugins.resourcemapper.type.multiplechoice" property="value=multiplechoice" />
+	</combobox>
+	
+	<list name="listChoices" selection="single" colspan="2" weightx="1"/>
+	
+	<label name="labelInfo" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" for="textInfo" colspan="2" valign="top" />
+	<textarea name="textInfo" wrap="true" columns="50" rows="10" colspan="2" weightx="1"/>
+
+	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(manageFieldDialog)" weightx="1" />	
+	<button name="buttonSave" text="i18n.action.save" icon="/icons/tick.png" action="saveField(manageFieldDialog)" weightx="1" />
+</dialog>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tab i18n="true"  name="tabResourseMapper" icon="/icons/big_rmapper.png" text="i18n.plugins.resourcemapper.title">
     <panel name="panelResourseMapper" bottom="9" columns="2" gap="9" left="9" right="9" top="9" weightx="1" weighty="1" scrollable="false">
-		<label name="labelResourseMapper" icon="/icons/header/reminders.png" valign="top" />
+		<label name="labelResourseMapper" icon="/icons/header_rmapper.png" valign="top" />
 		<splitpane orientation="horizontal" divider="170" weightx="1" weighty="1">
-			 <panel name="leftPanel" weightx="1" weighty="1" columns="1" top="6" left="6" right="6" bottom="6" gap="5" scrollable="false">
-			 	<label name="labelTasks" text="i18n.plugins.resourcemapper.tasks" weightx="1" />
-			 	<list name="listTasks" selection="single" weightx="1" weighty="1" action="taskChanged(listTasks" >
+			 <panel name="panelMenu" weightx="1" weighty="1" columns="1" top="6" left="6" right="6" bottom="6" gap="5" scrollable="false">
+			 	<label name="labelTasks" text="i18n.plugins.resourcemapper.tasks" icon="/icons/status.png" weightx="1" />
+			 	<list name="listTasks" selection="single" weightx="1" weighty="1" action="taskChanged(listTasks)" >
 					<item text="i18n.plugins.resourcemapper.manage.people" property="value=people" selected="true" />
 					<item text="i18n.plugins.resourcemapper.manage.fields" property="value=fields"/>
 					<item text="i18n.plugins.resourcemapper.browse.data" property="value=data"/>

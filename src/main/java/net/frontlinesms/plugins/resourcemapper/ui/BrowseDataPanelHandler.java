@@ -23,8 +23,11 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineUtils;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 /*
  * BrowseDataPanelHandler
@@ -42,11 +45,15 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 	private ApplicationContext appContext;
 	
 	private Object mainPanel;
+	private ResourceMapperCallback callback;
+	private Field selectedField;
+	private HospitalContact selectedContact;
 	
-	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext) {
-		LOG.debug("BrowseDataPanelHandler");
+	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
+		System.out.println("BrowseDataPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
+		this.callback = callback;
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 	}
 	
@@ -54,12 +61,56 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 		return this.mainPanel;
 	}
 	
-	public void searchFieldName() {
-		LOG.debug("searchFieldName");
+	public void showDateSelecter(Object textField) {
+		System.out.println("showDateSelecter");
+		this.ui.showDateSelecter(textField);
 	}
 	
-	public void showDateSelecter(Object textField) {
-		LOG.trace("showDateSelecter");
-		this.ui.showDateSelecter(textField);
+	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
+		String searchText = this.ui.getText(searchField);
+		System.out.println("searchByField: " + searchText);
+		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
+	}
+	
+	public void searchClear(Object searchField, Object tableField, Object buttonClear) {
+		System.out.println("searchClear");
+		this.ui.setText(searchField, "");
+		this.searchByField(searchField, tableField, buttonClear);
+		this.ui.requestFocus(searchField);
+	}
+	
+	public void submitterChanged(Object comboSubmitter) {
+		System.out.println("submitterChanged");
+	}
+	
+	public void setSelectedField (Field field) {
+		System.out.println("setSelectedField: "+ field);
+		this.selectedField = field;
+		Object searchField = this.ui.find(this.mainPanel, "searchField");
+		if (field != null) {
+			this.ui.setText(searchField, field.getFullName());
+		}
+		else {
+			this.ui.setText(searchField, "");
+		}
+	}
+	
+	public void setSelectedContact (HospitalContact contact) {
+		System.out.println("setSelectedContact: "+ contact);
+		this.selectedContact = contact;
+		Object comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
+		if (contact != null) {
+			int index = 0;
+			for (Object comboSubmitterItem : this.ui.getItems(comboSubmitter)) {
+				if (contact == this.ui.getAttachedObject(comboSubmitterItem)) {
+					this.ui.setSelectedIndex(comboSubmitter, index);
+					break;
+				}
+				index++;
+			}
+		}
+		else {
+			this.ui.setSelectedIndex(comboSubmitter, -1);
+		}
 	}
 }

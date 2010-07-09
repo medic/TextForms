@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<splitpane i18n="true" name="panelManagePeople" orientation="horizontal" divider="500" weightx="1" weighty="1">
-	<panel name="panelLeft" columns="4" weightx="1" weighty="1" scrollable="false" gap="10">
-		<label name="labelFindPerson" text="i18n.plugins.resourcemapper.find.person" icon="/icons/search.png" />
-		<textfield name="textFieldName" columns="10" weightx="1" perform="searchPeople()" />
+<splitpane i18n="true" name="panelManagePeople" orientation="horizontal" divider="450" weightx="1" weighty="1">
+	<panel name="panelTable" columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
+		<label name="labelFindPerson" text="i18n.plugins.resourcemapper.find.person" icon="/icons/search.png" for="searchPerson" weightx="0" />
+		<textfield name="searchPerson" action="searchByPerson(this, tablePeople, buttonClear)" weightx="1" columns="0" colspan="2"/>
+		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchPerson, tablePeople, this)" enabled="false"/>
 		
-		<button name="buttonAddPerson" icon="/icons/user_add.png" text="i18n.plugins.resourcemapper.add.person" action="addPerson()"/>
-		<button name="buttonDeletePerson" icon="/icons/user_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="deletePerson()"/>
-		
-		<table name="tablePeople" selection="single" weightx="1" weighty="1" colspan="4">
+		<table name="tablePeople" selection="single" action="personSelectionChanged(this, panelPerson)" weightx="1" weighty="1" colspan="4">
 			<header>
-				<column icon="/icons/file.png" text="i18n.plugins.resourcemapper.table.name" width="140"/>
-				<column icon="/icons/sms_receive.png" text="i18n.plugins.resourcemapper.table.current.hospital" width="160"/>
+				<column icon="/icons/user.png" text="i18n.plugins.resourcemapper.table.name" width="140"/>
+				<column icon="/icons/port_open.png" text="i18n.plugins.resourcemapper.table.current.hospital" width="150"/>
 				<column icon="/icons/date.png" text="i18n.plugins.resourcemapper.table.last.report" width="120"/>
 			</header>
 		</table>	
+		
+		<button name="buttonAddPerson" icon="/icons/user_add.png" text="i18n.plugins.resourcemapper.add.person" action="addPerson(tablePeople)" weightx="1" colspan="2"/>
+		<button name="buttonDeletePerson" icon="/icons/user_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="showConfirmationDialog('deletePerson')" weightx="1" colspan="2" enabled="false"/>
 	</panel>
-	<panel name="panelRight" columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
-		<label name="labelNameValue" icon="/icons/user.png" colspan="2" weightx="1" />
+	<panel name="panelPerson" columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
+		<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" valign="top" />
+		<label name="labelNameValue" height="40" weightx="1" font="bold 12"/>
 		
-		<label name="labelHospital" text="i18n.plugins.resourcemapper.field.hospital" icon="/icons/port_open.png" />
-		<label name="labelHospitalValue" weightx="1" />
+		<label name="labelHospital" text="i18n.plugins.resourcemapper.hospital" icon="/icons/port_open.png" valign="top" />
+		<label name="labelHospitalValue" weightx="1" font="bold 12" />
 		
-		<label name="labelPhone" text="i18n.plugins.resourcemapper.field.phone" icon="/icons/phone_number.png" />
-		<label name="labelPhoneValue" weightx="1" />
+		<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" valign="top" />
+		<label name="labelPhoneValue" weightx="1" font="bold 12" />
 		
 		<panel weightx="1" weighty="1" colspan="2" valign="fill" gap="10">
-			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses()" weightx="1" valign="bottom"/>
-			<button name="buttonEditPerson" icon="/icons/user_edit.png" text="i18n.plugins.resourcemapper.edit.person" action="editPerson()" weightx="1" valign="bottom"/>
+			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(panelPerson)" weightx="1" enabled="false"/>
+			<button name="buttonEditPerson" icon="/icons/user_edit.png" text="i18n.plugins.resourcemapper.edit.person" action="editPerson(panelPerson)" weightx="1" enabled="false"/>
 		</panel>
 	</panel>
 </splitpane>

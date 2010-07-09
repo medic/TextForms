@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel i18n="true" name="panelBrowseData" weightx="1" weighty="1" scrollable="false" columns="3" gap="10" left="6" right="6" bottom="6">
+<panel i18n="true" name="panelBrowseData" weightx="1" weighty="1" scrollable="false" columns="3" gap="5">
 	<panel gap="5" weightx="1">
-		<label name="labelFieldName" text="i18n.plugins.resourcemapper.fieldname" />
-		<textfield name="textSearchName" weightx="1" perform="searchFieldName()"/>
+		<label name="labelField" text="i18n.plugins.resourcemapper.find.field" icon="/icons/search.png" />
+		<textfield name="searchField" weightx="1" action="searchByField(this, tableField, buttonClear)"/>
+		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableField, this)" enabled="false"/>
 	</panel>
 	
 	<panel gap="5" left="15">
@@ -12,12 +13,12 @@
     
     <panel gap="5" weightx="1" left="15">
     	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.submitter" />
-		<combobox name="comboSubmitter" editable="false" weightx="1" />
+		<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this)"/>
 	</panel>
 	
-	<table name="tableFields" selection="single" colspan="3" weightx="1" weighty="1">
+	<table name="tableField" selection="single" colspan="3" weightx="1" weighty="1">
 		<header>
-			<column icon="/icons/file.png" text="i18n.plugins.resourcemapper.table.field" width="120" />
+			<column icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.table.field" width="120" />
 			<column icon="/icons/sms_receive.png" text="i18n.plugins.resourcemapper.table.response" width="210"/>
 			<column icon="/icons/date.png" text="i18n.plugins.resourcemapper.table.date" width="150"/>
 			<column icon="/icons/user_sender.png" text="i18n.plugins.resourcemapper.table.submitter" width="200"/>

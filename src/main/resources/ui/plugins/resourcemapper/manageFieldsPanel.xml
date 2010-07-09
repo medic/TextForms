@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<splitpane i18n="true" name="panelManageFields" orientation="horizontal" divider="400" weightx="1" weighty="1">
-	<panel name="panelLeft" columns="2" weightx="1" weighty="1" scrollable="false" gap="10">
-		<label name="labelFindField" text="i18n.plugins.resourcemapper.find.field" icon="/icons/search.png" />
-		<textfield name="textSearchField" columns="10" weightx="1" perform="searchFields()"/>
+<splitpane i18n="true" name="panelManageFields" orientation="horizontal" divider="450" weightx="1" weighty="1">
+	<panel name="panelTable" columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
+		<label name="labelField" text="i18n.plugins.resourcemapper.find.field" icon="/icons/search.png" for="searchField" weightx="0" />
+		<textfield name="searchField" action="searchByField(this, tableField, buttonClear)" weightx="1" columns="0" colspan="2"/>
+		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableField, this)" enabled="false"/>
 		
-		<table name="tableFields" selection="single" colspan="2" weightx="1" weighty="1">
+		<table name="tableField" selection="single" action="fieldSelectionChanged(this, panelField)" colspan="4" weightx="1" weighty="1">
 			<header>
-				<column icon="/icons/description.png" text="i18n.plugins.resourcemapper.table.name" width="150"/>
-				<column icon="/icons/tip.png" text="i18n.plugins.resourcemapper.table.abbreviation" width="100"/>
-				<column icon="/icons/status.png" text="i18n.plugins.resourcemapper.table.type" width="100"/>
+				<column icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.table.fieldname" width="150"/>
+				<column icon="/icons/description.png" text="i18n.plugins.resourcemapper.table.abbreviation" width="110"/>
+				<column icon="/icons/tip.png" text="i18n.plugins.resourcemapper.table.type" width="100"/>
 			</header>
 		</table>	
+		
+		<button name="buttonAddField" icon="/icons/keyword_add.png" text="i18n.plugins.resourcemapper.add.person" action="addField(tableField)" weightx="1" colspan="2"/>
+		<button name="buttonDeleteField" icon="/icons/keyword_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="showConfirmationDialog('deleteField')" weightx="1" colspan="2" enabled="false"/>
 	</panel>
-	<panel name="panelRight" columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
-		<label name="labelName" icon="/icons/description.png" text="i18n.plugins.resourcemapper.field.name" />
-		<label name="labelNameValue" weightx="1" />
+	<panel name="panelField" columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
+		<label name="labelName" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.fieldname" valign="top"/>
+		<label name="labelNameValue"  weightx="1" font="bold 12"/>
 		
-		<label name="labelAbbreviation" text="i18n.plugins.resourcemapper.field.abbreviation" icon="/icons/tip.png" />
-		<label name="labelAbbreviationValue" weightx="1" />
+		<label name="labelAbbreviation" text="i18n.plugins.resourcemapper.abbreviation" icon="/icons/description.png" valign="top" />
+		<label name="labelAbbreviationValue" weightx="1"  font="bold 12"/>
 		
-		<label name="labelType" text="i18n.plugins.resourcemapper.field.type" icon="/icons/status.png" />
-		<label name="labelTypeValue" weightx="1" />
+		<label name="labelType" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" valign="top" />
+		<label name="labelTypeValue" weightx="1" font="bold 12"/>
 		
-		<label name="labelChoices" text="i18n.plugins.resourcemapper.field.choices" icon="/icons/tip.png" colspan="2" />
-		<list name="listChoices" selection="single" colspan="2">
-			<item text="Water Damage" />
-			<item text="Fire Damage"/>
-			<item text="Earthquake Damage" />
-			<item text="No Damage" />
-		</list>
+		<list name="listChoices" selection="single" colspan="2" enabled="false"/>
 		
-		<label name="labelInfo" text="i18n.plugins.resourcemapper.field.info" icon="/icons/task_edit.png" colspan="2" />
-		<textarea name="textInfo" wrap="true" editable="false" columns="40" rows="10" colspan="2" />
+		<label name="labelInfo" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" colspan="2" />
+		<textarea name="labelInfoValue" wrap="true" editable="false" rows="10" colspan="2" weightx="1"/>
 		
 		<panel weightx="1" weighty="1" colspan="2" valign="fill" gap="10">
-			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses()" weightx="1" valign="bottom"/>
-			<button name="buttonEditPerson" icon="/icons/edit.png" text="i18n.plugins.resourcemapper.edit.field" action="editField()" weightx="1" valign="bottom"/>
+			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(panelField)" weightx="1" enabled="false"/>
+			<button name="buttonEditField" icon="/icons/keyword_edit.png" text="i18n.plugins.resourcemapper.edit.field" action="editField(panelField)" weightx="1" enabled="false"/>
 		</panel>
 	</panel>
 </splitpane>
