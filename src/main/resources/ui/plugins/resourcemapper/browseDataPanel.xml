@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel i18n="true" name="panelBrowseData" weightx="1" weighty="1" scrollable="false" columns="3" gap="5">
 	<panel gap="5" weightx="1">
-		<label name="labelField" text="i18n.plugins.resourcemapper.find.field" icon="/icons/search.png" />
+		<label name="labelField" icon="/icons/search.png" />
 		<textfield name="searchField" weightx="1" action="searchByField(this, tableField, buttonClear)"/>
 		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableField, this)" enabled="false"/>
 	</panel>

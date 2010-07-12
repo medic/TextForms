@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <splitpane i18n="true" name="panelManageFields" orientation="horizontal" divider="450" weightx="1" weighty="1">
 	<panel name="panelTable" columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
-		<label name="labelField" text="i18n.plugins.resourcemapper.find.field" icon="/icons/search.png" for="searchField" weightx="0" />
+		<label name="labelField" icon="/icons/search.png" for="searchField" weightx="0" />
 		<textfield name="searchField" action="searchByField(this, tableField, buttonClear)" weightx="1" columns="0" colspan="2"/>
 		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableField, this)" enabled="false"/>
 		

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <splitpane i18n="true" name="panelManagePeople" orientation="horizontal" divider="450" weightx="1" weighty="1">
 	<panel name="panelTable" columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
-		<label name="labelFindPerson" text="i18n.plugins.resourcemapper.find.person" icon="/icons/search.png" for="searchPerson" weightx="0" />
+		<label name="labelFindPerson" icon="/icons/search.png" for="searchPerson" weightx="0" />
 		<textfield name="searchPerson" action="searchByPerson(this, tablePeople, buttonClear)" weightx="1" columns="0" colspan="2"/>
 		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchPerson, tablePeople, this)" enabled="false"/>
 		

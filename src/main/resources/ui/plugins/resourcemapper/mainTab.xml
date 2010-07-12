@@ -6,9 +6,9 @@
 			 <panel name="panelMenu" weightx="1" weighty="1" columns="1" top="6" left="6" right="6" bottom="6" gap="5" scrollable="false">
 			 	<label name="labelTasks" text="i18n.plugins.resourcemapper.tasks" icon="/icons/status.png" weightx="1" />
 			 	<list name="listTasks" selection="single" weightx="1" weighty="1" action="taskChanged(listTasks)" >
-					<item text="i18n.plugins.resourcemapper.manage.people" property="value=people" selected="true" />
-					<item text="i18n.plugins.resourcemapper.manage.fields" property="value=fields"/>
-					<item text="i18n.plugins.resourcemapper.browse.data" property="value=data"/>
+					<item text="i18n.plugins.resourcemapper.manage.people" icon="/icons/user.png" property="value=people" selected="true" />
+					<item text="i18n.plugins.resourcemapper.manage.fields" icon="/icons/keyword.png" property="value=fields"/>
+					<item text="i18n.plugins.resourcemapper.browse.data" icon="/icons/browse.png" property="value=data"/>
 				</list>
 			</panel>
 			<panel name="panelMainContent" weightx="1" weighty="1" top="6" left="6" right="6" bottom="6"/>
