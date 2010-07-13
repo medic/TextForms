@@ -3,13 +3,15 @@ package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.PolymorphismType;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@org.hibernate.annotations.Entity(polymorphism=PolymorphismType.EXPLICIT)
+@DiscriminatorValue(value = "checklist")
 public class ChecklistField extends PlainTextField {
 	
 	@OneToMany(cascade={},targetEntity=BooleanField.class,mappedBy="list")
@@ -39,5 +41,13 @@ public class ChecklistField extends PlainTextField {
 	
 	public void removceItem(BooleanField item){
 		items.remove(item);
+	}
+	
+	public String getType() {
+		return "checklist";
+	}
+	
+	public String getTypeLabel() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_CHECKLIST);
 	}
 }

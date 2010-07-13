@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="managePeopleDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.people" modal="true" resizable="true" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
-
+<dialog name="managePeopleDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.people" modal="true" resizable="true" closable="true" close="removeDialog(this)" 
+		bottom="10" top="10" left="10" right="10" columns="2" gap="13">
 	<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" for="textName" valign="top" />
 	<textarea name="textName" height="50" rows="1" weightx="1"  />
 		
@@ -9,6 +9,9 @@
 		
 	<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" for="textPhone" valign="top" />
 	<textarea name="textPhone" rows="1" columns="50" />
+	
+	<label name="labelEmail" text="i18n.plugins.resourcemapper.email" icon="/icons/email.png" for="textEmail" valign="top" />
+	<textarea name="textEmail" rows="1" columns="50" />
 		
 	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(managePeopleDialog)" weightx="1" />
 	<button name="buttonSave" text="i18n.action.save" icon="/icons/tick.png" action="savePerson(managePeopleDialog)" weightx="1" />

@@ -148,53 +148,53 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		try{
 		if(contactDao.getAllHospitalContacts().size() == 0){
 			System.out.println("Creating dummy data");
-			for(int i = 0; i < 43; i++){
-				String name = getRandomName();
-				try {
-					contactDao.saveHospitalContact(new HospitalContact(rand.nextBoolean()?name:"",getRandomPhoneNumber(),rand.nextBoolean()?getEmail(name):"",true,getRandomHospitalId()));
-				} catch (DuplicateKeyException e) {
-					System.out.println("Duplicate phone numbers generated, unable to save contact");
-				}
-				if(i % 5 == 0){
-					System.out.println(i + " contacts created");
-				}
-			}
-			//Plain text mappings
-			PlainTextMappingDao mappingDao = (PlainTextMappingDao) appCon.getBean("plainTextMappingDao");
-			PlainTextField mapping1 = new PlainTextField("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
-			//bed totals
-			PlainTextField mapping2 = new PlainTextField("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
-			mapping2.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
-			
-			PlainTextField mapping3 = new PlainTextField("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
-			mapping3.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
-			//bed availables
-			PlainTextField mapping4 = new PlainTextField("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
-			mapping4.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
-			
-			PlainTextField mapping5 = new PlainTextField("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
-			mapping5.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
-			//geolocation
-			PlainTextField mapping6 = new PlainTextField("organization.geolocation","have:Hospital/have:Organization/have:OrganizationGeoLocation");
-			
-			BooleanField bmapping = new BooleanField("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
-			bmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
-			
-			CodedField cmapping = new CodedField("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
-			cmapping.setPossibleResponses(new HashSet<String>(Arrays.asList("Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility")));
-			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping1);
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping2);
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping3);
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping4);
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping5);
-			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping6);
-			
-			BooleanMappingDao bMappingDao = (BooleanMappingDao) appCon.getBean("booleanMappingDao" ); 
-			bMappingDao.saveBooleanMappingWithoutDuplicateHandling(bmapping);
-			
-			CodedMappingDao cMappingDao = (CodedMappingDao) appCon.getBean("codedMappingDao" ); 
-			cMappingDao.saveCodedMappingWithoutDuplicateHandling(cmapping);
+//			for(int i = 0; i < 43; i++){
+//				String name = getRandomName();
+//				try {
+//					contactDao.saveHospitalContact(new HospitalContact(rand.nextBoolean()?name:"",getRandomPhoneNumber(),rand.nextBoolean()?getEmail(name):"",true,getRandomHospitalId()));
+//				} catch (DuplicateKeyException e) {
+//					System.out.println("Duplicate phone numbers generated, unable to save contact");
+//				}
+//				if(i % 5 == 0){
+//					System.out.println(i + " contacts created");
+//				}
+//			}
+//			//Plain text mappings
+//			PlainTextMappingDao mappingDao = (PlainTextMappingDao) appCon.getBean("plainTextMappingDao");
+//			PlainTextField mapping1 = new PlainTextField("organization.name","have:Hospital/have:Organization/have:OrganizationInformation/have:OrganisationName");
+//			//bed totals
+//			PlainTextField mapping2 = new PlainTextField("hospital.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+//			mapping2.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+//			
+//			PlainTextField mapping3 = new PlainTextField("hospital.non.surgical.bed.total","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity");
+//			mapping3.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
+//			//bed availables
+//			PlainTextField mapping4 = new PlainTextField("hospital.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+//			mapping4.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=MedicalSurgical");
+//			
+//			PlainTextField mapping5 = new PlainTextField("hospital.non.surgical.bed.available","have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:Capacity/have:AvailableCount");
+//			mapping5.addInstruction("have:Hospital/have:HospitalBedCapacityStatus/have:BedCapacity/have:BedType=NonSurgical");
+//			//geolocation
+//			PlainTextField mapping6 = new PlainTextField("organization.geolocation","have:Hospital/have:Organization/have:OrganizationGeoLocation");
+//			
+//			BooleanField bmapping = new BooleanField("organization.is.damaged","have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage");
+//			bmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
+//			
+//			CodedField cmapping = new CodedField("organization.type","have:Hospital/have:Organization/have:OrganizationTypeText");
+//			cmapping.setPossibleResponses(new HashSet<String>(Arrays.asList("Public Hospital","Government Hospital","University Hospital", "Private Hospital","Health Center", "Clinic", "Dispensary", "Temporary Healthcare Facility")));
+//			cmapping.addInstruction("have:Hospital/have:Organization/have:OrganizationInformation/have:BuildingDamage/have:DamageType=water");
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping1);
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping2);
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping3);
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping4);
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping5);
+//			mappingDao.savePlainTextMappingWithoutDuplicateHandling(mapping6);
+//			
+//			BooleanMappingDao bMappingDao = (BooleanMappingDao) appCon.getBean("booleanMappingDao" ); 
+//			bMappingDao.saveBooleanMappingWithoutDuplicateHandling(bmapping);
+//			
+//			CodedMappingDao cMappingDao = (CodedMappingDao) appCon.getBean("codedMappingDao" ); 
+//			cMappingDao.saveCodedMappingWithoutDuplicateHandling(cmapping);
 		}
 		}catch(Throwable t){
 			System.out.println("Error creating dummy data");

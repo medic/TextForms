@@ -12,10 +12,12 @@
 	<tx:annotation-driven />
 	
 	<bean id="hospitalContactDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateHospitalContactDao" parent="baseHibernateDao"/>
+	<bean id="fieldMappingDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateFieldMappingDao" parent="baseHibernateDao"/>
+	<bean id="fieldResponseDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateFieldResponseDao" parent="baseHibernateDao"/>
+		
 	<bean id="booleanMappingDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateBooleanMappingDao" parent="baseHibernateDao"/>
 	<bean id="checklistMappingDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateChecklistMappingDao" parent="baseHibernateDao"/>
 	<bean id="codedMappingDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateCodedMappingDao" parent="baseHibernateDao"/>
-	<bean id="fieldResponseDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernateFieldResponseDao" parent="baseHibernateDao"/>
 	<bean id="plainTextMappingDao" class="net.frontlinesms.plugins.resourcemapper.data.repository.hibernate.HibernatePlainTextMappingDao" parent="baseHibernateDao"/>
 	
 </beans>

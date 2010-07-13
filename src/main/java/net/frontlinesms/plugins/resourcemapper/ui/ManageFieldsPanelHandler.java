@@ -19,12 +19,19 @@
  */
 package net.frontlinesms.plugins.resourcemapper.ui;
 
+import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
+import net.frontlinesms.plugins.resourcemapper.search.FieldMappingQueryGenerator;
+import net.frontlinesms.plugins.resourcemapper.ui.components.AdvancedTableActionDelegate;
+import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -35,7 +42,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  * see {@link "http://www.frontlinesms.net"} for more details. 
  * copyright owned by Kiwanja.net
  */
-public class ManageFieldsPanelHandler implements ThinletUiEventHandler {
+public class ManageFieldsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
 	private static Logger LOG = FrontlineUtils.getLogger(ManageFieldsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/resourcemapper/manageFieldsPanel.xml";
@@ -46,9 +53,24 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler {
 	private Object mainPanel;
 	private ManageFieldsDialogHandler editDialog;
 	private ResourceMapperCallback callback;
+	
+	private Object searchField;
+	private Object panelFields;
+	private Object tableFields;
+	
+	private Object labelNameValue;
+	private Object labelAbbreviationValue;
+	private Object labelTypeValue;
+	private Object labelInfoValue;
+	
 	private Object editButton;
 	private Object deleteButton;
 	private Object viewResponsesButton;
+	
+	private FieldMappingQueryGenerator queryGenerator;
+	private PagedAdvancedTableController tableController;
+	
+	private FieldMappingDao fieldMappingDao;
 	
 	public ManageFieldsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
 		System.out.println("ManageFieldsPanelHandler");
@@ -56,14 +78,47 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler {
 		this.appContext = appContext;
 		this.callback = callback;
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
+		
+		this.searchField = this.ui.find(this.mainPanel, "searchField");
+		this.tableFields = this.ui.find(this.mainPanel, "tableFields");
+		this.panelFields = this.ui.find(this.mainPanel, "panelFields");
+		
+		this.labelNameValue = this.ui.find(this.mainPanel, "labelNameValue");
+		this.labelAbbreviationValue = this.ui.find(this.mainPanel, "labelAbbreviationValue");
+		this.labelTypeValue = this.ui.find(this.mainPanel, "labelTypeValue");
+		this.labelInfoValue = this.ui.find(this.mainPanel, "labelInfoValue");
+		
 		this.editDialog = new ManageFieldsDialogHandler(this.ui, this.appContext, callback);
 		this.editButton = this.ui.find(this.mainPanel, "buttonEditField");
 		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteField");
 		this.viewResponsesButton = this.ui.find(this.mainPanel, "buttonViewResponses");
+	
+		this.fieldMappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+		
+		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableFields, this.panelFields);
+		this.tableController.putHeader(Field.class, 
+									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), getI18NString(ResourceMapperConstants.TABLE_ABBREV), getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
+									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
+									   new String[]{"getFullName", "getAbbreviation", "getType"});
+		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
+		this.tableController.setQueryGenerator(this.queryGenerator);
+		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
+											   getI18NString(ResourceMapperConstants.TABLE_NO_RESULTS), 
+											   getI18NString(ResourceMapperConstants.TABLE_NO_SEARCH_RESULTS));
+		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
+											  getI18NString(ResourceMapperConstants.TABLE_OF));
+		this.queryGenerator.startSearch("");
 	}
 	
 	public Object getMainPanel() {
 		return this.mainPanel;
+	}
+	
+	public void focus(Object component) {
+		System.out.println("focus");
+		if (component != null) {
+			this.ui.requestFocus(component);
+		}
 	}
 	
 	public void addField(Object tableField) {
@@ -77,16 +132,27 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler {
 	
 	public void deleteField() {
 		System.out.println("deleteField");
+		Field field = this.getSelectedField();
+		if (field != null) {
+			this.fieldMappingDao.deleteFieldMapping(field);
+		}
+		this.ui.removeConfirmationDialog();
+		this.refreshFields();
+	}
+	
+	public void refreshFields() {
+		String searchText = this.ui.getText(this.searchField);
+		this.queryGenerator.startSearch(searchText);
 	}
 	
 	public void editField(Object panelField) {
-		Field field = (Field)this.ui.getAttachedObject(panelField);
-		this.editDialog.show(field);
+		this.editDialog.show(this.getSelectedField());
 	}
 	
 	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
 		String searchText = this.ui.getText(searchField);
 		System.out.println("searchByField: " + searchText);
+		this.queryGenerator.startSearch(searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 	}
 	
@@ -100,41 +166,48 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler {
 	public void viewResponses(Object panelField) {
 		System.out.println("viewResponses");
 		if (this.callback != null) {
-			Field field = (Field)this.ui.getAttachedObject(panelField);
-			this.callback.viewResponses(field);
+			this.callback.viewResponses(this.getSelectedField());
 		}	
 	}
 	
-	public void typeChanged(Object comboTypes, Object listChoices) {
-		System.out.println("typeChanged");
-		Object selectedType = this.ui.getSelectedItem(comboTypes);
-		String selectedProperty = this.ui.getProperty(selectedType, "value").toString();
-		if ("plaintext".equalsIgnoreCase(selectedProperty)) {
-			this.ui.setVisible(listChoices, false);
+	private Field getSelectedField() {
+		final Object selectedRow = this.ui.getSelectedItem(this.tableFields);
+		if (selectedRow != null) {
+			return (Field)this.ui.getAttachedObject(selectedRow, Field.class);
 		}
-		else if ("boolean".equalsIgnoreCase(selectedProperty)) {
-			this.ui.setVisible(listChoices, false);
-		}
-		else if ("checklist".equalsIgnoreCase(selectedProperty)) {
-			this.ui.setVisible(listChoices, true);
-		}
-		else if ("multiplechoice".equalsIgnoreCase(selectedProperty)) {
-			this.ui.setVisible(listChoices, true);
-		}
+		return null;
 	}
 	
-	public void fieldSelectionChanged(Object tableField, Object panelField) {
-		System.out.println("fieldSelectionChanged");
-		Object selectedField = this.ui.getSelectedItem(tableField);
-		if (selectedField != null) {
+	public void doubleClickAction(Object selectedObject) {
+		System.out.println("doubleClickAction");
+		this.editDialog.show(this.getSelectedField());
+	}
+
+	public void resultsChanged() {
+		System.out.println("resultsChanged");
+		selectionChanged(null);
+	}
+
+	public void selectionChanged(Object selectedObject) {
+		System.out.println("selectionChanged");
+		Field field = this.getSelectedField();
+		if (field != null) {
 			this.ui.setEnabled(this.editButton, true);
 			this.ui.setEnabled(this.deleteButton, true);
 			this.ui.setEnabled(this.viewResponsesButton, true);
+			this.ui.setText(this.labelNameValue, field.getFullName());
+			this.ui.setText(this.labelAbbreviationValue, field.getAbbreviation());
+			this.ui.setText(this.labelTypeValue, field.getTypeLabel());
+			this.ui.setText(this.labelInfoValue, field.getInfoSnippet());
 		}
 		else {
 			this.ui.setEnabled(this.editButton, false);
 			this.ui.setEnabled(this.deleteButton, false);
 			this.ui.setEnabled(this.viewResponsesButton, false);
+			this.ui.setText(this.labelNameValue, "");
+			this.ui.setText(this.labelAbbreviationValue, "");
+			this.ui.setText(this.labelTypeValue, "");
+			this.ui.setText(this.labelInfoValue, "");
 		}
 	}
 }

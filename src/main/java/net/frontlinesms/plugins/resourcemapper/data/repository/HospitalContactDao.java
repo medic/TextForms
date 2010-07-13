@@ -9,6 +9,9 @@ public interface HospitalContactDao {
 
 	
 	public List<HospitalContact> getAllHospitalContacts();
+	
+	public List<HospitalContact> getAllHospitalContacts(int startIndex, int limit);
+	
 	/**
 	 * Retrieves the contact with the specified msisdn, or returns NULL if none exists.
 	 * @param phoneNumber a phone number

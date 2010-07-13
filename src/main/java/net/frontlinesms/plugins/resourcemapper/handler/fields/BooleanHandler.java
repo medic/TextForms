@@ -110,14 +110,14 @@ public class BooleanHandler implements FieldMessageHandler<BooleanField> {
 	}
 
 	public void generateAndPublishXML(FieldResponse<BooleanField> response) {
-		Document doc = XMLUtils.getInitializedDocument(response);
-		String textResponse = getResponseForContent(response.getMessage().getTextContent());
-		String path = response.getMapping().getPathToElement() + "=" + textResponse;
-		XMLUtils.handlePath(path, doc);
-		for (String paths : response.getMapping().getAdditionalInstructions()) {
-			XMLUtils.handlePath(paths, doc);
-		}
-		XMLPublisher.publish(doc.asXML());
+//		Document doc = XMLUtils.getInitializedDocument(response);
+//		String textResponse = getResponseForContent(response.getMessage().getTextContent());
+//		String path = response.getMapping().getPathToElement() + "=" + textResponse;
+//		XMLUtils.handlePath(path, doc);
+//		for (String paths : response.getMapping().getAdditionalInstructions()) {
+//			XMLUtils.handlePath(paths, doc);
+//		}
+//		XMLPublisher.publish(doc.asXML());
 	}
 
 }

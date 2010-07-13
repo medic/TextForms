@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 
 import net.frontlinesms.data.domain.Contact;
@@ -10,6 +12,8 @@ public class HospitalContact extends Contact {
 	private boolean isBlacklisted;
 	
 	private String hospitalId;
+	
+	private Date lastResponse;
 		
 	protected HospitalContact() {
 		super(null, null, null, null, null, true);
@@ -35,6 +39,14 @@ public class HospitalContact extends Contact {
 
 	public String getHospitalId() {
 		return hospitalId;
+	}
+	
+	public Date getLastResponse() {
+		return lastResponse;
+	}
+	
+	public void setLastResponse(Date lastResponse) {
+		this.lastResponse = lastResponse;
 	}
 
 }

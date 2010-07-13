@@ -3,15 +3,18 @@ package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
+
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.PolymorphismType;
 
 @Entity
-@org.hibernate.annotations.Entity(polymorphism=PolymorphismType.EXPLICIT)
+@DiscriminatorValue(value = "coded")
 public class CodedField extends PlainTextField {
 
 	public CodedField(String fullName, String abbreviation) {
@@ -44,5 +47,13 @@ public class CodedField extends PlainTextField {
 	
 	public void setPossibleResponses(Set<String> responses){
 		this.possibleResponses = responses;
+	}
+	
+	public String getType() {
+		return "coded";
+	}
+	
+	public String getTypeLabel() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_CODED);
 	}
 }

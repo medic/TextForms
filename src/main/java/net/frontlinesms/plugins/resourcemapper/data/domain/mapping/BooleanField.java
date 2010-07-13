@@ -3,13 +3,15 @@ package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.PolymorphismType;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@org.hibernate.annotations.Entity(polymorphism=PolymorphismType.EXPLICIT)
+@DiscriminatorValue(value = "boolean")
 public class BooleanField extends CodedField {
 	
 	@ManyToOne(cascade={},targetEntity=ChecklistField.class)
@@ -36,5 +38,13 @@ public class BooleanField extends CodedField {
 	
 	public boolean isOnChecklist(){
 		return list !=null;
+	}
+	
+	public String getType() {
+		return "boolean";
+	}
+	
+	public String getTypeLabel() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_BOOLEAN);
 	}
 }

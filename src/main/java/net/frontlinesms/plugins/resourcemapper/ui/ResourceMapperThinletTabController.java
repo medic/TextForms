@@ -98,9 +98,17 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	
 	public void refreshContact(HospitalContact contact) {
 		System.out.println("refreshContact: " + contact);
+		if (this.panelManagePeople == null) {
+			this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
+		}
+		this.panelManagePeople.refreshContacts();
 	}
 	
 	public void refreshField(Field field) {
 		System.out.println("refreshField: " + field);
+		if (this.panelManageFields == null) {
+			this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
+		}
+		this.panelManageFields.refreshFields();
 	}
 }

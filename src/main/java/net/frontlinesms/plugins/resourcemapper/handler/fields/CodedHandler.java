@@ -84,14 +84,14 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	}
 
 	public void generateAndPublishXML(FieldResponse<CodedField> response) {
-		Document doc = XMLUtils.getInitializedDocument(response);
-		String textResponse = getResponseForContent(response.getMessage().getTextContent(), response.getMapping());
-		String path = response.getMapping().getPathToElement() + "=" + textResponse;
-		XMLUtils.handlePath(path, doc);
-		for (String paths : response.getMapping().getAdditionalInstructions()) {
-			XMLUtils.handlePath(paths, doc);
-		}
-		XMLPublisher.publish(doc.asXML());
+//		Document doc = XMLUtils.getInitializedDocument(response);
+//		String textResponse = getResponseForContent(response.getMessage().getTextContent(), response.getMapping());
+//		String path = response.getMapping().getPathToElement() + "=" + textResponse;
+//		XMLUtils.handlePath(path, doc);
+//		for (String paths : response.getMapping().getAdditionalInstructions()) {
+//			XMLUtils.handlePath(paths, doc);
+//		}
+//		XMLPublisher.publish(doc.asXML());
 	}
 	
 	protected void output(String msisdn, String text){

@@ -30,6 +30,10 @@ public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContac
 		return super.getAll();
 	}
 
+	public List<HospitalContact> getAllHospitalContacts(int startIndex, int limit) {
+		return super.getAll(startIndex, limit);
+	}
+	
 	public HospitalContact getHospitalContactByPhoneNumber(String phoneNumber) {
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("phoneNumber", phoneNumber));

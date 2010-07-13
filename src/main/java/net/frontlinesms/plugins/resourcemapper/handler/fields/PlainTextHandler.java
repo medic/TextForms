@@ -57,13 +57,13 @@ public class PlainTextHandler implements FieldMessageHandler<PlainTextField> {
 	}
 	
 	public void generateAndPublishXML(FieldResponse<PlainTextField> response){
-		Document doc = XMLUtils.getInitializedDocument(response);
-		String text = response.getMessage().getTextContent().split(" ", 2)[1];
-		String path = response.getMapping().getPathToElement() +"=" + text;
-		XMLUtils.handlePath(path, doc);
-		for(String paths: response.getMapping().getAdditionalInstructions()){
-			XMLUtils.handlePath(paths, doc);
-		}
-		XMLPublisher.publish(doc.asXML());
+//		Document doc = XMLUtils.getInitializedDocument(response);
+//		String text = response.getMessage().getTextContent().split(" ", 2)[1];
+//		String path = response.getMapping().getPathToElement() +"=" + text;
+//		XMLUtils.handlePath(path, doc);
+//		for(String paths: response.getMapping().getAdditionalInstructions()){
+//			XMLUtils.handlePath(paths, doc);
+//		}
+//		XMLPublisher.publish(doc.asXML());
 	}
 }

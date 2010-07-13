@@ -23,8 +23,10 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineUtils;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
+import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -45,11 +47,14 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	private ResourceMapperCallback callback;
 	
 	private Object mainDialog;
+	
 	private HospitalContact contact;
+	private HospitalContactDao contactDao;
 	
 	private Object textName;
 	private Object textHospital;
 	private Object textPhone;
+	private Object textEmail;
 	
 	public ManagePeopleDialogHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
 		System.out.println("ManagePeopleDialogHandler");
@@ -60,6 +65,8 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 		this.textName = this.ui.find(this.mainDialog, "textName");
 		this.textHospital = this.ui.find(this.mainDialog, "textHospital");
 		this.textPhone = this.ui.find(this.mainDialog, "textPhone");
+		this.textEmail = this.ui.find(this.mainDialog, "textEmail");
+		this.contactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
 	public void show(HospitalContact contact) {
@@ -68,17 +75,34 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textName, contact.getName());
 			this.ui.setText(this.textHospital, contact.getHospitalId());
 			this.ui.setText(this.textPhone, contact.getPhoneNumber());
+			this.ui.setText(this.textEmail, contact.getEmailAddress());
 		}
 		else {
 			this.ui.setText(this.textName, "");
 			this.ui.setText(this.textHospital, "");
 			this.ui.setText(this.textPhone, "");
+			this.ui.setText(this.textEmail, "");
 		}
 		this.ui.add(this.mainDialog);
 	}
 	
-	public void savePerson(Object dialog) {
+	public void savePerson(Object dialog) throws DuplicateKeyException {
 		System.out.println("savePerson");
+		String contactName = this.ui.getText(this.textName);
+		String contactHospital = this.ui.getText(this.textHospital);
+		String contactPhone = this.ui.getText(this.textPhone);
+		String contactEmail = this.ui.getText(this.textEmail);
+		if (this.contact != null) {
+			this.contact.setName(contactName);
+			this.contact.setHospitalId(contactHospital);
+			this.contact.setPhoneNumber(contactPhone);
+			this.contact.setEmailAddress(contactEmail);
+			this.contactDao.updateHospitalContact(this.contact);
+		}
+		else {
+			this.contact = new HospitalContact(contactName, contactPhone, contactEmail, true, contactHospital);
+			this.contactDao.saveHospitalContact(this.contact);
+		}
 		this.callback.refreshContact(this.contact);
 		this.ui.remove(dialog);
 	}

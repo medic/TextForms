@@ -1,0 +1,2 @@
+net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField
+net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField

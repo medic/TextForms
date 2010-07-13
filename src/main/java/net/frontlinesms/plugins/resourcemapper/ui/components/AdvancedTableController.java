@@ -1,7 +1,5 @@
 package net.frontlinesms.plugins.resourcemapper.ui.components;
 
-import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
-
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -53,6 +51,10 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	protected static Font font;
 	protected static FontMetrics metrics;
 
+	protected String resultsText;
+	protected String noResultsText;
+	protected String noSearchResultsText;
+	
 	static {
 		// initialize stuff for determining font width
 		icon = new ImageIcon();
@@ -94,6 +96,12 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 		metrics = graphics.getFontMetrics(font);
 	}
 
+	public void setResultsPhrases(String results, String noResults, String noSearchResults) {
+		this.resultsText = results;
+		this.noResultsText = noResults;
+		this.noSearchResultsText = noSearchResults;
+	}
+	
 	/**
 	 * creates a new header option for the specified class
 	 * 
@@ -102,12 +110,14 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
 	 */
 	@SuppressWarnings("static-access")
-	public void putHeader(Class headerClass, String[] columnNames,
-			String[] columnMethods) {
+	public void putHeader(Class headerClass, String[] columnNames, String[] columnIcons, String[] columnMethods) {
 		Object header = uiController.create("header");
 		for (int i = 0; i < columnNames.length; i++) {
-			uiController.add(header, uiController.createColumn(columnNames[i],
-					columnMethods[i]));
+			Object column = uiController.createColumn(columnNames[i], columnMethods[i]);
+			if (columnIcons != null && columnIcons.length > i && columnIcons[i] != null) {
+				uiController.setIcon(column, columnIcons[i]);
+			}
+			uiController.add(header, column);
 		}
 		uiController.setAction(header, "headerClicked()", null, this);
 		headers.put(getRealClass(headerClass), header);
@@ -125,10 +135,10 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 		if (results.size() == 0) {
 			uiController.removeAll(getTable());
 			Object header = uiController.create("header");
-			uiController.add(header, uiController.createColumn(getI18NString("advancedtable.no.results.to.display"),null));
+			uiController.add(header, uiController.createColumn(this.noResultsText, null));
 			uiController.add(getTable(), header);
 			Object row = uiController.createTableRow(null);
-			uiController.add(row, uiController.createTableCell(noResultsMessage == null ? getI18NString("advancedtable.no.search.results"): noResultsMessage));
+			uiController.add(row, uiController.createTableCell(noResultsMessage == null ? this.noSearchResultsText: this.noResultsMessage));
 			uiController.add(getTable(), row);
 			delegate.resultsChanged();
 			return;
@@ -253,7 +263,10 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	}
 
 	private int getStringWidth(String text) {
-		return metrics.stringWidth(text);
+		if (text != null) {
+			return metrics.stringWidth(text);
+		}
+		return 0;
 	}
 
 	public void setTable(Object table) {
@@ -312,12 +325,10 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	}
 
 	public void headerClicked() {
-		// int index = uiController.getSelectedIndex(getCurrentHeader());
-		// String sort =
-		// uiController.getChoice(uiController.getSelectedItem(getCurrentHeader()),
-		// "sort");
-		// boolean sortOrder = (sort.equals("ascent"))? true:false;
-		// delegate.getQueryGenerator().setSort(, sortOrder);
+//		 int index = uiController.getSelectedIndex(getCurrentHeader());
+//		 String sort = uiController.getChoice(uiController.getSelectedItem(getCurrentHeader()), "sort");
+//		 boolean sortOrder = (sort.equals("ascent"))? true:false;
+//		 delegate.getQueryGenerator().setSort(sortOrder);
 	}
 
 	public void clearResults() {
