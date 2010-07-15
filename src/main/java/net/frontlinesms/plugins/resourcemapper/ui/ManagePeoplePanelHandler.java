@@ -135,10 +135,10 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 			this.contactDao.deleteHospitalContact(contact);
 		}
 		this.ui.removeConfirmationDialog();
-		this.refreshContacts();
+		this.refreshContacts(null);
 	}
 	
-	public void refreshContacts() {
+	public void refreshContacts(HospitalContact contact) {
 		String searchText = this.ui.getText(this.searchPerson);
 		this.queryGenerator.startSearch(searchText);
 	}

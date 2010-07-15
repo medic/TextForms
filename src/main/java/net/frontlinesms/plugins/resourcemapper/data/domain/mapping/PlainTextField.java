@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
+import java.util.Set;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -12,7 +14,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @Entity
-@DiscriminatorValue(value = "plaintext")
+@DiscriminatorValue(value="plaintext")
 public class PlainTextField extends Field {
 
 	public PlainTextField() {
@@ -23,24 +25,20 @@ public class PlainTextField extends Field {
 		super(fullName, abbreviation);
 	}
 	
-	/**
-	 * The "name" attribute in the Google XML schema
-	 */
-	private String schemaName;
-
-	public String getSchemaName() {
-		return schemaName;
-	}
-	
-	public void setSchemaName(String schemaName) {
-		this.schemaName = schemaName;
-	}
-	
 	public String getType() {
 		return "plaintext";
 	}
 	
 	public String getTypeLabel() {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_PLAIN_TEXT);
+	}
+	
+	public void setChoices(Set<String> choices) {
+		//do nothing for PlainTextField
+	}
+	
+	public Set<String> getChoices() {
+		//return nothing for PlainTextField
+		return null;
 	}
 }

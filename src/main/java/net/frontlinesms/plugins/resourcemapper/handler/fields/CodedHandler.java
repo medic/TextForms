@@ -47,7 +47,7 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 		//String[] commands = content.split(" ");
 		if (messageIsValid(content)){
 			String message = content + " " +ShortCodeProperties.getInstance().getValueForKey("coded.answer.prefix");
-			Set<String> possibleResponses = mappingDao.getMappingForShortCode(content).getPossibleResponses();
+			Set<String> possibleResponses = mappingDao.getMappingForShortCode(content).getChoices();
 			int index = 1;
 			for (String possibleResponse: possibleResponses) {
 				message += "\n" + index + " - " + possibleResponse;
@@ -79,7 +79,7 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	 */
 	public String getResponseForContent(String content, CodedField mapping) {
 		//TODO Does this really need to be a set?
-		Set<String> possibleResponses = mapping.getPossibleResponses();
+		Set<String> possibleResponses = mapping.getChoices();
 		return possibleResponses.toArray(new String[possibleResponses.size()])[Integer.parseInt(content)-1];
 	}
 
@@ -118,7 +118,7 @@ public class CodedHandler implements CallbackHandler<CodedField> {
 	
 	private boolean callbackMessageIsValid(String content, CodedField mapping){
 		if(shouldHandleCallbackMessage(content)){
-			int max = mapping.getPossibleResponses().size();
+			int max = mapping.getChoices().size();
 			if(Integer.parseInt(content) <= max && Integer.parseInt(content) > 0) {
 				return true;
 			}

@@ -62,6 +62,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	private Object labelAbbreviationValue;
 	private Object labelTypeValue;
 	private Object labelInfoValue;
+	private Object listChoices;
 	
 	private Object editButton;
 	private Object deleteButton;
@@ -87,6 +88,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.labelAbbreviationValue = this.ui.find(this.mainPanel, "labelAbbreviationValue");
 		this.labelTypeValue = this.ui.find(this.mainPanel, "labelTypeValue");
 		this.labelInfoValue = this.ui.find(this.mainPanel, "labelInfoValue");
+		this.listChoices = this.ui.find(this.mainPanel, "listChoices");
 		
 		this.editDialog = new ManageFieldsDialogHandler(this.ui, this.appContext, callback);
 		this.editButton = this.ui.find(this.mainPanel, "buttonEditField");
@@ -99,7 +101,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.putHeader(Field.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), getI18NString(ResourceMapperConstants.TABLE_ABBREV), getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
 									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
-									   new String[]{"getFullName", "getAbbreviation", "getType"});
+									   new String[]{"getName", "getAbbreviation", "getType"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -137,10 +139,10 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.fieldMappingDao.deleteFieldMapping(field);
 		}
 		this.ui.removeConfirmationDialog();
-		this.refreshFields();
+		this.refreshFields(null);
 	}
 	
-	public void refreshFields() {
+	public void refreshFields(Field field) {
 		String searchText = this.ui.getText(this.searchField);
 		this.queryGenerator.startSearch(searchText);
 	}
@@ -195,10 +197,21 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setEnabled(this.editButton, true);
 			this.ui.setEnabled(this.deleteButton, true);
 			this.ui.setEnabled(this.viewResponsesButton, true);
-			this.ui.setText(this.labelNameValue, field.getFullName());
+			this.ui.setText(this.labelNameValue, field.getName());
 			this.ui.setText(this.labelAbbreviationValue, field.getAbbreviation());
 			this.ui.setText(this.labelTypeValue, field.getTypeLabel());
 			this.ui.setText(this.labelInfoValue, field.getInfoSnippet());
+			this.ui.removeAll(this.listChoices);
+			if ("boolean".equalsIgnoreCase(field.getType())) {
+				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
+				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_FALSE), 0));
+			}
+			else if (field.getChoices() != null) {
+				for (String choiceText : field.getChoices()) {
+					System.out.println("choiceText: " + choiceText);
+					this.ui.add(this.listChoices, this.ui.createListItem(choiceText, choiceText));
+				}	
+			}
 		}
 		else {
 			this.ui.setEnabled(this.editButton, false);
@@ -208,6 +221,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelAbbreviationValue, "");
 			this.ui.setText(this.labelTypeValue, "");
 			this.ui.setText(this.labelInfoValue, "");
+			this.ui.removeAll(this.listChoices);
 		}
 	}
 }

@@ -30,6 +30,9 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		this.appContext = appContext;
 		this.mainTab = this.ui.loadComponentFromFile(XML_PATH, this);
 		this.mainPanel = this.ui.find(this.mainTab, "panelMainContent");
+		this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
+		this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
+		this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
 		taskChanged(this.ui.find(this.mainTab, "listTasks"));
 	}
 
@@ -41,26 +44,14 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		Object selectedListItem = this.ui.getSelectedItem(listTasks);
 		String selectedProperty = this.ui.getProperty(selectedListItem, "value").toString();
 		System.out.println("taskChanged: " + selectedProperty);
-		this.ui.removeAll(this.mainPanel);
 		if ("fields".equalsIgnoreCase(selectedProperty)) {
-			if (this.panelManageFields == null) {
-				this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
-			}
-			this.ui.add(this.mainPanel, this.panelManageFields.getMainPanel());
+			showManageFieldsPanel();
 		}
 		else if ("people".equalsIgnoreCase(selectedProperty)) {
-			if (this.panelManagePeople == null) {
-				this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
-			}
-			this.ui.add(this.mainPanel, this.panelManagePeople.getMainPanel());
+			showManagePeoplePanel();
 		}
 		else if ("data".equalsIgnoreCase(selectedProperty)) {
-			if (this.panelBrowseData == null) {
-				this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
-			}
-			this.panelBrowseData.setSelectedContact(null);
-			this.panelBrowseData.setSelectedField(null);
-			this.ui.add(this.mainPanel, this.panelBrowseData.getMainPanel());
+			showBrowseDataPanel(null, null);
 		}
 	}
 	
@@ -71,13 +62,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 			String itemProperty = this.ui.getProperty(item, "value").toString();
 			this.ui.setSelected(item, "data".equalsIgnoreCase(itemProperty));
 		} 
-		this.ui.removeAll(this.mainPanel);
-		if (this.panelBrowseData == null) {
-			this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
-		}
-		this.panelBrowseData.setSelectedContact(contact);
-		this.panelBrowseData.setSelectedField(null);
-		this.ui.add(this.mainPanel, this.panelBrowseData.getMainPanel());
+		showBrowseDataPanel(contact, null);
 	}
 	
 	public void viewResponses(Field field) {
@@ -87,28 +72,34 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 			String itemProperty = this.ui.getProperty(item, "value").toString();
 			this.ui.setSelected(item, "data".equalsIgnoreCase(itemProperty));
 		} 
-		this.ui.removeAll(this.mainPanel);
-		if (this.panelBrowseData == null) {
-			this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
-		}
-		this.panelBrowseData.setSelectedContact(null);
-		this.panelBrowseData.setSelectedField(field);
-		this.ui.add(this.mainPanel, this.panelBrowseData.getMainPanel());
+		showBrowseDataPanel(null, field);
 	}
 	
 	public void refreshContact(HospitalContact contact) {
 		System.out.println("refreshContact: " + contact);
-		if (this.panelManagePeople == null) {
-			this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
-		}
-		this.panelManagePeople.refreshContacts();
+		this.panelManagePeople.refreshContacts(contact);
 	}
 	
 	public void refreshField(Field field) {
 		System.out.println("refreshField: " + field);
-		if (this.panelManageFields == null) {
-			this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
-		}
-		this.panelManageFields.refreshFields();
+		this.panelManageFields.refreshFields(field);
+	}
+	
+	private void showBrowseDataPanel(HospitalContact contact, Field field) {
+		this.ui.removeAll(this.mainPanel);
+		this.panelBrowseData.loadHospitalContacts();
+		this.panelBrowseData.setSelectedContact(contact);
+		this.panelBrowseData.setSelectedField(field);
+		this.ui.add(this.mainPanel, this.panelBrowseData.getMainPanel());
+	}
+	
+	private void showManagePeoplePanel() {
+		this.ui.removeAll(this.mainPanel);
+		this.ui.add(this.mainPanel, this.panelManagePeople.getMainPanel());
+	}
+	
+	private void showManageFieldsPanel() {
+		this.ui.removeAll(this.mainPanel);
+		this.ui.add(this.mainPanel, this.panelManageFields.getMainPanel());
 	}
 }

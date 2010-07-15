@@ -28,6 +28,7 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 
 /*
  * BrowseDataPanelHandler
@@ -46,8 +47,12 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 	
 	private Object mainPanel;
 	private ResourceMapperCallback callback;
-	private Field selectedField;
+	
 	private HospitalContact selectedContact;
+	private HospitalContactDao hospitalContactDao;
+	
+	private Field selectedField;
+	private Object comboSubmitter;
 	
 	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
 		System.out.println("BrowseDataPanelHandler");
@@ -55,10 +60,22 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 		this.appContext = appContext;
 		this.callback = callback;
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
+		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
+		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
 	}
 	
 	public Object getMainPanel() {
 		return this.mainPanel;
+	}
+
+	public void loadHospitalContacts() {
+		this.ui.removeAll(this.comboSubmitter);
+		this.ui.add(this.comboSubmitter, this.ui.createComboboxChoice("", null));
+		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
+			Object comboboxChoice = this.ui.createComboboxChoice(contact.getName(), contact);
+			this.ui.setIcon(comboboxChoice, "/icons/user.png");
+			this.ui.add(this.comboSubmitter, comboboxChoice);
+		}
 	}
 	
 	public void showDateSelecter(Object textField) {
@@ -80,37 +97,50 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 	}
 	
 	public void submitterChanged(Object comboSubmitter) {
-		System.out.println("submitterChanged");
+		Object selectedItem = this.ui.getSelectedItem(comboSubmitter);
+		if (selectedItem != null) {
+			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(selectedItem, HospitalContact.class);
+			if (submitter != null) {
+				System.out.println("submitterChanged: " + submitter.getName());
+			}
+			else {
+				System.out.println("submitterChanged: null");
+			}	
+		}
 	}
 	
-	public void setSelectedField (Field field) {
+	public void setSelectedField(Field field) {
 		System.out.println("setSelectedField: "+ field);
 		this.selectedField = field;
 		Object searchField = this.ui.find(this.mainPanel, "searchField");
 		if (field != null) {
-			this.ui.setText(searchField, field.getFullName());
+			this.ui.setText(searchField, field.getName());
 		}
 		else {
 			this.ui.setText(searchField, "");
 		}
 	}
 	
-	public void setSelectedContact (HospitalContact contact) {
+	public void setSelectedContact(HospitalContact contact) {
 		System.out.println("setSelectedContact: "+ contact);
 		this.selectedContact = contact;
-		Object comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
 		if (contact != null) {
 			int index = 0;
-			for (Object comboSubmitterItem : this.ui.getItems(comboSubmitter)) {
-				if (contact == this.ui.getAttachedObject(comboSubmitterItem)) {
-					this.ui.setSelectedIndex(comboSubmitter, index);
-					break;
+			for (Object comboboxChoice : this.ui.getItems(this.comboSubmitter)) {
+				Object attachedObject = this.ui.getAttachedObject(comboboxChoice);
+				if (attachedObject != null) {
+					HospitalContact contactItem = (HospitalContact)attachedObject;
+					if (contact.equals(contactItem)) {
+						this.ui.setSelectedIndex(this.comboSubmitter, index);
+						System.out.println("Selecting Contact: " + contact.getName());
+						break;
+					}
 				}
 				index++;
 			}
 		}
 		else {
-			this.ui.setSelectedIndex(comboSubmitter, -1);
+			this.ui.setSelectedIndex(this.comboSubmitter, 0);
 		}
 	}
 }

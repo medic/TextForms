@@ -1,59 +1,64 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
-
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 
 @Entity
-@DiscriminatorValue(value = "coded")
-public class CodedField extends PlainTextField {
+@DiscriminatorValue(value="coded")
+public abstract class CodedField extends PlainTextField {
 
-	public CodedField(String fullName, String abbreviation) {
-		super(fullName, abbreviation);
+	public CodedField() {
+		super();
 	}
-	public CodedField(){super();}
 	
-	public CodedField(String shortCode, String pathToElement,Set<String> possibleResponses) {
+	public CodedField(String name, String abbreviation) {
+		super(name, abbreviation);
+	}
+	
+	public CodedField(String shortCode, String pathToElement, Set<String> choices) {
 		super(shortCode, pathToElement);
-		this.possibleResponses = possibleResponses;
+		this.choices = choices;
 	}
 	
-	@CollectionOfElements
-	@JoinTable(name="coded_possible_responses", joinColumns = @JoinColumn(name="response"))
-	@Column(name="possible_responses")
-	private Set<String> possibleResponses;
+	@CollectionOfElements(targetElement=String.class, fetch=FetchType.EAGER)
+	@JoinTable(name="field_choices", joinColumns = @JoinColumn(name="choice"))
+	@Column(name="choices")
+	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private Set<String> choices;
 	
-	
-	public Set<String> getPossibleResponses() {
-		return possibleResponses;
+	public Set<String> getChoices() {
+		return this.choices;
 	}
 
-	public void addPossibleResponse(String response) {
-		possibleResponses.add(response);
+	public void setChoices(Set<String> choices) {
+		this.choices = choices;
 	}
 	
-	public boolean removePossibleResponse(String response){
-		return possibleResponses.remove(response);
+	public void addChoice(String choice) {
+		if (this.choices == null) {
+			this.choices = new TreeSet<String>();
+		}
+		this.choices.add(choice);
 	}
 	
-	public void setPossibleResponses(Set<String> responses){
-		this.possibleResponses = responses;
+	public boolean removeChoice(String choice){
+		if (this.choices != null) {
+			return this.choices.remove(choice);
+		}
+		return false;
 	}
 	
-	public String getType() {
-		return "coded";
-	}
+	public abstract String getType();
 	
-	public String getTypeLabel() {
-		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_CODED);
-	}
+	public abstract String getTypeLabel();
 }

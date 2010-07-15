@@ -1,43 +1,38 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@DiscriminatorValue(value = "boolean")
+@DiscriminatorValue(value="boolean")
 public class BooleanField extends CodedField {
 	
-	@ManyToOne(cascade={},targetEntity=ChecklistField.class)
-	private ChecklistField list;
+	public BooleanField() {
+		this(null, null);
+	}
 	
 	public BooleanField(String fullName, String abbreviation) {
 		super(fullName, abbreviation, null);
-		Set<String> yesAndNo = new HashSet<String>();
+		Set<String> yesAndNo = new TreeSet<String>();
 		//the only possibilities are 0 and 1, since this is a boolean field
 		yesAndNo.add("0");
 		yesAndNo.add("1");
-		super.setPossibleResponses(yesAndNo);
-	}
-	
-	public BooleanField(){super();}
-
-	public void setList(ChecklistField list) {
-		this.list = list;
+		super.setChoices(yesAndNo);
 	}
 
-	public ChecklistField getList() {
-		return list;
+	public void addChoice(String choice) {
+		//do nothing for BooleanField
 	}
 	
-	public boolean isOnChecklist(){
-		return list !=null;
+	public boolean removeChoice(String choice){
+		//do nothing for  choice
+		return false;
 	}
 	
 	public String getType() {

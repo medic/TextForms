@@ -25,9 +25,8 @@ public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements
 		super.update(field);
 	}
 
-	public void updateFieldMappingWithoutDuplicateHandling( Field field) {
+	public void updateFieldMappingWithoutDuplicateHandling(Field field) {
 		super.updateWithoutDuplicateHandling(field);
-
 	}
 
 	public void deleteFieldMapping(Field field) {

@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -26,42 +28,39 @@ public abstract class Field {
 	
 	public Field() {}
 	
-	public Field(String fullName, String abbreviation) {
-		this.fullName = fullName;
+	public Field(String name, String abbreviation) {
+		this.name = name;
 		this.abbreviation = abbreviation;
 	}
 	
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(unique=true,nullable=false,updatable=false)
-	protected long mid;
+	@Column(name = "field_id", unique=true, nullable=false, updatable=false)
+	protected long id;
 	
 	/**
 	 * The full name of this field. 
 	 */
-	protected String fullName;
+	@Column(name="name", nullable=false)
+	protected String name;
+	
+	public long getID() {
+		return this.id;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	/**
 	 * The 'textable' abbreviation for this field
 	 */
+	@Column(name="abbrev", unique=true, nullable=false)
 	protected String abbreviation;
-
-	/**
-	 * A short (<160 character) description of this field
-	 */
-	protected String infoSnippet;
-	
-	public long getMid() {
-		return mid;
-	}
-	
-	public String getFullName() {
-		return fullName;
-	}
-	
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
 	
 	public String getAbbreviation() {
 		return abbreviation;
@@ -71,6 +70,12 @@ public abstract class Field {
 		this.abbreviation = abbreviation;
 	}
 	
+	/**
+	 * A short (<160 character) description of this field
+	 */
+	@Column(name="info", nullable=true)
+	protected String infoSnippet;
+	
 	public String getInfoSnippet() {
 		return infoSnippet;
 	}
@@ -78,6 +83,24 @@ public abstract class Field {
 	public void setInfoSnippet(String infoSnippet) {
 		this.infoSnippet = infoSnippet;
 	}
+	
+	/**
+	 * The "name" attribute in the Google XML schema
+	 */
+	@Column(name="schema", nullable=true)
+	private String schemaName;
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+	
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+	
+	public abstract Set<String> getChoices();
+	
+	public abstract void setChoices(Set<String> choices);
 	
 	public abstract String getType();
 	

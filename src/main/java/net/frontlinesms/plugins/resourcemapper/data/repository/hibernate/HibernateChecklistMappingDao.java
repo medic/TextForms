@@ -28,7 +28,6 @@ public class HibernateChecklistMappingDao extends BaseHibernateDao<ChecklistFiel
 
 	public void saveChecklistMapping(ChecklistField mapping) throws DuplicateKeyException {
 		super.save(mapping);
-
 	}
 
 	public void saveChecklistMappingWithoutDuplicateHandling(ChecklistField mapping) {
@@ -52,6 +51,4 @@ public class HibernateChecklistMappingDao extends BaseHibernateDao<ChecklistFiel
 	public List<String> getShortCodes() {
 		return super.getSession().createSQLQuery(SHORT_CODES_QUERY).list();
 	}
-
-
 }

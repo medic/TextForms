@@ -10,27 +10,27 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@DiscriminatorValue(value="checklist")
-public class ChecklistField extends CodedField {
+@DiscriminatorValue(value="multichoice")
+public class MultiChoiceField extends CodedField {
 	
-	public ChecklistField() {
+	public MultiChoiceField() {
 		super();
 	}
 	
-	public ChecklistField(String name, String abbreviation, Set<String> choices) {
+	public MultiChoiceField(String name, String abbreviation, Set<String> choices) {
 		super(name, abbreviation, choices);
 	}
 
-	public ChecklistField(String shortCode, String pathToElement) {
+	public MultiChoiceField(String shortCode, String pathToElement) {
 		super(shortCode, pathToElement);
 		this.setChoices(new TreeSet<String>());
 	}
 
 	public String getType() {
-		return "checklist";
+		return "multichoice";
 	}
 	
 	public String getTypeLabel() {
-		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_CHECKLIST);
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_MULTICHOICE);
 	}
 }

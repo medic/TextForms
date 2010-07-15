@@ -31,4 +31,9 @@ public final class ResourceMapperConstants {
 	public static final String TYPE_CHECKLIST = "plugins.resourcemapper.type.checklist";
 	public static final String TYPE_MULTICHOICE = "plugins.resourcemapper.type.multichoice";
 	public static final String TYPE_CODED = "plugins.resourcemapper.type.coded";
+	
+	public static final String BOOLEAN_TRUE = "plugins.resourcemapper.true";
+	public static final String BOOLEAN_FALSE = "plugins.resourcemapper.false";
+	
+	public static final String ALERT_DUPLICATE_ABBREV = "plugins.resourcemapper.alert.duplicate.abbrev";
 }

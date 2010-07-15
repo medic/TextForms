@@ -22,7 +22,7 @@
 		<label name="labelType" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" valign="top" />
 		<label name="labelTypeValue" weightx="1" font="bold 12"/>
 		
-		<list name="listChoices" selection="single" colspan="2" enabled="false"/>
+		<list name="listChoices" selection="single" colspan="2" height="100"/>
 		
 		<label name="labelInfo" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" colspan="2" />
 		<textarea name="labelInfoValue" wrap="true" editable="false" rows="10" colspan="2" weightx="1"/>

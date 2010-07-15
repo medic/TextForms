@@ -22,6 +22,7 @@ package net.frontlinesms.plugins.resourcemapper.data.repository;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -42,7 +43,7 @@ public final class FieldMappingFactory {
 	/*
 	 * Get list of Field classes
 	 * (To add a new Reminder classes to the project, append a new row to the file
-	 * /resources/META-INF/services/net.frontlinesms.plugins.reminders.data.domain.Reminder
+	 * /resources/META-INF/services/net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field
 	 * with the full package and class name of the new implementing Reminder class)
 	 */
 	public static List<Field> getFieldClasses() {
@@ -56,14 +57,15 @@ public final class FieldMappingFactory {
 		return fieldClasses;
 	}private static List<Field> fieldClasses = null;
 	
-	public static Field createField(String name, String abbrev, String infoSnippet, String type) {
+	public static Field createField(String name, String abbrev, String infoSnippet, String type, Set<String> choices) {
 		for (Field fieldClass : getFieldClasses()) {
 			if (fieldClass.getType().equalsIgnoreCase(type)) {
 				try {
 					Field field = fieldClass.getClass().newInstance();
-					field.setFullName(name);
+					field.setName(name);
 					field.setAbbreviation(abbrev);
 					field.setInfoSnippet(infoSnippet);
+					field.setChoices(choices);
 					LOG.debug("Field Created: " + field);
 					return field;
 				} catch (InstantiationException e) {

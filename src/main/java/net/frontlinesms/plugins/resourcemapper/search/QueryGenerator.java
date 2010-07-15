@@ -6,6 +6,7 @@ import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableC
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -53,13 +54,13 @@ public abstract class QueryGenerator {
 	public abstract void setSort(int column, boolean ascending);
 	
 	public QueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable){
-		sessionFactory = (SessionFactory) appCon.getBean("sessionFactory");
+		this.sessionFactory = (SessionFactory) appCon.getBean("sessionFactory");
 		this.resultsTable = resultsTable;
-		pageSize=30;
-		totalPages=0;
-		totalResults=0;
-		currentPage=0;
-		previousQuery="";
+		this.pageSize = 30;
+		this.totalPages = 0;
+		this.totalResults = 0;
+		this.currentPage = 0;
+		this.previousQuery = "";
 	}
 	
 	public int getCurrentPage() {
@@ -67,7 +68,7 @@ public abstract class QueryGenerator {
 	}
 	
 	public void setCurrentPage(int currentPage) {
-		if(currentPage < totalPages){
+		if(currentPage < this.totalPages){
 			this.currentPage = currentPage;
 		}
 	}
@@ -81,53 +82,54 @@ public abstract class QueryGenerator {
 	}
 	
 	public int getTotalResults() {
-		return totalResults;
+		return this.totalResults;
 	}
 	
 	public int getTotalPages() {
-		return totalPages;
+		return this.totalPages;
 	}
 	
 	public void nextPage(){
-		if(currentPage < (totalPages - 1)){
-			currentPage++;
+		if (this.currentPage < (this.totalPages - 1)){
+			this.currentPage++;
 			refresh();
 		}
 	}
 	
 	public void previousPage(){
-		if(currentPage > 0){
-			currentPage--;
+		if (this.currentPage > 0){
+			this.currentPage--;
 			refresh();
 		}
 	}
 	
 	public int getFirstResultOnPage(){
-		return currentPage * pageSize + 1;
+		return this.currentPage * this.pageSize + 1;
 	}
 	
 	public int getLastResultOnPage(){
-		if(currentPage < totalPages-1){
-			return currentPage * pageSize + pageSize;
-		}else{
-			return totalResults;
+		if (this.currentPage < this.totalPages-1){
+			return this.currentPage * this.pageSize + this.pageSize;
+		}
+		else{
+			return this.totalResults;
 		}
 	}
 	
 	public boolean hasNextPage(){
-		return currentPage < (totalPages-1);
+		return this.currentPage < (this.totalPages-1);
 	}
 	
 	public boolean hasPreviousPage(){
-		return currentPage > 0;
+		return this.currentPage > 0;
 	}
 	
 	public void refresh(){
-		runQuery(previousQuery);
+		runQuery(this.previousQuery);
 	}
 	
 	public void resetPaging(){
-		currentPage=0;
+		this.currentPage=0;
 	}
 	
 	/**
@@ -138,33 +140,52 @@ public abstract class QueryGenerator {
 	protected void runQuery(String query){
 		System.out.println(query);
 		//check if session is active
-		if(session == null){
-			session = sessionFactory.openSession();
-			session.beginTransaction();
+		if (this.session == null) {
+			try {
+				this.session = this.sessionFactory.getCurrentSession();
+			}
+			catch (Throwable t) {			
+				this.session = this.sessionFactory.openSession();
+			}
 		}
+		Transaction transaction = this.session.beginTransaction();
+		
 		//construct the count query
 		String querySuffix = query.substring(query.indexOf("from"));
 		String countQuery = "select count(*) " + querySuffix;
+		
 		//run the count query, obtaining the total number of results
 		long countPrevTime = System.nanoTime();
-		totalResults = ((Long) session.createQuery(countQuery).list().get(0)).intValue();
+		this.totalResults = ((Long) this.session.createQuery(countQuery).list().get(0)).intValue();
+		
 		long countElapsedTime = System.nanoTime() - countPrevTime;
 		System.out.println("Count Time: " + countElapsedTime/1000000.0);
 		
-		if(totalResults % pageSize == 0){
-			totalPages = totalResults / pageSize;
-		}else{
-			totalPages = (totalResults / pageSize) +1;
+		if (this.totalResults % this.pageSize == 0) {
+			this.totalPages = this.totalResults / this.pageSize;
+		}
+		else {
+			this.totalPages = (this.totalResults / this.pageSize) + 1;
 		}
 		//set up the time measurement
 		long prevTime = System.nanoTime();
 		//run the query
-		List results  = session.createQuery(query).setFirstResult(currentPage * pageSize).setMaxResults(pageSize).list();
+		List results  = session.createQuery(query).setFirstResult(this.currentPage * this.pageSize).setMaxResults(this.pageSize).list();
+		
 		//output time elapsed
 		long elapsedTime = System.nanoTime() - prevTime;
 		System.out.println("Query Time: " + elapsedTime/1000000.0);
-		previousQuery = query;
-		resultsTable.setResults(results);
+		this.previousQuery = query;
+		
+		for (Object result : results){
+			this.session.evict(result);
+		}
+		
+		if (transaction != null) {
+			transaction.commit();
+		}
+		
+		this.resultsTable.setResults(results);
 	}
 	
 }

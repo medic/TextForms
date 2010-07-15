@@ -16,6 +16,8 @@ import javax.swing.ImageIcon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -44,7 +46,8 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 
 	/** The size of the results array */
 	protected int resultsSize;
-
+	private SessionFactory sessionFactory;
+	
 	/** Objects for determining text width **/
 	protected static ImageIcon icon;
 	protected static Graphics graphics;
@@ -94,6 +97,7 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 		graphics = icon.getImage().getGraphics();
 		font = new Font("Sans Serif", Font.PLAIN, 14);
 		metrics = graphics.getFontMetrics(font);
+		this.sessionFactory = (SessionFactory) appcon.getBean("sessionFactory");
 	}
 
 	public void setResultsPhrases(String results, String noResults, String noSearchResults) {
