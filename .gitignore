@@ -8,3 +8,6 @@ bin/
 .classpath
 .project
 .settings
+
+# OSX files
+.DS_Store

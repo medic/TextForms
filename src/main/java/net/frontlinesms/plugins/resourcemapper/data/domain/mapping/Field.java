@@ -59,7 +59,7 @@ public abstract class Field {
 	/**
 	 * The 'textable' abbreviation for this field
 	 */
-	@Column(name="abbrev", unique=true, nullable=false)
+	@Column(name="abbreviation", unique=true, nullable=false)
 	protected String abbreviation;
 	
 	public String getAbbreviation() {

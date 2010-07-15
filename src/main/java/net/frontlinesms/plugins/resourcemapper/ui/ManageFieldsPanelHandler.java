@@ -101,7 +101,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.putHeader(Field.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), getI18NString(ResourceMapperConstants.TABLE_ABBREV), getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
 									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
-									   new String[]{"getName", "getAbbreviation", "getType"});
+									   new String[]{"getName", "getAbbreviation", "getTypeLabel"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 

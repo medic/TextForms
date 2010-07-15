@@ -16,7 +16,7 @@ public class FieldMappingQueryGenerator extends QueryGenerator {
 	
 	@Override
 	public void startSearch(String text){
-		String query = "select f from Field f where lower(f.name) like lower('%"+text+"%')";
+		String query = "select f from Field f where lower(f.name) like lower('%"+text+"%') or lower(f.abbreviation) like lower('%"+text+"%')";
 		super.runQuery(query);
 	}
 
