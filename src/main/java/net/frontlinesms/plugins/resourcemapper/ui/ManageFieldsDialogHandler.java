@@ -83,11 +83,8 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.textFieldChoice = this.ui.find(this.mainDialog, "textFieldChoice");	
 		this.buttonFieldAdd = this.ui.find(this.mainDialog, "buttonFieldAdd");
 		this.fieldMappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
-		this.ui.add(this.comboFieldTypes, this.ui.createComboboxChoice("", null));
-		for (Field fieldClass : FieldMappingFactory.getFieldClasses()) {
-			Object comboBoxChoice = this.ui.createComboboxChoice(fieldClass.getTypeLabel(), fieldClass.getType());
-			this.ui.add(this.comboFieldTypes, comboBoxChoice);
-		}
+		
+		loadFieldMappings();
 	}
 	
 	public void show(Field field) {
@@ -117,6 +114,15 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		}
 		fieldTypeChanged(this.comboFieldTypes, this.panelFieldChoices, this.listFieldChoices);
 		this.ui.add(this.mainDialog);
+	}
+	
+	private void loadFieldMappings() {
+		this.ui.add(this.comboFieldTypes, this.ui.createComboboxChoice("", null));
+		for (Field fieldClass : FieldMappingFactory.getFieldClasses()) {
+			Object comboBoxChoice = this.ui.createComboboxChoice(fieldClass.getTypeLabel(), fieldClass.getType());
+			this.ui.setIcon(comboBoxChoice, "/icons/tip.png");
+			this.ui.add(this.comboFieldTypes, comboBoxChoice);
+		}
 	}
 	
 	public void saveField(Object dialog) throws DuplicateKeyException {

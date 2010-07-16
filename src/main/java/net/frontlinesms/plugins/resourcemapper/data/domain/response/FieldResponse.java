@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.response;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -55,8 +57,29 @@ public abstract class FieldResponse<M extends PlainTextField> {
 		this.message = message;
 	}
 
+	public String getMessageText() {
+		if (this.message != null) {
+			return this.message.getTextContent();
+		}
+		return null;
+	}
+	
 	public HospitalContact getSubmitter() {
 		return submitter;
+	}
+	
+	public String getSubmitterName() {
+		if (this.submitter != null) {
+			return this.submitter.getName();
+		}
+		return null;
+	}
+	
+	public String getSubmitterPhone() {
+		if (this.submitter != null) {
+			return this.submitter.getPhoneNumber();
+		}
+		return null;
 	}
 
 	public void setSubmitter(HospitalContact submitter) {
@@ -67,6 +90,11 @@ public abstract class FieldResponse<M extends PlainTextField> {
 		return new Date(dateSubmitted);
 	}
 
+	public String getDateSubmittedText() {
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		return dateFormat.format(new Date(dateSubmitted));
+	}
+	
 	public void setDateSubmitted(Date dateSubmitted) {
 		this.dateSubmitted = dateSubmitted.getTime();
 	}
@@ -85,6 +113,41 @@ public abstract class FieldResponse<M extends PlainTextField> {
 
 	public void setMapping(M mapping) {
 		this.mapping = mapping;
+	}
+	
+	public String getMappingType() {
+		if (this.mapping != null) {
+			return this.mapping.getType();
+		}
+		return null;
+	}
+	
+	public String getMappingTypeLabel() {
+		if (this.mapping != null) {
+			return this.mapping.getTypeLabel();
+		}
+		return null;
+	}
+	
+	public String getMappingName() {
+		if (this.mapping != null) {
+			return this.mapping.getName();
+		}
+		return null;
+	}
+	
+	public String getMappingAbbreviation() {
+		if (this.mapping != null) {
+			return this.mapping.getAbbreviation();
+		}
+		return null;
+	}
+	
+	public String getMappingDisplayName() {
+		if (this.mapping != null) {
+			return String.format("%s : %s (%s)", this.mapping.getName(), this.mapping.getAbbreviation(), this.mapping.getTypeLabel());
+		}
+		return null;
 	}
 
 	public long getFid() {

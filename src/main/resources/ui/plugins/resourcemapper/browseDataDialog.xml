@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="browseDataDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.browse.data" 
+		modal="true" resizable="false" closable="true" close="removeDialog(this)" 
+		bottom="10" top="10" left="10" right="10" columns="2" gap="13">
+
+	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.table.submitter" icon="/icons/user_sender.png" for="comboSubmitter" valign="top" />
+	<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this, textHospital)" />
+	
+	<label name="labelHospital" text="i18n.plugins.resourcemapper.table.hospital" icon="/icons/port_open.png" for="textHospital" valign="top" />
+	<textarea name="textHospital" rows="1" columns="40" weightx="1" editable="false" enabled="false" />
+	
+	<label name="labelFieldTypes" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.field" for="comboFieldTypes" valign="top"/>
+	<combobox name="comboFieldTypes" editable="false" weightx="1" />
+	
+	<label name="labelResponse" text="i18n.plugins.resourcemapper.table.response" icon="/icons/sms_receive.png" for="textResponse" valign="top" />
+	<textarea name="textResponse" rows="3" columns="40" weightx="1" />
+	
+	<label name="labelDate" text="i18n.plugins.resourcemapper.table.date" icon="/icons/date.png" for="textDate" valign="top" />
+	<panel columns="2" weightx="2" gap="5">
+		<textfield name="textDate" editable="false" enabled="false" weightx="1"/>
+		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
+	</panel>
+	
+	<button name="buttonCancelResponse" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(browseDataDialog)" weightx="1" />	
+	<button name="buttonSaveResponse" text="i18n.action.save" icon="/icons/tick.png" action="saveFieldResponse(browseDataDialog)" weightx="1" />
+</dialog>

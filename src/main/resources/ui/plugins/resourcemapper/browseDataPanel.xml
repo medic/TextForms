@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<panel i18n="true" name="panelBrowseData" weightx="1" weighty="1" scrollable="false" columns="3" gap="5">
+<panel i18n="true" name="panelBrowseData" columns="3" weightx="1" weighty="1" scrollable="false" gap="5">
 	<panel gap="5" weightx="1">
 		<label name="labelField" icon="/icons/search.png" />
-		<textfield name="searchField" weightx="1" action="searchByField(this, tableField, buttonClear)"/>
-		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableField, this)" enabled="false"/>
+		<textfield name="searchField" weightx="1" action="searchByField(this, tableFields, buttonClear)"/>
+		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableFields, this)" enabled="false"/>
 	</panel>
 	
 	<panel gap="5" left="15">
@@ -16,12 +16,13 @@
 		<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this)"/>
 	</panel>
 	
-	<table name="tableField" selection="single" colspan="3" weightx="1" weighty="1">
-		<header>
-			<column icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.table.field" width="120" />
-			<column icon="/icons/sms_receive.png" text="i18n.plugins.resourcemapper.table.response" width="210"/>
-			<column icon="/icons/date.png" text="i18n.plugins.resourcemapper.table.date" width="150"/>
-			<column icon="/icons/user_sender.png" text="i18n.plugins.resourcemapper.table.submitter" width="200"/>
-		</header>
-	</table>	
+	<panel name="panelFields" border="false" colspan="3" weightx="1" weighty="1" valign="fill" gap="10">
+		<table name="tableFields" selection="single" weightx="1" weighty="1"/>
+	</panel>
+		
+	<panel weightx="1" colspan="3" columns="3" gap="10">
+		<button name="buttonAddResponse" icon="/icons/keyword_add.png" text="i18n.plugins.resourcemapper.add.response" action="addResponse(tableFields)" weightx="1" />
+		<button name="buttonEditResponse" icon="/icons/keyword_edit.png" text="i18n.plugins.resourcemapper.edit.response" action="editResponse(tableFields)" weightx="1" enabled="false"/>
+		<button name="buttonDeleteResponse" icon="/icons/keyword_delete.png" text="i18n.plugins.resourcemapper.delete.response" action="showConfirmationDialog('deleteField')" weightx="1" enabled="false"/>
+	</panel>
 </panel>

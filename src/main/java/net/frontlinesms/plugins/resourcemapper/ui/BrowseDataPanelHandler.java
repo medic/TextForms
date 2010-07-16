@@ -19,16 +19,24 @@
  */
 package net.frontlinesms.plugins.resourcemapper.ui;
 
+import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
+import net.frontlinesms.plugins.resourcemapper.search.FieldResponseQueryGenerator;
+import net.frontlinesms.plugins.resourcemapper.ui.components.AdvancedTableActionDelegate;
+import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableController;
 
 /*
  * BrowseDataPanelHandler
@@ -37,7 +45,7 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDa
  * see {@link "http://www.frontlinesms.net"} for more details. 
  * copyright owned by Kiwanja.net
  */
-public class BrowseDataPanelHandler implements ThinletUiEventHandler {
+public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
 	private static Logger LOG = FrontlineUtils.getLogger(BrowseDataPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/resourcemapper/browseDataPanel.xml";
@@ -46,13 +54,26 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 	private ApplicationContext appContext;
 	
 	private Object mainPanel;
+	private BrowseDataDialogHandler editDialog;
 	private ResourceMapperCallback callback;
 	
 	private HospitalContact selectedContact;
 	private HospitalContactDao hospitalContactDao;
+	private FieldResponseDao fieldResponseDao;
 	
 	private Field selectedField;
 	private Object comboSubmitter;
+	private Object searchField;
+	
+	private Object panelFields;
+	private Object tableFields;
+	
+	private Object addButton;
+	private Object editButton;
+	private Object deleteButton;
+	
+	private FieldResponseQueryGenerator queryGenerator;
+	private PagedAdvancedTableController tableController;
 	
 	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
 		System.out.println("BrowseDataPanelHandler");
@@ -60,8 +81,54 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 		this.appContext = appContext;
 		this.callback = callback;
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
+		this.editDialog = new BrowseDataDialogHandler(this.ui, this.appContext, callback);
+		
 		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
 		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
+		this.fieldResponseDao = (FieldResponseDao)appContext.getBean("fieldResponseDao");
+		
+		this.tableFields = this.ui.find(this.mainPanel, "tableFields");
+		this.panelFields = this.ui.find(this.mainPanel, "panelFields");
+		this.searchField = this.ui.find(this.mainPanel, "searchField");
+		
+		this.addButton = this.ui.find(this.mainPanel, "buttonAddResponse");
+		this.editButton = this.ui.find(this.mainPanel, "buttonEditResponse");
+		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteResponse");
+		
+		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableFields, this.panelFields);
+		this.tableController.putHeader(FieldResponse.class, 
+									   new String[]{getI18NString(ResourceMapperConstants.TABLE_DATE),
+													getI18NString(ResourceMapperConstants.TABLE_SUBMITTER),
+													getI18NString(ResourceMapperConstants.TABLE_PHONE),
+													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL),
+													getI18NString(ResourceMapperConstants.TABLE_TYPE),
+													getI18NString(ResourceMapperConstants.TABLE_FIELD),
+													getI18NString(ResourceMapperConstants.TABLE_ABBREV),
+													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
+									   new String[]{"/icons/date.png", 
+													"/icons/user_sender.png", 
+													"/icons/phone_type.png", 
+													"/icons/port_open.png", 
+													"/icons/tip.png", 
+													"/icons/keyword.png", 
+													"/icons/description.png", 
+													"/icons/sms_receive.png"},
+									   new String[]{"getDateSubmittedText", 
+													"getSubmitterName", 
+													"getSubmitterPhone", 
+													"getHospitalId", 
+													"getMappingTypeLabel", 
+													"getMappingName", 
+													"getMappingAbbreviation", 
+													"getMessageText"});
+		this.queryGenerator = new FieldResponseQueryGenerator(this.appContext, this.tableController);
+		this.tableController.setQueryGenerator(this.queryGenerator);
+		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
+											   getI18NString(ResourceMapperConstants.TABLE_NO_RESULTS), 
+											   getI18NString(ResourceMapperConstants.TABLE_NO_SEARCH_RESULTS));
+		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
+											  getI18NString(ResourceMapperConstants.TABLE_OF));
+		this.queryGenerator.startSearch("");
 	}
 	
 	public Object getMainPanel() {
@@ -78,14 +145,24 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 		}
 	}
 	
+	public void refreshFieldResponses(FieldResponse fieldResponse) {
+		String searchText = this.ui.getText(this.searchField);
+		this.queryGenerator.startSearch(searchText);
+	}
+	
 	public void showDateSelecter(Object textField) {
 		System.out.println("showDateSelecter");
 		this.ui.showDateSelecter(textField);
 	}
 	
+	public void showConfirmationDialog(String methodToBeCalled) {
+		this.ui.showConfirmationDialog(methodToBeCalled, this);
+	}
+	
 	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
 		String searchText = this.ui.getText(searchField);
 		System.out.println("searchByField: " + searchText);
+		this.queryGenerator.startSearch(searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 	}
 	
@@ -142,5 +219,59 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler {
 		else {
 			this.ui.setSelectedIndex(this.comboSubmitter, 0);
 		}
+	}
+	
+	public void addResponse(Object tableField) {
+		System.out.println("addResponse");
+		this.editDialog.loadHospitalContacts();
+		this.editDialog.loadFieldMappings();
+		this.editDialog.show(null);
+	}
+	
+	public void editResponse(Object tableField) {
+		System.out.println("editResponse");
+		this.editDialog.loadHospitalContacts();
+		this.editDialog.loadFieldMappings();
+		this.editDialog.show(this.getSelectedFieldResponse());
+	}
+	
+	public void deleteField(Object tableField) {
+		System.out.println("deleteField");
+		FieldResponse fieldResponse = this.getSelectedFieldResponse();
+		if (fieldResponse != null) {
+			this.fieldResponseDao.deleteFieldResponse(fieldResponse);
+		}
+	}
+	
+	public void doubleClickAction(Object selectedObject) {
+		System.out.println("doubleClickAction");
+		this.editDialog.loadHospitalContacts();
+		this.editDialog.loadFieldMappings();
+		this.editDialog.show(this.getSelectedFieldResponse());
+	}
+
+	public void resultsChanged() {
+		System.out.println("resultsChanged");
+	}
+
+	public void selectionChanged(Object selectedObject) {
+		System.out.println("selectionChanged");
+		FieldResponse fieldResponse = this.getSelectedFieldResponse();
+		if (fieldResponse != null) {
+			this.ui.setEnabled(this.editButton, true);
+			this.ui.setEnabled(this.deleteButton, true);
+		}
+		else {
+			this.ui.setEnabled(this.editButton, false);
+			this.ui.setEnabled(this.deleteButton, false);
+		}
+	}
+	
+	private FieldResponse getSelectedFieldResponse() {
+		final Object selectedRow = this.ui.getSelectedItem(this.tableFields);
+		if (selectedRow != null) {
+			return (FieldResponse)this.ui.getAttachedObject(selectedRow, FieldResponse.class);
+		}
+		return null;
 	}
 }

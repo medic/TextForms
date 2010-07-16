@@ -30,7 +30,7 @@ import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 /*
- * RemindersFactory
+ * FieldMappingFactory
  * @author Dale Zak
  * 
  * see {@link "http://www.frontlinesms.net"} for more details. 

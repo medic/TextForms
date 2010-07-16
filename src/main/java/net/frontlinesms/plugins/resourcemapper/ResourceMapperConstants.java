@@ -13,6 +13,7 @@ public final class ResourceMapperConstants {
 	
 	public static final String TABLE_NAME = "plugins.resourcemapper.table.name";
 	public static final String TABLE_EMAIL = "plugins.resourcemapper.table.email";
+	public static final String TABLE_FIELD = "plugins.resourcemapper.table.field";
 	public static final String TABLE_FIELDNAME = "plugins.resourcemapper.table.fieldname";
 	public static final String TABLE_RESPONSE = "plugins.resourcemapper.table.response";
 	public static final String TABLE_DATE = "plugins.resourcemapper.table.date";
@@ -20,6 +21,7 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_ABBREV = "plugins.resourcemapper.table.abbreviation";
 	public static final String TABLE_HOSPITAL = "plugins.resourcemapper.table.hospital";
 	public static final String TABLE_TYPE = "plugins.resourcemapper.table.type";
+	public static final String TABLE_PHONE = "plugins.resourcemapper.table.phone";
 	
 	public static final String TABLE_RESULTS = "plugins.resourcemapper.table.paging.results";
 	public static final String TABLE_NO_RESULTS = "plugins.resourcemapper.table.paging.no.results";
@@ -36,4 +38,6 @@ public final class ResourceMapperConstants {
 	public static final String BOOLEAN_FALSE = "plugins.resourcemapper.false";
 	
 	public static final String ALERT_DUPLICATE_ABBREV = "plugins.resourcemapper.alert.duplicate.abbrev";
+	public static final String ALERT_ERROR_CREATE_RESPONSE = "plugins.resourcemapper.alert.create.response";
+	public static final String ALERT_ERROR_SAVE_RESPONSE = "plugins.resourcemapper.alert.save.response";
 }

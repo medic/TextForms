@@ -6,6 +6,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -83,6 +84,11 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	public void refreshField(Field field) {
 		System.out.println("refreshField: " + field);
 		this.panelManageFields.refreshFields(field);
+	}
+	
+	public void refreshFieldResponse(FieldResponse fieldResponse) {
+		System.out.println("refreshFieldResponse: " + fieldResponse);
+		this.panelBrowseData.refreshFieldResponses(fieldResponse);
 	}
 	
 	private void showBrowseDataPanel(HospitalContact contact, Field field) {

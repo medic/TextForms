@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 
 public interface FieldResponseDao {
@@ -43,7 +43,7 @@ public interface FieldResponseDao {
 	 */
 	public void updateFieldResponseWithoutDuplicateHandling(FieldResponse response);
 	
-	public List<FieldResponse> getFieldResponsesForMapping(PlainTextField mapping);
+	public List<FieldResponse> getFieldResponsesForMapping(Field mapping);
 	
 	public List<FieldResponse> getFieldResponsesForHospitalId(String hospitalId);
 	
