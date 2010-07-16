@@ -26,10 +26,12 @@ public class ChecklistField extends CodedField {
 		this.setChoices(new TreeSet<String>());
 	}
 
+	@Override
 	public String getType() {
 		return "checklist";
 	}
 	
+	@Override
 	public String getTypeLabel() {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_CHECKLIST);
 	}

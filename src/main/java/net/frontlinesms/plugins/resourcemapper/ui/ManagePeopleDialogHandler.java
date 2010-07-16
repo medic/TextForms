@@ -19,12 +19,15 @@
  */
 package net.frontlinesms.plugins.resourcemapper.ui;
 
+import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -92,19 +95,33 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 		String contactHospital = this.ui.getText(this.textHospital);
 		String contactPhone = this.ui.getText(this.textPhone);
 		String contactEmail = this.ui.getText(this.textEmail);
-		if (this.contact != null) {
+		if (contactName == null || contactName.length() == 0) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_NAME));
+		}
+		else if (contactHospital == null || contactHospital.length() == 0) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_HOSPITAL));
+		}
+		else if (contactPhone == null || contactPhone.length() == 0) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_PHONE));
+		}
+		else if (contactEmail == null || contactEmail.length() == 0) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_EMAIL));
+		}
+		else if (this.contact != null) {
 			this.contact.setName(contactName);
 			this.contact.setHospitalId(contactHospital);
 			this.contact.setPhoneNumber(contactPhone);
 			this.contact.setEmailAddress(contactEmail);
 			this.contactDao.updateHospitalContact(this.contact);
+			this.callback.refreshContact(this.contact);
+			this.ui.remove(dialog);
 		}
 		else {
 			this.contact = new HospitalContact(contactName, contactPhone, contactEmail, true, contactHospital);
 			this.contactDao.saveHospitalContact(this.contact);
+			this.callback.refreshContact(this.contact);
+			this.ui.remove(dialog);
 		}
-		this.callback.refreshContact(this.contact);
-		this.ui.remove(dialog);
 	}
 	
 	public void removeDialog(Object dialog) {

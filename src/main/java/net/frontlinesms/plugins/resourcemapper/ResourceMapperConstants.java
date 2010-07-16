@@ -40,4 +40,16 @@ public final class ResourceMapperConstants {
 	public static final String ALERT_DUPLICATE_ABBREV = "plugins.resourcemapper.alert.duplicate.abbrev";
 	public static final String ALERT_ERROR_CREATE_RESPONSE = "plugins.resourcemapper.alert.create.response";
 	public static final String ALERT_ERROR_SAVE_RESPONSE = "plugins.resourcemapper.alert.save.response";
+	public static final String ALERT_MISSING_CONTACT_NAME = "plugins.resourcemapper.alert.missing.contact.name";
+	public static final String ALERT_MISSING_CONTACT_HOSPITAL = "plugins.resourcemapper.alert.missing.contact.hospital";
+	public static final String ALERT_MISSING_CONTACT_PHONE = "plugins.resourcemapper.alert.missing.contact.phone";
+	public static final String ALERT_MISSING_CONTACT_EMAIL = "plugins.resourcemapper.alert.missing.contact.email";	
+	public static final String ALERT_MISSING_FIELD_NAME = "plugins.resourcemapper.alert.missing.field.name";
+	public static final String ALERT_MISSING_FIELD_ABBREV = "plugins.resourcemapper.alert.missing.field.abbrev";
+	public static final String ALERT_MISSING_FIELD_TYPE = "plugins.resourcemapper.alert.missing.field.type";
+	public static final String ALERT_MISSING_RESPONSE_SUBMITTER = "plugins.resourcemapper.alert.missing.response.submitter";
+	public static final String ALERT_MISSING_RESPONSE_FIELD = "plugins.resourcemapper.alert.missing.response.field";	
+	public static final String ALERT_MISSING_RESPONSE_DATE = "plugins.resourcemapper.alert.missing.response.date";
+	public static final String ALERT_MISSING_RESPONSE_TEXT = "plugins.resourcemapper.alert.missing.response.text";
+	
 }

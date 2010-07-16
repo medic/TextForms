@@ -3,6 +3,7 @@ package net.frontlinesms.plugins.resourcemapper.ui.components;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -114,12 +115,47 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
 	 */
 	@SuppressWarnings("static-access")
-	public void putHeader(Class headerClass, String[] columnNames, String[] columnIcons, String[] columnMethods) {
+	public void putHeader(Class headerClass, String[] columnNames, String[] columnMethods) {
+		putHeader(headerClass, columnNames, columnMethods, null, null);
+	}
+	
+	/**
+	 * creates a new header option for the specified class
+	 * 
+	 * @param headerClass
+	 * @param columnNames an arraylist of the desired titles of the columns
+	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
+	 * @param columnIcons an arraylist of iconpaths to be used for header image
+	 */
+	@SuppressWarnings("static-access")
+	public void putHeader(Class headerClass, String[] columnNames, String[] columnMethods, String[] columnIcons) {
+		putHeader(headerClass, columnNames, columnMethods, columnIcons, null);
+	}
+	
+	/**
+	 * creates a new header option for the specified class
+	 * 
+	 * @param headerClass
+	 * @param columnNames an arraylist of the desired titles of the columns
+	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
+	 * @param columnIcons an arraylist of iconpaths to be used for header image
+	 * @param columnSorts an arraylist used for sorting columns
+	 */
+	@SuppressWarnings("static-access")
+	public void putHeader(Class headerClass, String[] columnNames, String[] columnMethods, String[] columnIcons, String[] columnSorts) {
 		Object header = uiController.create("header");
 		for (int i = 0; i < columnNames.length; i++) {
 			Object column = uiController.createColumn(columnNames[i], columnMethods[i]);
-			if (columnIcons != null && columnIcons.length > i && columnIcons[i] != null) {
+			if (columnIcons != null && columnIcons.length > i && columnIcons[i] != null && columnIcons[i].length() > 0) {
 				uiController.setIcon(column, columnIcons[i]);
+				uiController.putProperty(column, "icon", columnIcons[i]);
+			}
+			if (columnSorts != null && columnSorts.length > i && columnSorts[i] != null && columnSorts[i].length() > 0) {
+				uiController.putProperty(column, "sort", columnSorts[i]);
+				uiController.setEnabled(column, true);
+			}
+			else {
+				uiController.setEnabled(column, false);
 			}
 			uiController.add(header, column);
 		}
@@ -144,7 +180,9 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 			Object row = uiController.createTableRow(null);
 			uiController.add(row, uiController.createTableCell(noResultsMessage == null ? this.noSearchResultsText: this.noResultsMessage));
 			uiController.add(getTable(), row);
-			delegate.resultsChanged();
+			if (delegate != null) {
+				delegate.resultsChanged();
+			}
 			return;
 		}
 		uiController.removeAll(getTable());
@@ -171,7 +209,9 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 			}
 			uiController.add(getTable(), row);
 		}
-		delegate.resultsChanged();
+		if (delegate != null) {
+			delegate.resultsChanged();
+		}
 	}
 
 	/**
@@ -244,6 +284,15 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 
 	private int getColumnWidth(Object column, List results, Class c) {
 		int result = getStringWidth(uiController.getText(column));
+		String iconPath = (String)uiController.getProperty(column, "icon");
+		if (iconPath != null && iconPath.length() > 0) {
+			//add spacing for sort and icon
+			result += 22;
+		}
+		else {
+			//add spacing for sort
+			result += 10;
+		}
 		Method m = null;
 		try {
 			m = c.getMethod((String) uiController.getAttachedObject(column), null);
@@ -287,7 +336,9 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 */
 	public void tableSelectionChange() {
 		Object entity = uiController.getAttachedObject(uiController.getSelectedItem(getTable()));
-		delegate.selectionChanged(entity);
+		if (delegate != null) {
+			delegate.selectionChanged(entity);
+		}
 	}
 
 	/**
@@ -295,7 +346,9 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 */
 	public void doubleClick() {
 		Object entity = uiController.getAttachedObject(uiController.getSelectedItem(getTable()));
-		delegate.doubleClickAction(entity);
+		if (delegate != null) {
+			delegate.doubleClickAction(entity);
+		}
 	}
 
 	public Object getTable() {
@@ -329,10 +382,14 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	}
 
 	public void headerClicked() {
-//		 int index = uiController.getSelectedIndex(getCurrentHeader());
-//		 String sort = uiController.getChoice(uiController.getSelectedItem(getCurrentHeader()), "sort");
-//		 boolean sortOrder = (sort.equals("ascent"))? true:false;
-//		 delegate.getQueryGenerator().setSort(sortOrder);
+		 int index = uiController.getSelectedIndex(getCurrentHeader());
+		 Object selected = uiController.getSelectedItem(getCurrentHeader());
+		 String sort = uiController.getChoice(selected, "sort");
+		 boolean ascending = sort.equals("ascent") ?  true : false;
+		 String column = (String)uiController.getProperty(selected, "sort");
+		 if (delegate != null) {
+			 delegate.sortChanged(column, ascending); 
+		 }	
 	}
 
 	public void clearResults() {

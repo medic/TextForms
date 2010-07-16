@@ -98,9 +98,12 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tablePeople, this.panelPeople);
 		this.tableController.putHeader(HospitalContact.class, 
-									   new String[]{getI18NString(ResourceMapperConstants.TABLE_NAME), getI18NString(ResourceMapperConstants.TABLE_HOSPITAL), getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
+									   new String[]{getI18NString(ResourceMapperConstants.TABLE_NAME), 
+													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL), 
+													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
+									   new String[]{"getName", "getHospitalId", "getLastResponse"},
 									   new String[]{"/icons/user.png", "/icons/port_open.png", "/icons/date.png"},
-									   new String[]{"getName", "getHospitalId", "getLastResponse"});
+									   new String []{"name", "hospitalId", "lastResponse"});
 		this.queryGenerator = new HospitalContactQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -189,6 +192,12 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		selectionChanged(null);
 	}
 
+	public void sortChanged(String column, boolean ascending) {
+		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		String searchText = this.ui.getText(this.searchPerson);
+		this.queryGenerator.startSearch(searchText, column, ascending);
+	}
+	
 	public void selectionChanged(Object selectedObject) {
 		System.out.println("selectionChanged");
 		HospitalContact contact = this.getSelectedContact();

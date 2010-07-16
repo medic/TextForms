@@ -74,7 +74,7 @@ public final class FieldResponseFactory {
 		if (field.getClass() == PlainTextField.class) {
 			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (PlainTextField)field);
 		}
-		else if (field.getClass() == PlainTextField.class) {
+		else if (field.getClass() == BooleanField.class) {
 			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (BooleanField)field);
 		}
 		else if (field.getClass() == ChecklistField.class) {

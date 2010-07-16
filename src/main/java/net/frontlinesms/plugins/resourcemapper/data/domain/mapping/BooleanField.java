@@ -26,19 +26,23 @@ public class BooleanField extends CodedField {
 		super.setChoices(yesAndNo);
 	}
 
+	@Override
 	public void addChoice(String choice) {
 		//do nothing for BooleanField
 	}
 	
+	@Override
 	public boolean removeChoice(String choice){
 		//do nothing for  choice
 		return false;
 	}
 	
+	@Override
 	public String getType() {
 		return "boolean";
 	}
 	
+	@Override
 	public String getTypeLabel() {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_BOOLEAN);
 	}

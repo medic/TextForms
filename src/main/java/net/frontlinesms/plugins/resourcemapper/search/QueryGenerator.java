@@ -51,7 +51,7 @@ public abstract class QueryGenerator {
 	protected PagedAdvancedTableController resultsTable;
 	
 	public abstract void startSearch(String value);
-	public abstract void setSort(int column, boolean ascending);
+	public abstract void startSearch(String value, String sortColumn, boolean sortAscending);
 	
 	public QueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable){
 		this.sessionFactory = (SessionFactory) appCon.getBean("sessionFactory");
@@ -137,7 +137,7 @@ public abstract class QueryGenerator {
 	 * and performance measurement
 	 * @param query The query to be run
 	 */
-	protected void runQuery(String query){
+	protected void runQuery(String query) {
 		System.out.println(query);
 		//check if session is active
 		if (this.session == null) {
@@ -151,8 +151,13 @@ public abstract class QueryGenerator {
 		Transaction transaction = this.session.beginTransaction();
 		
 		//construct the count query
-		String querySuffix = query.substring(query.indexOf("from"));
-		String countQuery = "select count(*) " + querySuffix;
+		String querySuffix = query.substring(query.toUpperCase().indexOf("FROM"));
+		int orderByIndex = querySuffix.toUpperCase().indexOf("ORDER BY");
+		if (orderByIndex > -1) {
+			querySuffix = querySuffix.substring(0, orderByIndex);
+		}
+		String countQuery = "SELECT COUNT(*) " + querySuffix;
+		System.out.println(countQuery);
 		
 		//run the count query, obtaining the total number of results
 		long countPrevTime = System.nanoTime();
@@ -167,15 +172,16 @@ public abstract class QueryGenerator {
 		else {
 			this.totalPages = (this.totalResults / this.pageSize) + 1;
 		}
+		
 		//set up the time measurement
 		long prevTime = System.nanoTime();
 		//run the query
 		List results  = session.createQuery(query).setFirstResult(this.currentPage * this.pageSize).setMaxResults(this.pageSize).list();
+		this.previousQuery = query;
 		
 		//output time elapsed
 		long elapsedTime = System.nanoTime() - prevTime;
 		System.out.println("Query Time: " + elapsedTime/1000000.0);
-		this.previousQuery = query;
 		
 		for (Object result : results){
 			this.session.evict(result);

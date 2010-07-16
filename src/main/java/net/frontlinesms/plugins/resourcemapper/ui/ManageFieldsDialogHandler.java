@@ -131,21 +131,32 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		String abbreviation = this.ui.getText(this.textAbbreviation);
 		String infoSnippet = this.ui.getText(this.textInfoSnippet);
 		Object fieldType = this.ui.getSelectedItem(this.comboFieldTypes);
-		String type = this.ui.getAttachedObject(fieldType).toString();
+		String type = (String)this.ui.getAttachedObject(fieldType);
 		Set<String> choices = new TreeSet<String>();
 		for (Object comboItem : this.ui.getItems(this.listFieldChoices)) {
 			String comboItemText = this.ui.getAttachedObject(comboItem).toString();
 			System.out.println("comboItemText: " + comboItemText);
 			choices.add(comboItemText);	
 		}
+		
 		try {
-			if (this.field != null && this.field.getType().equalsIgnoreCase(type)) {
+			if (name == null || name.length() == 0) {
+				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_NAME));
+			}
+			else if (abbreviation == null || abbreviation.length() == 0) {
+				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_ABBREV));
+			}
+			else if (type == null || type.length() == 0) {
+				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_TYPE));
+			}
+			else if (this.field != null && this.field.getType().equalsIgnoreCase(type)) {
 				this.field.setName(name);
 				this.field.setAbbreviation(abbreviation);
 				this.field.setInfoSnippet(infoSnippet);
 				this.field.setChoices(choices);
 				this.fieldMappingDao.updateFieldMapping(this.field);
 				this.callback.refreshField(this.field);
+				this.ui.remove(dialog);
 			}
 			else {
 				if (this.field != null) {
@@ -158,8 +169,8 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 					this.fieldMappingDao.saveFieldMapping(newField);
 				}
 				this.callback.refreshField(newField);
+				this.ui.remove(dialog);
 			}
-			this.ui.remove(dialog);
 		}
 		catch (DuplicateKeyException ex) {
 			System.out.println(ex);

@@ -99,9 +99,12 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableFields, this.panelFields);
 		this.tableController.putHeader(Field.class, 
-									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), getI18NString(ResourceMapperConstants.TABLE_ABBREV), getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
+									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), 
+													getI18NString(ResourceMapperConstants.TABLE_ABBREV), 
+													getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
+									   new String[]{"getName", "getAbbreviation", "getTypeLabel"},
 									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
-									   new String[]{"getName", "getAbbreviation", "getTypeLabel"});
+									   new String[]{"name", "abbreviation", "type"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -190,6 +193,12 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		selectionChanged(null);
 	}
 
+	public void sortChanged(String column, boolean ascending) {
+		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		String searchText = this.ui.getText(this.searchField);
+		this.queryGenerator.startSearch(searchText, column, ascending);
+	}
+	
 	public void selectionChanged(Object selectedObject) {
 		System.out.println("selectionChanged");
 		Field field = this.getSelectedField();

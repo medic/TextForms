@@ -206,7 +206,19 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		String hospitalId = this.ui.getText(this.textHospital);
 		HospitalContact submitter = this.getSubmitter();
 		Field field = this.getField();
-		if (this.fieldResponse != null) {
+		if (submitter == null) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_RESPONSE_SUBMITTER));
+		}
+		else if (field == null) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_RESPONSE_FIELD));
+		}
+		else if (dateSubmitted == null) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_RESPONSE_DATE));
+		}
+		else if (response == null || response.length() == 0) {
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_RESPONSE_TEXT));
+		}
+		else if (this.fieldResponse != null) {
 			this.fieldResponse.setDateSubmitted(dateSubmitted);
 			this.fieldResponse.setSubmitter(submitter);
 			this.fieldResponse.setHospitalId(hospitalId);
@@ -218,6 +230,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 			}
 			this.fieldResponseDao.updateFieldResponse(this.fieldResponse);
 			this.callback.refreshFieldResponse(this.fieldResponse);
+			this.ui.remove(dialog);
 			System.out.println("FieldResponse Updated!");
 		}
 		else {
@@ -234,8 +247,8 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_ERROR_CREATE_RESPONSE));
 			}
 			this.callback.refreshFieldResponse(newFieldResponse);
+			this.ui.remove(dialog);
 		}
-		this.ui.remove(dialog);
 	}
 	
 	private Field getField() {

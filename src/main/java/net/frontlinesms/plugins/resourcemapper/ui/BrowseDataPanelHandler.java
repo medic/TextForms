@@ -64,13 +64,16 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	private Field selectedField;
 	private Object comboSubmitter;
 	private Object searchField;
+	private Object textDate;
 	
 	private Object panelFields;
 	private Object tableFields;
 	
-	private Object addButton;
 	private Object editButton;
 	private Object deleteButton;
+	
+	private String sortColumn;
+	private boolean sortAscending;
 	
 	private FieldResponseQueryGenerator queryGenerator;
 	private PagedAdvancedTableController tableController;
@@ -83,15 +86,15 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 		this.editDialog = new BrowseDataDialogHandler(this.ui, this.appContext, callback);
 		
-		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
 		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
 		this.fieldResponseDao = (FieldResponseDao)appContext.getBean("fieldResponseDao");
 		
 		this.tableFields = this.ui.find(this.mainPanel, "tableFields");
 		this.panelFields = this.ui.find(this.mainPanel, "panelFields");
 		this.searchField = this.ui.find(this.mainPanel, "searchField");
+		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
+		this.textDate = this.ui.find(this.mainPanel, "textDate");
 		
-		this.addButton = this.ui.find(this.mainPanel, "buttonAddResponse");
 		this.editButton = this.ui.find(this.mainPanel, "buttonEditResponse");
 		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteResponse");
 		
@@ -99,28 +102,32 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.tableController.putHeader(FieldResponse.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_DATE),
 													getI18NString(ResourceMapperConstants.TABLE_SUBMITTER),
-													getI18NString(ResourceMapperConstants.TABLE_PHONE),
 													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL),
 													getI18NString(ResourceMapperConstants.TABLE_TYPE),
 													getI18NString(ResourceMapperConstants.TABLE_FIELD),
 													getI18NString(ResourceMapperConstants.TABLE_ABBREV),
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
+									   new String[]{"getDateSubmittedText", 
+													"getSubmitterName", 
+													"getHospitalId", 
+													"getMappingTypeLabel", 
+													"getMappingName", 
+													"getMappingAbbreviation", 
+													"getMessageText"},
 									   new String[]{"/icons/date.png", 
 													"/icons/user_sender.png", 
-													"/icons/phone_type.png", 
 													"/icons/port_open.png", 
 													"/icons/tip.png", 
 													"/icons/keyword.png", 
 													"/icons/description.png", 
 													"/icons/sms_receive.png"},
-									   new String[]{"getDateSubmittedText", 
-													"getSubmitterName", 
-													"getSubmitterPhone", 
-													"getHospitalId", 
-													"getMappingTypeLabel", 
-													"getMappingName", 
-													"getMappingAbbreviation", 
-													"getMessageText"});
+									   new String []{"dateSubmitted", 
+													 "submitter.name",
+													 "hospitalId",
+													 "mapping.name",
+													 "mapping.abbreviation",
+													 "mapping.name",
+													 "message.textMessageContent"});
 		this.queryGenerator = new FieldResponseQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -128,7 +135,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 											   getI18NString(ResourceMapperConstants.TABLE_NO_SEARCH_RESULTS));
 		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
 											  getI18NString(ResourceMapperConstants.TABLE_OF));
-		this.queryGenerator.startSearch("");
+		startSearch();
 	}
 	
 	public Object getMainPanel() {
@@ -146,8 +153,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void refreshFieldResponses(FieldResponse fieldResponse) {
-		String searchText = this.ui.getText(this.searchField);
-		this.queryGenerator.startSearch(searchText);
+		startSearch();
 	}
 	
 	public void showDateSelecter(Object textField) {
@@ -155,35 +161,55 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.ui.showDateSelecter(textField);
 	}
 	
+	public void dateChanged(Object textDate, Object buttonClear) {
+		System.out.println("dateChanged");
+		String dateText = this.ui.getText(textDate);
+		this.ui.setEnabled(buttonClear, dateText != null && dateText.length() > 0);
+		startSearch();
+	}
+	
+	public void clearDate(Object textDate, Object buttonClear) {
+		System.out.println("clearDate");
+		this.ui.setText(textDate, "");
+		this.ui.setEnabled(buttonClear, false);
+		startSearch();
+	}
+	
 	public void showConfirmationDialog(String methodToBeCalled) {
 		this.ui.showConfirmationDialog(methodToBeCalled, this);
 	}
 	
-	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
+	public void searchByField(Object searchField, Object buttonClear) {
 		String searchText = this.ui.getText(searchField);
 		System.out.println("searchByField: " + searchText);
-		this.queryGenerator.startSearch(searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
+		startSearch();
 	}
 	
-	public void searchClear(Object searchField, Object tableField, Object buttonClear) {
-		System.out.println("searchClear");
+	public void clearSearch(Object searchField, Object buttonClear) {
+		System.out.println("clearSearch");
 		this.ui.setText(searchField, "");
-		this.searchByField(searchField, tableField, buttonClear);
+		this.searchByField(searchField, buttonClear);
 		this.ui.requestFocus(searchField);
 	}
 	
-	public void submitterChanged(Object comboSubmitter) {
-		Object selectedItem = this.ui.getSelectedItem(comboSubmitter);
-		if (selectedItem != null) {
-			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(selectedItem, HospitalContact.class);
+	private void startSearch() {
+		String text = this.ui.getText(this.searchField);
+		String date = this.ui.getText(this.textDate);
+		String contact = null;
+		Object selectedSubmitter = this.ui.getSelectedItem(this.comboSubmitter);
+		if (selectedSubmitter != null) {
+			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(selectedSubmitter, HospitalContact.class);
 			if (submitter != null) {
 				System.out.println("submitterChanged: " + submitter.getName());
+				contact = submitter.getName();
 			}
-			else {
-				System.out.println("submitterChanged: null");
-			}	
 		}
+		this.queryGenerator.startSearch(text, this.sortColumn, this.sortAscending,  date, contact);
+	}
+	
+	public void submitterChanged(Object comboSubmitter) {
+		startSearch();
 	}
 	
 	public void setSelectedField(Field field) {
@@ -196,6 +222,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		else {
 			this.ui.setText(searchField, "");
 		}
+		startSearch();
 	}
 	
 	public void setSelectedContact(HospitalContact contact) {
@@ -219,6 +246,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		else {
 			this.ui.setSelectedIndex(this.comboSubmitter, 0);
 		}
+		startSearch();
 	}
 	
 	public void addResponse(Object tableField) {
@@ -254,6 +282,13 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		System.out.println("resultsChanged");
 	}
 
+	public void sortChanged(String column, boolean ascending) {
+		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		this.sortColumn = column;
+		this.sortAscending = ascending;
+		startSearch();
+	}
+	
 	public void selectionChanged(Object selectedObject) {
 		System.out.println("selectionChanged");
 		FieldResponse fieldResponse = this.getSelectedFieldResponse();
@@ -274,4 +309,5 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 		return null;
 	}
+
 }

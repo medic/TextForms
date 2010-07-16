@@ -12,12 +12,28 @@ public class FieldMappingQueryGenerator extends QueryGenerator {
 	}
 
 	@Override
-	public void setSort(int column, boolean ascending) { /*do nothing*/}
+	public void startSearch(String text) {
+		super.runQuery(getSearchQuery(text, null, false));
+	}
 	
 	@Override
-	public void startSearch(String text){
-		String query = "select f from Field f where lower(f.name) like lower('%"+text+"%') or lower(f.abbreviation) like lower('%"+text+"%')";
-		super.runQuery(query);
+	public void startSearch(String text, String sortColumn, boolean sortAscending) {
+		super.runQuery(getSearchQuery(text, sortColumn, sortAscending));
 	}
-
+	
+	private String getSearchQuery(String text, String sortColumn, boolean sortAscending) {
+		String query = "SELECT f FROM Field f";
+		query += " WHERE lower(f.name) LIKE lower('%"+text+"%')";
+		query += " OR lower(f.abbreviation) LIKE lower('%"+text+"%')";
+		if (sortColumn != null && sortColumn.length() > 0) {
+			if (sortAscending) {
+				query += String.format(" ORDER BY f.%s ASC", sortColumn);
+			}
+			else {
+				query += String.format(" ORDER BY f.%s DESC", sortColumn);
+			}
+		}
+		return query;
+	}
+	
 }

@@ -25,20 +25,24 @@ public class PlainTextField extends Field {
 		super(fullName, abbreviation);
 	}
 	
-	public String getType() {
-		return "plaintext";
-	}
-	
-	public String getTypeLabel() {
-		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_PLAIN_TEXT);
-	}
-	
+	@Override
 	public void setChoices(Set<String> choices) {
 		//do nothing for PlainTextField
 	}
 	
+	@Override
 	public Set<String> getChoices() {
 		//return nothing for PlainTextField
 		return null;
+	}
+	
+	@Override
+	public String getType() {
+		return "plaintext";
+	}
+	
+	@Override
+	public String getTypeLabel() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_PLAIN_TEXT);
 	}
 }
