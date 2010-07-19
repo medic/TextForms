@@ -56,8 +56,9 @@ public class FieldResponseQueryGenerator extends QueryGenerator {
 				System.out.println(String.format("Start: %s", startDate.getTime()));
 				System.out.println(String.format("End: %s", endDate.getTime()));
 				query += String.format(" AND fr.dateSubmitted <= %d ", endDate.getTimeInMillis());
-			} catch (Exception e) {
-				e.printStackTrace();
+			} 
+			catch (Exception e) {
+				//do nothing
 			}
 		}
 		if (sortColumn != null && sortColumn.length() > 0) {

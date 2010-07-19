@@ -7,7 +7,7 @@
 	</panel>
 	
 	<panel gap="5" left="15" columns="3">
-		<textfield name="textDate" editable="false" enabled="false" columns="15" action="dateChanged(this, buttonDateClear)"/>
+		<textfield name="textDate" columns="15" action="dateChanged(this, buttonDateClear)" tooltip="DD/MM/YYYY"/>
 		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
 		<button name="buttonDateClear" icon="/icons/cross.png" action="clearDate(textDate, this)" enabled="false"/>
     </panel>

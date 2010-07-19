@@ -17,7 +17,7 @@
 	
 	<label name="labelDate" text="i18n.plugins.resourcemapper.table.date" icon="/icons/date.png" for="textDate" valign="top" />
 	<panel columns="2" weightx="2" gap="5">
-		<textfield name="textDate" editable="false" enabled="false" weightx="1"/>
+		<textfield name="textDate" weightx="1" tooltip="DD/MM/YYYY"/>
 		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
 	</panel>
 	
