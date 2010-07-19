@@ -99,11 +99,12 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tablePeople, this.panelPeople);
 		this.tableController.putHeader(HospitalContact.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_NAME), 
+													getI18NString(ResourceMapperConstants.TABLE_PHONE), 
 													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL), 
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
-									   new String[]{"getName", "getHospitalId", "getLastResponse"},
-									   new String[]{"/icons/user.png", "/icons/port_open.png", "/icons/date.png"},
-									   new String []{"name", "hospitalId", "lastResponse"});
+									   new String[]{"getName", "getPhoneNumber", "getHospitalId", "getLastResponse"},
+									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/port_open.png", "/icons/date.png"},
+									   new String []{"name", "phoneNumber", "hospitalId", "lastResponse"});
 		this.queryGenerator = new HospitalContactQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
