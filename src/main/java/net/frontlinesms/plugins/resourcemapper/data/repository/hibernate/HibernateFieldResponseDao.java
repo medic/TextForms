@@ -4,8 +4,10 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 
@@ -66,5 +68,5 @@ public class HibernateFieldResponseDao extends BaseHibernateDao<FieldResponse> i
 		c.add(Restrictions.eq("submitter", contact));
 		return super.getList(c);
 	}
-
+	
 }

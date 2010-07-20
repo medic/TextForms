@@ -10,7 +10,7 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 public class XMLPublisher {
 
 	public static synchronized void publish(String xmlDocument) {
-		if(ResourceMapperProperties.isInDebugMode()){
+		if(ResourceMapperProperties.getInstance().isInDebugMode()){
 			System.out.println(xmlDocument);
 			return;
 		}

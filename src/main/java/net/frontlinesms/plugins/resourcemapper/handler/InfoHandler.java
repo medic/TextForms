@@ -5,64 +5,87 @@ import java.util.Collection;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
-import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 import org.springframework.context.ApplicationContext;
 
 public class InfoHandler implements MessageHandler {
 	
-	private FrontlineSMS frontline;
-	public InfoHandler(FrontlineSMS frontline, ApplicationContext appCon){
+	protected FrontlineSMS frontline;
+	protected ApplicationContext appContext;
+	protected FieldMappingDao mappingDao;
+	
+	public InfoHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		this.frontline = frontline;
+		this.appContext = appContext;
+		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
 	}
 	
-	public Collection<String> getKeywords() {
+	private Collection<String> getKeywords() {
 		ArrayList<String> results = new ArrayList<String>();
-		results.add(ShortCodeProperties.getInstance().getValueForKey("info"));
+		results.add("info");
+		results.add("help");
+		results.add("?");
 		return results;
 	}
 
-	public void handleMessage(FrontlineMessage m) {
-		//if it's valid, send the requested info snippet
-		if(messageIsValid(m.getTextContent())){
-			output(m.getSenderMsisdn(), ShortCodeProperties.getInstance().getInfoSnippetForShortCode(m.getTextContent().split(" ")[m.getTextContent().split(" ").length -1]));
-		//otherwise, send an error message
-		}else{
-			output(m.getSenderMsisdn(),ShortCodeProperties.getInstance().getValueForKey("info.error.message"));
+	public void handleMessage(FrontlineMessage message) {
+		System.out.println("InfoHandler.handleMessage: " + message);
+		if (message == null) {
+			//TODO show warning message
+		}
+		else if (isSatisfiedBy(message.getTextContent())) {
+			//if it's valid, send the requested info snippet
+			String [] words = message.getTextContent().split(" ");
+			String abbrev = words.length == 1 ? words[0] : words[1];
+			Field field = this.mappingDao.getFieldForAbbreviation(abbrev);
+			if (field != null) {
+				output(message.getSenderMsisdn(), field.getInfoSnippet());
+			}
+			else {
+				output(message.getSenderMsisdn(), "No Field Mapping");
+			}
+		}
+		else {
+			//otherwise, send an error message
+			output(message.getSenderMsisdn(), "Invalid Response Received");
 		}
 	}
 	
-	private boolean messageIsValid(String message){
-		//if there are more than 2 commands in the message then the message is invalid
-		if(message.split(" ").length >2){
+	public boolean isSatisfiedBy(String response) {
+		if (response == null) {
 			return false;
-		//if the message contains a valid field name, then it is valid
-		}else if(message.split(" ").length ==2){
-			if(ShortCodeProperties.getInstance().getKeyForShortCode(message.split(" ")[1]) !=null){
-				return true;
+		}
+		String [] words = response.split(" ");
+		if (words.length > 2) {
+			//if there are more than 2 commands in the message then the message is invalid
+			return false;
+		}
+		else if (words.length == 2) {
+			//if the message contains a valid field name, then it is valid
+			for (String keyword : getKeywords()) {
+				if (keyword.equalsIgnoreCase(words[0])) {
+					return true;
+				}
 			}
-		}else if(message.trim().equals(ShortCodeProperties.getInstance().getKeyForShortCode("info"))){
-			return true;
+		} 
+		else if (words.length == 1) {
+			return mappingDao.getFieldForAbbreviation(words[0]) != null;
 		}
 		//otherwise, it's false
 		return false;
 	}
 	
-	protected void output(String msisdn, String text){
-		if(ResourceMapperProperties.getInstance().isInDebugMode()){
-			System.out.println(text);
-		}else{
-			frontline.sendTextMessage(msisdn, text);
-		}
-	}
-	
-	public static void main(String[] args) {
-		for(String s: "info".split(" ")){
-			System.out.println("one");
-			System.out.println(s);
-			System.out.println("two");
-		}
+	protected void output(String msisdn, String text) {
+		System.out.println("msisdn=" + msisdn + " text=" + text);
+//TODO fix ResourceMapperProperties.getInstance().isInDebugMode() to work with resourcemapper.properties file
+//		if (ResourceMapperProperties.getInstance().isInDebugMode()) {
+//			System.out.println("msisdn=" + msisdn + " text=" + text);
+//		}
+//		else if (frontline != null) {
+//			frontline.sendTextMessage(msisdn, text);
+//		}
 	}
 
 }

@@ -106,4 +106,8 @@ public abstract class Field {
 	
 	public abstract String getTypeLabel();
 	
+	public abstract String getPathToElement();
+	
+	public abstract String [] getAdditionalInstructions();
+	
 }

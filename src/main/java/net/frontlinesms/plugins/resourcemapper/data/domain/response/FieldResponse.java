@@ -15,11 +15,11 @@ import javax.persistence.OneToOne;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class FieldResponse<M extends PlainTextField> {
+public abstract class FieldResponse<M extends Field> {
 
 	public FieldResponse() {}
 
@@ -46,7 +46,7 @@ public abstract class FieldResponse<M extends PlainTextField> {
 
 	protected String hospitalId;
 	
-	@OneToOne(targetEntity=PlainTextField.class)
+	@OneToOne(targetEntity=Field.class)
 	M mapping;
 
 	public FrontlineMessage getMessage() {

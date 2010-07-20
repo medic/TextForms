@@ -45,4 +45,14 @@ public class PlainTextField extends Field {
 	public String getTypeLabel() {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_PLAIN_TEXT);
 	}
+
+	@Override
+	public String[] getAdditionalInstructions() {
+		return null;
+	}
+
+	@Override
+	public String getPathToElement() {
+		return null;
+	}
 }

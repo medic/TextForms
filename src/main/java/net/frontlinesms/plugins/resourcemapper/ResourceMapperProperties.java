@@ -2,7 +2,7 @@ package net.frontlinesms.plugins.resourcemapper;
 
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
-public class ResourceMapperProperties extends UserHomeFilePropertySet{
+public class ResourceMapperProperties extends UserHomeFilePropertySet {
 
 	private static ResourceMapperProperties instance;
 	
@@ -11,13 +11,13 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet{
 	}
 
 	public static synchronized ResourceMapperProperties getInstance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new ResourceMapperProperties();
 		}
 		return instance;
 	}
 	
-	public static boolean isInDebugMode(){
-		return getInstance().getProperty("debug.mode").equalsIgnoreCase("true");
+	public boolean isInDebugMode(){
+		return "true".equalsIgnoreCase(getInstance().getProperty("debug.mode"));
 	}
 }

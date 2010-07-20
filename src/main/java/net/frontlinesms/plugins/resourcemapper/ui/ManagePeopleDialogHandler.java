@@ -60,7 +60,6 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	private Object textEmail;
 	
 	public ManagePeopleDialogHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
-		System.out.println("ManagePeopleDialogHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;

@@ -223,7 +223,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 			this.fieldResponse.setSubmitter(submitter);
 			this.fieldResponse.setHospitalId(hospitalId);
 			if (this.fieldResponse.getMessage() == null) {
-				FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), Long.toString(submitter.getId()), null, response);
+				FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), submitter.getPhoneNumber(), null, response);
 				this.messageDao.saveMessage(frontlineMessage);
 				this.fieldResponse.setMessage(frontlineMessage);
 				System.out.println("FrontlineMessage Created!");
@@ -274,8 +274,9 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				return dateFormat.parse(dateString);	
 			}
-		} catch (ParseException e) {
-			e.printStackTrace();
+		} 
+		catch (ParseException e) {
+			//do nothing
 		}
 		return null;
 	}

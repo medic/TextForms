@@ -74,7 +74,6 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	private HospitalContactDao contactDao;
 	
 	public ManagePeoplePanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
-		System.out.println("ManagePeoplePanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -203,6 +202,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		System.out.println("selectionChanged");
 		HospitalContact contact = this.getSelectedContact();
 		if (contact != null) {
+			System.out.println("contact: " + contact.getId());
 			this.ui.setEnabled(this.editButton, true);
 			this.ui.setEnabled(this.deleteButton, true);
 			this.ui.setEnabled(this.viewResponsesButton, true);

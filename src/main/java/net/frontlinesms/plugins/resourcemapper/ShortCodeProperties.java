@@ -21,7 +21,7 @@ public class ShortCodeProperties extends UserHomeFilePropertySet {
 	public static final String CODED_VALIDATION_ERROR="coded.error.response";
 
 	protected ShortCodeProperties() {
-		super("resourcemapper_short_codes");
+		super("shortcode");
 	}
 
 	public static synchronized ShortCodeProperties getInstance() {
