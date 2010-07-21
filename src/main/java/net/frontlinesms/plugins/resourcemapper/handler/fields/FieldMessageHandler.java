@@ -45,24 +45,9 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
 		if (words.length == 1) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[1]);
+			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
 			if (field != null) {
-				if (field.getChoices() != null) {
-					StringBuilder reply = new StringBuilder();
-					reply.append(field.getInfoSnippet());
-					int index = 1;
-					for (String choice : field.getChoices()) {
-						reply.append("\n");
-						reply.append(index);
-						reply.append(" ");
-						reply.append(choice);
-						index++;		
-					}
-					sendReply(message.getSenderMsisdn(), reply.toString(), false);
-				}
-				else {
-					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
-				}
+				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), String.format("No Field Mapping Found For '%s'", words[0]), true);
@@ -78,7 +63,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 						try {
 							this.responseDao.saveFieldResponse(response);
 							//TODO generateAndPublishXML(response);
-							LOG.debug("Response Created: %s", response);
+							LOG.debug("FieldResponse Created: %s", response.getClass());
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
@@ -105,9 +90,11 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		LOG.debug("generateAndPublishXML: %s", response);
 		if (response != null) {
 			Document document = XMLUtils.getInitializedDocument(response);
-			String [] words = response.getMessage().getTextContent().split(" ", 2);
+			String content = response.getMessage().getTextContent().replaceFirst("[\\s]", " ");
+			String [] words = content.split(" ", 2);
 			String keyword = words[0];
 			String text = words[1];
+			LOG.debug("keyword:%s text:%s", keyword, text);
 			String pathToElement = response.getMapping().getPathToElement();
 			if (pathToElement != null) {
 				String path = pathToElement + "=" + text;
@@ -125,10 +112,10 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 	
 	protected void sendReply(String msisdn, String text, boolean error) {
 		if (error) {
-			LOG.error("Reply: (%s) %s", msisdn, text);
+			LOG.error("(%s) %s", msisdn, text);
 		}
 		else {
-			LOG.debug("Reply: (%s) %s", msisdn, text);
+			LOG.debug("(%s) %s", msisdn, text);
 		}
 		//TODO frontline.sendTextMessage(msisdn, text);
 	}

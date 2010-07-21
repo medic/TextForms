@@ -1,2 +1,5 @@
 net.frontlinesms.plugins.resourcemapper.handler.InfoHandler
 net.frontlinesms.plugins.resourcemapper.handler.PlainTextHandler
+net.frontlinesms.plugins.resourcemapper.handler.BooleanHandler
+net.frontlinesms.plugins.resourcemapper.handler.MultiChoiceHandler
+net.frontlinesms.plugins.resourcemapper.handler.ChecklistHandler

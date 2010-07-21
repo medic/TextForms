@@ -1,6 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -26,12 +26,12 @@ public class PlainTextField extends Field {
 	}
 	
 	@Override
-	public void setChoices(Set<String> choices) {
+	public void setChoices(List<String> choices) {
 		//do nothing for PlainTextField
 	}
 	
 	@Override
-	public Set<String> getChoices() {
+	public List<String> getChoices() {
 		//return nothing for PlainTextField
 		return null;
 	}

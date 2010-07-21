@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
+import org.springframework.context.ApplicationContext;
+
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.MessageDao;
@@ -18,14 +21,10 @@ import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.BooleanHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.ChecklistHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.CodedHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.PlainTextHandler;
-import net.frontlinesms.plugins.resourcemapper.ui.ManageFieldsDialogHandler;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
-
-import org.springframework.context.ApplicationContext;
 
 @PluginControllerProperties(name="Resource Mapper", iconPath="/icons/small_rmapper.png",
 		springConfigLocation="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper-spring-hibernate.xml",
@@ -69,9 +68,8 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
-		//BasicConfigurator.configure();
 		initListeners();
-		//debugIncomingMessageEvents();
+		debugIncomingMessageEvents();
 	}
 	
 	/** @return {@link #frontlineController} */
@@ -87,10 +85,10 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	private void initListeners(){
 		listeners = new ArrayList<MessageHandler>();
 		listeners.add(new InfoHandler(frontlineController, appContext));
-		listeners.add(new PlainTextHandler(frontlineController, appContext));
 		listeners.add(new BooleanHandler(frontlineController, appContext));
 		listeners.add(new ChecklistHandler(frontlineController, appContext));
 		listeners.add(new MultiChoiceHandler(frontlineController, appContext));
+		listeners.add(new PlainTextHandler(frontlineController, appContext));
 	}
 	
 	private void debugIncomingMessageEvents() {
@@ -99,9 +97,13 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		String senderMsisdn = "306.341.3644";	
 		for (String message : new String[] {"info hosp", "help hosp", "? hosp", "hosp", 
 											"hosp Saskatoon RUH", "city Saskatoon",
-											"power yes", "power true", "power y", "power t", "power 1",
+											"power", "power yes", "power true", "power y", "power t", "power 1",
 											"power no", "power false", "power n", "power f", "power 0",
-											"invalid"
+											"power yyy",
+											"info day", "day", "1", "day", "tuesday",
+											"day 1", "day 7", "day monday",
+											"pet", "pet 1", "pet 3", "pet cat", "pet cat, dog", "pet 1, cat", "pet cat, shark, dog",
+											"invalid", ""
 											}) {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
 			this.messageDao.saveMessage(frontlineMessage);
@@ -111,15 +113,19 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	
 	public void incomingMessageEvent(FrontlineMessage message) {
 		LOG.debug("-");
-		LOG.debug("ResourceMapperPluginController.incomingMessageEvent: %s", message.getTextContent());
-		if (callbacks == null){
+		LOG.debug("incomingMessageEvent: %s", message.getTextContent());
+		if (callbacks == null) {
 			callbacks = new ArrayList<CallbackInfo>();
 		}
+		
 		//first, remove all callbacks that have timed out
 		List<CallbackInfo> expiredCallbacks = new ArrayList<CallbackInfo>();
 		for (CallbackInfo callback : callbacks) {
-			if (callback.hasTimedOut()){
-				callback.getHandler().callBackTimedOut(callback.getPhoneNumber());
+			if (callback.hasTimedOut()) {
+				CallbackHandler callbackHandler = callback.getHandler();
+				if (callbackHandler != null) {
+					callbackHandler.callBackTimedOut(callback.getPhoneNumber());
+				}
 				expiredCallbacks.add(callback);
 			}
 		}
@@ -141,7 +147,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				}			
 			}
 		}	
-		LOG.debug("MessageHandler %s", handler);
+		//LOG.debug("MessageHandler: %s", handler);
 		
 		//now, see if there is a callback out on that message
 		CallbackHandler callbackHandler = null;
@@ -151,7 +157,9 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				break;
 			}
 		}
-		LOG.debug("CallbackHandler %s", callbackHandler);
+		if (callbackHandler != null) {
+			LOG.debug("CallbackHandler: %s", callbackHandler);
+		}
 		
 		if (handler != null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false) {
 			//if there is a keyword in the message and the callback handler doesn't seem
@@ -201,7 +209,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		}
 	}
 	
-	public static void unregisterCallback(CallbackInfo callback){
+	public static void unregisterCallback(CallbackInfo callback) {
 		LOG.debug("unregisterCallback(%s)", callback);
 		unregisterCallback(callback.getPhoneNumber());
 	}

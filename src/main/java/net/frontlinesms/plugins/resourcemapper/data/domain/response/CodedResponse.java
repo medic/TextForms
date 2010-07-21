@@ -9,17 +9,14 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 
 @Entity
-public class CodedResponse extends FieldResponse<CodedField> {
+public class CodedResponse<M extends CodedField> extends FieldResponse<M> {
 
 	public CodedResponse() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public CodedResponse(FrontlineMessage message, HospitalContact submitter,
-			Date dateSubmitted, String hospitalId, CodedField mapping) {
+	public CodedResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, M mapping) {
 		super(message, submitter, dateSubmitted, hospitalId, mapping);
-		// TODO Auto-generated constructor stub
 	}
 
 }

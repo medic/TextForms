@@ -10,9 +10,9 @@ import org.springframework.context.ApplicationContext;
 
 public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(PlainTextHandler.class);
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(PlainTextHandler.class);
 	
-	private final PlainTextField plainTextField = new PlainTextField();
+	private static final PlainTextField plainTextField = new PlainTextField();
 	
 	public PlainTextHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);

@@ -9,17 +9,14 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField;
 
 @Entity
-public class ChecklistResponse extends FieldResponse<ChecklistField> {
+public class ChecklistResponse extends CodedResponse<ChecklistField> {
 
 	public ChecklistResponse() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public ChecklistResponse(FrontlineMessage message, HospitalContact submitter,
-			Date dateSubmitted, String hospitalId, ChecklistField mapping) {
+	public ChecklistResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, ChecklistField mapping) {
 		super(message, submitter, dateSubmitted, hospitalId, mapping);
-		// TODO Auto-generated constructor stub
 	}
 
 }

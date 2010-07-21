@@ -2,115 +2,170 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
-import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.CodedResponse;
+import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFactory;
 
 import org.springframework.context.ApplicationContext;
 
-public abstract class CodedHandler extends CallbackHandler<CodedField> {
+public abstract class CodedHandler<M extends CodedField> extends CallbackHandler<M> {
 
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CodedHandler.class);
+	protected final HashMap<String, Field> callbacks = new HashMap<String, Field>();
+	
 	public CodedHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
-		callbacks = new HashMap<String, Field>();
-	}
-
-	private HashMap<String, Field> callbacks;
-	
-//	public void handleMessage(FrontlineMessage m) {
-//		String content = m.getTextContent().trim();
-//		content.replaceAll("[\\s]", " ");
-//		//String[] commands = content.split(" ");
-//		if (isSatisfiedBy(content)) {
-//			String message = content + " " +ShortCodeProperties.getInstance().getValueForKey("coded.answer.prefix");
-//			Set<String> possibleResponses = mappingDao.getFieldForAbbreviation(content).getChoices();
-//			int index = 1;
-//			for (String possibleResponse: possibleResponses) {
-//				message += "\n" + index + " - " + possibleResponse;
-//				index++;		
-//			}
-//			output(m.getSenderMsisdn(), message);
-//			//TODO call via callback interface
-//			ResourceMapperPluginController.registerCallback(m.getSenderMsisdn(), this);
-//			this.callbacks.put(m.getSenderMsisdn(), mappingDao.getFieldForAbbreviation(content));
-//		}
-//		else{
-//			output(m.getSenderMsisdn(),ShortCodeProperties.getInstance().getValueForKey(ShortCodeProperties.CODED_VALIDATION_ERROR));
-//		}
-//	}
-	
-	/**
-	 * Gets the string response for the response. This method should only 
-	 * be called after a callback is received
-	 * @param content
-	 * @return
-	 */
-	public String getResponseForContent(String content, CodedField mapping) {
-		//TODO Does this really need to be a set?
-		Set<String> possibleResponses = mapping.getChoices();
-		return possibleResponses.toArray(new String[possibleResponses.size()])[Integer.parseInt(content)-1];
 	}
 	
-	protected void output(String msisdn, String text){
-		if (ResourceMapperProperties.getInstance().isInDebugMode()){
-			System.out.println(text);
+	@Override
+	public void handleMessage(FrontlineMessage message) {
+		LOG.debug("handleMessage: %s", message.getTextContent());
+		String content = message.getTextContent().replaceFirst("[\\s]", " ");
+		String[] words = content.split(" ", 2);
+		if (words.length == 1) {
+			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			if (field != null) {
+				if (field.getChoices() != null) {
+					StringBuilder reply = new StringBuilder();
+					reply.append(field.getInfoSnippet());
+					int index = 1;
+					for (String choice : field.getChoices()) {
+						reply.append("\n");
+						reply.append(index);
+						reply.append(" ");
+						reply.append(choice);
+						index++;		
+					}
+					sendReply(message.getSenderMsisdn(), reply.toString(), false);
+					LOG.debug("Register Callback for '%s'", content);
+					ResourceMapperPluginController.registerCallback(message.getSenderMsisdn(), this);
+					this.callbacks.put(message.getSenderMsisdn(), mappingDao.getFieldForAbbreviation(content));
+				}
+				else {
+					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
+				}
+			}
+			else {
+				sendReply(message.getSenderMsisdn(), String.format("No Field Mapping Found For '%s'", words[0]), true);
+			}	
+		}
+		else if (isValidResponse(words)) {
+			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			if (field != null) {
+				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				if (contact != null) {
+					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
+					if (response != null) {
+						try {
+							this.responseDao.saveFieldResponse(response);
+							//TODO generateAndPublishXML(response);
+							LOG.debug("Response Created: %s", response);
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
+					}
+					else {
+						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+					}
+				}
+				else {
+					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
+				}	
+			}
+			else {
+				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
+			}
 		}
 		else {
-			frontline.sendTextMessage(msisdn, text);
-		}
-	}
-
-	public void handleCallback(FrontlineMessage m) {
-		if (callbackMessageIsValid(m.getTextContent(), callbacks.get(m.getSenderMsisdn()))){
-			CodedField mapping = (CodedField)callbacks.get(m.getSenderMsisdn());
-			HospitalContact contact = contactDao.getHospitalContactByPhoneNumber(m.getSenderMsisdn());
-			CodedResponse response = new CodedResponse(m, contact, new Date(), contact.getHospitalId(), mapping);
-			generateAndPublishXML(response);
-			ResourceMapperPluginController.unregisterCallback(m.getSenderMsisdn());
-		}else{
-			output(m.getSenderMsisdn(), ShortCodeProperties.getInstance().getValueForKey("coded.bad.answer.response"));
-			ResourceMapperPluginController.unregisterCallback(m.getSenderMsisdn());
+			sendReply(message.getSenderMsisdn(), String.format("Invalid Response Received '%s'", message.getTextContent()), true);
 		}
 	}
 	
-	private boolean callbackMessageIsValid(String content, Field mapping){
-		if (shouldHandleCallbackMessage(content)) {
-			int max = mapping.getChoices().size();
-			if(Integer.parseInt(content) <= max && Integer.parseInt(content) > 0) {
+	@Override
+	public void handleCallback(FrontlineMessage message) {
+		LOG.debug("handleCallback: %s", message.getTextContent());
+		if (shouldHandleCallbackMessage(message)) {
+			Field field = this.callbacks.get(message.getSenderMsisdn());
+			if (field != null) {
+				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				if (contact != null) {
+					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
+					if (response != null) {
+						try {
+							this.responseDao.saveFieldResponse(response);
+							//TODO generateAndPublishXML(response);
+							LOG.debug("FieldResponse Created: %s", response.getClass());
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
+					}
+					else {
+						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+					}
+				}
+				else {
+					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
+				}		
+			}
+			else {
+				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
+			}
+		}
+		else {
+			sendReply(message.getSenderMsisdn(), "Invalid Response", true);
+		}
+		ResourceMapperPluginController.unregisterCallback(message.getSenderMsisdn());
+	}
+	
+	@Override
+	public void callBackTimedOut(String msisdn) {
+		this.callbacks.remove(msisdn);
+	}
+
+	protected boolean isValidInteger(String word) {
+		try {
+			Integer.parseInt(word);
+			return true;
+		} 
+		catch (NumberFormatException nfe) {
+			//do nothing
+		}
+		return false;
+	}
+	
+	protected boolean isValidInteger(List<String> choices, String answer) {
+		if (isValidInteger(answer)) {
+			int value = Integer.parseInt(answer);
+			if (value > 0 && value <= choices.size()) {
 				return true;
 			}
 		}
 		return false;
 	}
-
-	/**
-	 * this handler wants to handle the callback message if it contains only 1 number
-	 * @see net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler#shouldHandleCallbackMessage(net.frontlinesms.data.domain.Message)
-	 */
-	public boolean shouldHandleCallbackMessage(FrontlineMessage m) {
-		return shouldHandleCallbackMessage(m.getTextContent());
+	
+	protected boolean isValidString(List<String> choices, String answer) {
+		if (choices != null && choices.size() > 0 && answer != null && answer.length() > 0) {
+			String answerTrimmed = answer.trim();
+			for (String choice : choices) {
+				//TODO improve fuzzy string comparison logic
+				if (choice.equalsIgnoreCase(answerTrimmed) || 
+					choice.toLowerCase().startsWith(answerTrimmed.toLowerCase())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
-	/**
-	 * Helper method for shouldHandleCallbackMessage(Message m)
-	 * @param content
-	 * @return
-	 */
-	private boolean shouldHandleCallbackMessage(String content){
-		//TODO:make this work
-		return !content.matches("\\D") && content.split(" ").length ==1;
-	}
-
-	public void callBackTimedOut(String msisdn) {
-		callbacks.remove(msisdn);
-	}
-
 }

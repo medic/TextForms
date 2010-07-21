@@ -1,7 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -17,13 +17,13 @@ public class MultiChoiceField extends CodedField {
 		super();
 	}
 	
-	public MultiChoiceField(String name, String abbreviation, Set<String> choices) {
+	public MultiChoiceField(String name, String abbreviation, List<String> choices) {
 		super(name, abbreviation, choices);
 	}
 
 	public MultiChoiceField(String shortCode, String pathToElement) {
 		super(shortCode, pathToElement);
-		this.setChoices(new TreeSet<String>());
+		this.setChoices(new ArrayList<String>());
 	}
 
 	@Override

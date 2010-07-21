@@ -22,7 +22,6 @@ package net.frontlinesms.plugins.resourcemapper.data.repository;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
@@ -55,7 +54,7 @@ public final class FieldMappingFactory {
 		return fieldClasses;
 	}private static List<Field> fieldClasses = null;
 	
-	public static Field createField(String name, String abbrev, String infoSnippet, String type, Set<String> choices) {
+	public static Field createField(String name, String abbrev, String infoSnippet, String type, List<String> choices) {
 		for (Field fieldClass : getFieldClasses()) {
 			if (fieldClass.getType().equalsIgnoreCase(type)) {
 				try {

@@ -1,7 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -25,7 +25,7 @@ public abstract class CodedField extends PlainTextField {
 		super(name, abbreviation);
 	}
 	
-	public CodedField(String shortCode, String pathToElement, Set<String> choices) {
+	public CodedField(String shortCode, String pathToElement, List<String> choices) {
 		super(shortCode, pathToElement);
 		this.choices = choices;
 	}
@@ -34,19 +34,19 @@ public abstract class CodedField extends PlainTextField {
 	@JoinTable(name="field_choices", joinColumns = @JoinColumn(name="choice"))
 	@Column(name="choices")
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private Set<String> choices;
+	private List<String> choices;
 	
-	public Set<String> getChoices() {
+	public List<String> getChoices() {
 		return this.choices;
 	}
 
-	public void setChoices(Set<String> choices) {
+	public void setChoices(List<String> choices) {
 		this.choices = choices;
 	}
 	
 	public void addChoice(String choice) {
 		if (this.choices == null) {
-			this.choices = new TreeSet<String>();
+			this.choices = new ArrayList<String>();
 		}
 		this.choices.add(choice);
 	}

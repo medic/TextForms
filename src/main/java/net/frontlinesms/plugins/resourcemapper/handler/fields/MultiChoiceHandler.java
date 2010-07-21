@@ -1,19 +1,21 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.MultiChoiceField;
 
-public class MultiChoiceHandler extends FieldMessageHandler<MultiChoiceField> {
+public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(MultiChoiceHandler.class);
 	
-	private final MultiChoiceField multiChoiceField = new MultiChoiceField();
+	private static final MultiChoiceField multiChoiceField = new MultiChoiceField();
 	
 	public MultiChoiceHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
@@ -23,32 +25,33 @@ public class MultiChoiceHandler extends FieldMessageHandler<MultiChoiceField> {
 		return this.mappingDao.getAbbreviationsForField(multiChoiceField);
 	}
 	
+	@Override
 	protected boolean isValidResponse(String[] words) {
-		return words != null && words.length > 1 && (isValidInteger(words[1]) || isValidOption(words[0], words[1]));
-	}
-	
-	private boolean isValidInteger(String word) {
-		try {
-			Integer.parseInt(word);
-			return true;
-		} 
-		catch (NumberFormatException nfe) {
-		
-		}
-		return false;
-	}
-	
-	private boolean isValidOption(String keyword, String word) {
-		Field field = this.mappingDao.getFieldForAbbreviation(keyword);
-		if (field != null) {
-			for (String choice : field.getChoices()) {
-				//TODO improve fuzzy string comparison logic
-				if (choice.equalsIgnoreCase(word) || 
-					choice.toLowerCase().startsWith(word.toLowerCase())) {
-					return true;
-				}
+		if (words != null && words.length > 1) {
+			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			if (field != null) {
+				List<String> choices = field.getChoices();
+				return isValidInteger(choices, words[1]) || isValidString(choices, words[1]);
 			}
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
+		Field field = this.callbacks.get(message.getSenderMsisdn());
+		if (field != null) {
+			List<String> choices = field.getChoices();
+			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+			if (words != null && words.length == 1 && (isValidInteger(choices, words[0]) || isValidString(choices, words[0]))) {
+				return true;
+			}
+			else {
+				LOG.error("Choices: %s Invalid: %s", choices, message.getTextContent());
+				return false;
+			}
+		}
+		return false;
+	}
+
 }

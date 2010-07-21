@@ -1,5 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.handler;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 
 public class InfoHandler implements MessageHandler {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(InfoHandler.class);
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(InfoHandler.class);
 	
 	protected FrontlineSMS frontline;
 	protected ApplicationContext appContext;
@@ -26,7 +27,7 @@ public class InfoHandler implements MessageHandler {
 	}
 	
 	public Collection<String> getKeywords() {
-		ArrayList<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<String>();
 		results.add("info");
 		results.add("help");
 		results.add("?");
@@ -34,9 +35,12 @@ public class InfoHandler implements MessageHandler {
 	}
 
 	public void handleMessage(FrontlineMessage message) {
-		LOG.debug("InfoHandler.handleMessage %s", message.getTextContent());
-		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
-		if (words.length > 1) {
+		LOG.debug("handleMessage: %s", message.getTextContent());
+		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ");
+		if (words.length == 1) {
+			sendReply(message.getSenderMsisdn(), "Welcome to ResourceMapper!", false);
+		}
+		else if (words.length == 2) {
 			Field field = this.mappingDao.getFieldForAbbreviation(words[1]);
 			if (field != null) {
 				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
@@ -46,16 +50,16 @@ public class InfoHandler implements MessageHandler {
 			}		
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), String.format("Invalid Message '%s'", message.getTextContent()), true);
+			sendReply(message.getSenderMsisdn(), "Welcome to ResourceMapper!", false);
 		}
 	}
 	
 	protected void sendReply(String msisdn, String text, boolean error) {
 		if (error) {
-			LOG.error("Reply: (%s) %s", msisdn, text);
+			LOG.error("(%s) %s", msisdn, text);
 		}
 		else {
-			LOG.debug("Reply: (%s) %s", msisdn, text);
+			LOG.debug("(%s) %s", msisdn, text);
 		}
 		//TODO frontline.sendTextMessage(msisdn, text);
 	}

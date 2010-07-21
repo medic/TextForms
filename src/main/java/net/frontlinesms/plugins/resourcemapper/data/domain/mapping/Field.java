@@ -1,6 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -98,9 +98,9 @@ public abstract class Field {
 		this.schemaName = schemaName;
 	}
 	
-	public abstract Set<String> getChoices();
+	public abstract List<String> getChoices();
 	
-	public abstract void setChoices(Set<String> choices);
+	public abstract void setChoices(List<String> choices);
 	
 	public abstract String getType();
 	

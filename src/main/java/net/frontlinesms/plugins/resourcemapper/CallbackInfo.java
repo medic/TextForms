@@ -1,13 +1,15 @@
 package net.frontlinesms.plugins.resourcemapper;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler;
 
 import com.ibm.icu.util.Calendar;
 
 public class CallbackInfo {
+	
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CallbackInfo.class);
 	
 	private String phoneNumber;
 	private CallbackHandler handler;
@@ -23,34 +25,39 @@ public class CallbackInfo {
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
+	
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
 	public CallbackHandler getHandler() {
 		return handler;
 	}
+	
 	public void setHandler(CallbackHandler handler) {
 		this.handler = handler;
 	}
 
-	public boolean hasTimedOut(){
-		String[] timeout = ResourceMapperProperties.getInstance().getProperties().get("callback.timeout").split(":");
-		int hour= Integer.parseInt(timeout[0]);
-		int minute= Integer.parseInt(timeout[1]);
-		GregorianCalendar calendar = new GregorianCalendar();
+	public boolean hasTimedOut() {
+		//TODO load from properties file
+		//String[] timeout = ResourceMapperProperties.getInstance().getProperties().get("callback.timeout").split(":");
+		String [] timeout = new String [] {"0", "05"};
+		int hour = Integer.parseInt(timeout[0]);
+		int minute = Integer.parseInt(timeout[1]);
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(0L);
-		if(hour > 0){
+		if (hour > 0) {
 			calendar.set(Calendar.HOUR, hour);
 		}
-		if(minute > 0){
+		if (minute > 0) {
 			calendar.set(Calendar.MINUTE, minute);			
 		}
 		long timeoutTime = calendar.getTimeInMillis();
-		long passedTime = new GregorianCalendar().getTimeInMillis() - startTime;
-		if (timeoutTime<= passedTime) {
+		long passedTime = Calendar.getInstance().getTimeInMillis() - startTime;
+		if (timeoutTime <= passedTime) {
 			return true;
 		}
-		else{
+		else {
 			return false;
 		}
 	}

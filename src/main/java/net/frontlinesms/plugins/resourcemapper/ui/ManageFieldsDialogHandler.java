@@ -21,8 +21,8 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.context.ApplicationContext;
 
@@ -131,7 +131,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		String infoSnippet = this.ui.getText(this.textInfoSnippet);
 		Object fieldType = this.ui.getSelectedItem(this.comboFieldTypes);
 		String type = (String)this.ui.getAttachedObject(fieldType);
-		Set<String> choices = new TreeSet<String>();
+		List<String> choices = new ArrayList<String>();
 		for (Object comboItem : this.ui.getItems(this.listFieldChoices)) {
 			String comboItemText = this.ui.getAttachedObject(comboItem).toString();
 			LOG.debug("comboItemText: %s", comboItemText);
