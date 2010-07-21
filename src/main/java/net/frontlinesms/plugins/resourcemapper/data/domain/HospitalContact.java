@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -47,6 +49,14 @@ public class HospitalContact extends Contact {
 	
 	public void setLastResponse(Date lastResponse) {
 		this.lastResponse = lastResponse;
+	}
+	
+	public String getLastResponseText() {
+		if (this.lastResponse != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			return dateFormat.format(this.lastResponse);	
+		}
+		return "";
 	}
 
 }

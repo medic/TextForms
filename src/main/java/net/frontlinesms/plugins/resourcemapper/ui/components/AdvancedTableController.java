@@ -306,8 +306,8 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 			try {
 				String s = (String) m.invoke(r, null);
 				tempWidth = getStringWidth(s);
-			} catch (Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				//do nothing
 			}
 			result = Math.max(result, tempWidth);
 		}

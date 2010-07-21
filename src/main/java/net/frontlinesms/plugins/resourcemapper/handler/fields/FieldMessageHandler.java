@@ -6,6 +6,7 @@ import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -63,6 +64,13 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 						this.responseDao.saveFieldResponse(response);
 						//TODO generateAndPublishXML(response);
 						LOG.debug("FieldResponse Created: %s", response.getClass());
+						try {
+							contact.setLastResponse(new Date());
+							this.contactDao.updateHospitalContact(contact);
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
@@ -68,6 +69,13 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						this.responseDao.saveFieldResponse(response);
 						//TODO generateAndPublishXML(response);
 						LOG.debug("Response Created: %s", response);
+						try {
+							contact.setLastResponse(new Date());
+							this.contactDao.updateHospitalContact(contact);
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
@@ -100,6 +108,13 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						this.responseDao.saveFieldResponse(response);
 						//TODO generateAndPublishXML(response);
 						LOG.debug("FieldResponse Created: %s", response.getClass());
+						try {
+							contact.setLastResponse(new Date());
+							this.contactDao.updateHospitalContact(contact);
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
