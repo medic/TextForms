@@ -1,15 +1,14 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
-import java.util.Collection;
 import java.util.Date;
 
 import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
-import net.frontlinesms.plugins.resourcemapper.ShortCodeProperties;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
@@ -23,6 +22,8 @@ import net.frontlinesms.plugins.resourcemapper.xml.XMLUtils;
 
 public abstract class FieldMessageHandler<M extends Field> implements MessageHandler {
 
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldMessageHandler.class);
+	
 	protected FrontlineSMS frontline;
 	protected ApplicationContext appContext;
 	
@@ -38,60 +39,75 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		this.contactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
-	protected Collection<String> getKeywords() {
-		return this.mappingDao.getAbbreviations();
-	}
-
-	@SuppressWarnings("static-access")
+	protected abstract boolean isValidResponse(String[] words);
+	
 	public void handleMessage(FrontlineMessage message) {
-		System.out.println("FieldMessageHandler.handleMessage: " + message);
-		String content = message.getTextContent();
-		content.replaceFirst("[\\s]", " ");
-		String[] commands = content.split(" ", 2);
-		//the user has texted in only the name of a field, 
-		//so we treat this as a request for information about the field
-		if (commands.length == 1) {
-			String infoSnippetForShortCode = ShortCodeProperties.getInstance().getInfoSnippetForShortCode(commands[0]);
-			if (ResourceMapperProperties.getInstance().isInDebugMode()) {
-				System.out.println(infoSnippetForShortCode);
+		LOG.debug("handleMessage: %s", message.getTextContent());
+		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+		if (words.length == 1) {
+			Field field = this.mappingDao.getFieldForAbbreviation(words[1]);
+			if (field != null) {
+				if (field.getChoices() != null) {
+					StringBuilder reply = new StringBuilder();
+					reply.append(field.getInfoSnippet());
+					int index = 1;
+					for (String choice : field.getChoices()) {
+						reply.append("\n");
+						reply.append(index);
+						reply.append(" ");
+						reply.append(choice);
+						index++;		
+					}
+					sendReply(message.getSenderMsisdn(), reply.toString(), false);
+				}
+				else {
+					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
+				}
 			}
 			else {
-				this.frontline.sendTextMessage(message.getSenderMsisdn(), infoSnippetForShortCode);
-			}
+				sendReply(message.getSenderMsisdn(), String.format("No Field Mapping Found For '%s'", words[0]), true);
+			}	
 		}
-		else if (commands.length > 0) {
-			Field field = this.mappingDao.getFieldForAbbreviation(commands[0]);
+		else if (isValidResponse(words)) {
+			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
 			if (field != null) {
 				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
-					//generateAndPublishXML(response);
+					if (response != null) {
+						try {
+							this.responseDao.saveFieldResponse(response);
+							//TODO generateAndPublishXML(response);
+							LOG.debug("Response Created: %s", response);
+						} 
+						catch (DuplicateKeyException ex) {
+							LOG.error("DuplicateKeyException: %s", ex);
+						}
+					}
+					else {
+						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+					}
 				}
 				else {
-					//TODO return warning that hospital is required
-					System.err.println("Warning, hospital contact is required");
+					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
 				}	
 			}
 			else {
-				//TODO return warning that mapping is required
-				System.err.println("Warning, field mapping is required");
+				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
 			}
 		}
 		else {
-			//TODO handle empty case
-			System.err.println("Warning, empty command");
+			sendReply(message.getSenderMsisdn(), String.format("Invalid Response Received '%s'", message.getTextContent()), true);
 		}
 	}
 	
-	public void generateAndPublishXML(FieldResponse<M> response) {
-		System.out.println("generateAndPublishXML: " + response);
+	protected void generateAndPublishXML(FieldResponse<M> response) {
+		LOG.debug("generateAndPublishXML: %s", response);
 		if (response != null) {
 			Document document = XMLUtils.getInitializedDocument(response);
 			String [] words = response.getMessage().getTextContent().split(" ", 2);
 			String keyword = words[0];
-			System.out.println("keyword: " + keyword);
 			String text = words[1];
-			System.out.println("text: " + text);
 			String pathToElement = response.getMapping().getPathToElement();
 			if (pathToElement != null) {
 				String path = pathToElement + "=" + text;
@@ -103,7 +119,17 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 			XMLPublisher.publish(document.asXML());
 		}
 		else {
-			System.out.println("FieldMessageHandler.generateAndPublishXML response is NULL");
+			LOG.debug("FieldMessageHandler.generateAndPublishXML response is NULL");
 		}
+	}
+	
+	protected void sendReply(String msisdn, String text, boolean error) {
+		if (error) {
+			LOG.error("Reply: (%s) %s", msisdn, text);
+		}
+		else {
+			LOG.debug("Reply: (%s) %s", msisdn, text);
+		}
+		//TODO frontline.sendTextMessage(msisdn, text);
 	}
 }

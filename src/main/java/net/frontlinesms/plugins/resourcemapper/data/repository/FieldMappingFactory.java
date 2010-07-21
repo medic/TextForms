@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
-import net.frontlinesms.FrontlineUtils;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 /*
@@ -38,19 +36,19 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
  */
 public final class FieldMappingFactory {
 
-	private static Logger LOG = FrontlineUtils.getLogger(FieldMappingFactory.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldMappingFactory.class);
 	
 	/*
 	 * Get list of Field classes
-	 * (To add a new Reminder classes to the project, append a new row to the file
+	 * (To add a new Field classes to the project, append a new row to the file
 	 * /resources/META-INF/services/net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field
-	 * with the full package and class name of the new implementing Reminder class)
+	 * with the full package and class name of the new implementing Field class)
 	 */
 	public static List<Field> getFieldClasses() {
 		if (fieldClasses == null) {
 			fieldClasses = new ArrayList<Field>();
 			for (Field field : ServiceLoader.load(Field.class)) {
-				System.out.println("Field Discovered: " + field);
+				LOG.debug("Field Discovered: %s", field);
 				fieldClasses.add(field);
 		    }
 		}
@@ -75,7 +73,7 @@ public final class FieldMappingFactory {
 				}
 			}
 		}
-		LOG.debug("Unable to find class for type: " + type);
+		LOG.error("Unable to find class for type: " + type);
 		return null;
 	}
 	

@@ -1,6 +1,5 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -17,7 +16,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.response.CodedRespons
 
 import org.springframework.context.ApplicationContext;
 
-public class CodedHandler extends CallbackHandler<CodedField> {
+public abstract class CodedHandler extends CallbackHandler<CodedField> {
 
 	public CodedHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
@@ -26,42 +25,27 @@ public class CodedHandler extends CallbackHandler<CodedField> {
 
 	private HashMap<String, Field> callbacks;
 	
-	
-	protected Collection<String> getKeywords() {
-		return mappingDao.getAbbreviations();
-	}
-
-	@SuppressWarnings("static-access")
-	public void handleMessage(FrontlineMessage m) {
-		String content = m.getTextContent().trim();
-		content.replaceAll("[\\s]", " ");
-		//String[] commands = content.split(" ");
-		if (isSatisfiedBy(content)) {
-			String message = content + " " +ShortCodeProperties.getInstance().getValueForKey("coded.answer.prefix");
-			Set<String> possibleResponses = mappingDao.getFieldForAbbreviation(content).getChoices();
-			int index = 1;
-			for (String possibleResponse: possibleResponses) {
-				message += "\n" + index + " - " + possibleResponse;
-				index++;		
-			}
-			output(m.getSenderMsisdn(), message);
-			//TODO call via callback interface
-			ResourceMapperPluginController.registerCallback(m.getSenderMsisdn(), this);
-			this.callbacks.put(m.getSenderMsisdn(), mappingDao.getFieldForAbbreviation(content));
-		}
-		else{
-			output(m.getSenderMsisdn(),ShortCodeProperties.getInstance().getValueForKey(ShortCodeProperties.CODED_VALIDATION_ERROR));
-		}
-	}
-	
-	/**
-	 * The message is valid if it contains only 1 name of a coded field
-	 * @param content
-	 * @return
-	 */
-	public boolean isSatisfiedBy(String content) {
-		return content.split(" ").length == 1 && getKeywords().contains(content);
-	}
+//	public void handleMessage(FrontlineMessage m) {
+//		String content = m.getTextContent().trim();
+//		content.replaceAll("[\\s]", " ");
+//		//String[] commands = content.split(" ");
+//		if (isSatisfiedBy(content)) {
+//			String message = content + " " +ShortCodeProperties.getInstance().getValueForKey("coded.answer.prefix");
+//			Set<String> possibleResponses = mappingDao.getFieldForAbbreviation(content).getChoices();
+//			int index = 1;
+//			for (String possibleResponse: possibleResponses) {
+//				message += "\n" + index + " - " + possibleResponse;
+//				index++;		
+//			}
+//			output(m.getSenderMsisdn(), message);
+//			//TODO call via callback interface
+//			ResourceMapperPluginController.registerCallback(m.getSenderMsisdn(), this);
+//			this.callbacks.put(m.getSenderMsisdn(), mappingDao.getFieldForAbbreviation(content));
+//		}
+//		else{
+//			output(m.getSenderMsisdn(),ShortCodeProperties.getInstance().getValueForKey(ShortCodeProperties.CODED_VALIDATION_ERROR));
+//		}
+//	}
 	
 	/**
 	 * Gets the string response for the response. This method should only 

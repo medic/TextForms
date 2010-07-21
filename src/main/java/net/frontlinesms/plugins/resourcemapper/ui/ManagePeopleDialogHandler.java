@@ -21,13 +21,12 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -42,7 +41,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(ManagePeopleDialogHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeopleDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/resourcemapper/managePeopleDialog.xml";
 	
 	private UiGeneratorController ui;
@@ -60,6 +59,7 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	private Object textEmail;
 	
 	public ManagePeopleDialogHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
+		LOG.debug("ManagePeopleDialogHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -89,7 +89,7 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	public void savePerson(Object dialog) throws DuplicateKeyException {
-		System.out.println("savePerson");
+		LOG.debug("savePerson");
 		String contactName = this.ui.getText(this.textName);
 		String contactHospital = this.ui.getText(this.textHospital);
 		String contactPhone = this.ui.getText(this.textPhone);
@@ -124,7 +124,7 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	public void removeDialog(Object dialog) {
-		System.out.println("removeDialog");
+		LOG.debug("removeDialog");
 		this.ui.remove(dialog);
 	}
 }

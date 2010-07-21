@@ -21,12 +21,11 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.search.FieldMappingQueryGenerator;
@@ -44,7 +43,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class ManageFieldsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(ManageFieldsPanelHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManageFieldsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/resourcemapper/manageFieldsPanel.xml";
 	
 	private UiGeneratorController ui;
@@ -74,7 +73,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	private FieldMappingDao fieldMappingDao;
 	
 	public ManageFieldsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
-		System.out.println("ManageFieldsPanelHandler");
+		LOG.debug("ManageFieldsPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -120,14 +119,13 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void focus(Object component) {
-		System.out.println("focus");
 		if (component != null) {
 			this.ui.requestFocus(component);
 		}
 	}
 	
 	public void addField(Object tableField) {
-		System.out.println("addField");
+		LOG.debug("addField");
 		this.editDialog.show(null);
 	}
 	
@@ -136,7 +134,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void deleteField() {
-		System.out.println("deleteField");
+		LOG.debug("deleteField");
 		Field field = this.getSelectedField();
 		if (field != null) {
 			this.fieldMappingDao.deleteFieldMapping(field);
@@ -156,20 +154,20 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	
 	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
 		String searchText = this.ui.getText(searchField);
-		System.out.println("searchByField: " + searchText);
+		LOG.debug("searchByField: %s", searchText);
 		this.queryGenerator.startSearch(searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 	}
 	
 	public void searchClear(Object searchField, Object tableField, Object buttonClear) {
-		System.out.println("searchClear");
+		LOG.debug("searchClear");
 		this.ui.setText(searchField, "");
 		this.searchByField(searchField, tableField, buttonClear);
 		this.ui.requestFocus(searchField);
 	}
 	
 	public void viewResponses(Object panelField) {
-		System.out.println("viewResponses");
+		LOG.debug("viewResponses");
 		if (this.callback != null) {
 			this.callback.viewResponses(this.getSelectedField());
 		}	
@@ -184,23 +182,23 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void doubleClickAction(Object selectedObject) {
-		System.out.println("doubleClickAction");
+		LOG.debug("doubleClickAction");
 		this.editDialog.show(this.getSelectedField());
 	}
 
 	public void resultsChanged() {
-		System.out.println("resultsChanged");
+		LOG.debug("resultsChanged");
 		selectionChanged(null);
 	}
 
 	public void sortChanged(String column, boolean ascending) {
-		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		LOG.debug("sortChanged: column=%s ascending=%s", column, ascending);
 		String searchText = this.ui.getText(this.searchField);
 		this.queryGenerator.startSearch(searchText, column, ascending);
 	}
 	
 	public void selectionChanged(Object selectedObject) {
-		System.out.println("selectionChanged");
+		LOG.debug("selectionChanged");
 		Field field = this.getSelectedField();
 		if (field != null) {
 			this.ui.setEnabled(this.editButton, true);
@@ -217,7 +215,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			}
 			else if (field.getChoices() != null) {
 				for (String choiceText : field.getChoices()) {
-					System.out.println("choiceText: " + choiceText);
+					LOG.debug("choiceText: %s", choiceText);
 					this.ui.add(this.listChoices, this.ui.createListItem(choiceText, choiceText));
 				}	
 			}

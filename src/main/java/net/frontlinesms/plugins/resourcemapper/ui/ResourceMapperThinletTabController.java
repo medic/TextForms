@@ -1,19 +1,18 @@
 package net.frontlinesms.plugins.resourcemapper.ui;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 public class ResourceMapperThinletTabController implements ThinletUiEventHandler, ResourceMapperCallback {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(ResourceMapperThinletTabController.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeoplePanelHandler.class);
 	
 	private static final String XML_PATH = "/ui/plugins/resourcemapper/mainTab.xml";
 	
@@ -27,6 +26,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	private BrowseDataPanelHandler panelBrowseData;
 	
 	public ResourceMapperThinletTabController(UiGeneratorController uiController, ApplicationContext appContext){
+		LOG.debug("ResourceMapperThinletTabController");
 		this.ui = uiController;
 		this.appContext = appContext;
 		this.mainTab = this.ui.loadComponentFromFile(XML_PATH, this);
@@ -44,7 +44,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	public void taskChanged(Object listTasks) {
 		Object selectedListItem = this.ui.getSelectedItem(listTasks);
 		String selectedProperty = this.ui.getProperty(selectedListItem, "value").toString();
-		System.out.println("taskChanged: " + selectedProperty);
+		LOG.debug("taskChanged: " + selectedProperty);
 		if ("fields".equalsIgnoreCase(selectedProperty)) {
 			showManageFieldsPanel();
 		}
@@ -57,7 +57,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	}
 	
 	public void viewResponses(HospitalContact contact) {
-		System.out.println("viewResponses by contact");
+		LOG.debug("viewResponses by contact");
 		Object taskList = this.ui.find(this.mainTab, "listTasks");
 		for (Object item : this.ui.getItems(taskList)) {
 			String itemProperty = this.ui.getProperty(item, "value").toString();
@@ -67,7 +67,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	}
 	
 	public void viewResponses(Field field) {
-		System.out.println("viewResponses by field");
+		LOG.debug("viewResponses by field");
 		Object taskList = this.ui.find(this.mainTab, "listTasks");
 		for (Object item : this.ui.getItems(taskList)) {
 			String itemProperty = this.ui.getProperty(item, "value").toString();
@@ -77,17 +77,17 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	}
 	
 	public void refreshContact(HospitalContact contact) {
-		System.out.println("refreshContact: " + contact);
+		LOG.debug("refreshContact: %s", contact);
 		this.panelManagePeople.refreshContacts(contact);
 	}
 	
 	public void refreshField(Field field) {
-		System.out.println("refreshField: " + field);
+		LOG.debug("refreshField: %s", field);
 		this.panelManageFields.refreshFields(field);
 	}
 	
 	public void refreshFieldResponse(FieldResponse fieldResponse) {
-		System.out.println("refreshFieldResponse: " + fieldResponse);
+		LOG.debug("refreshFieldResponse: %s", fieldResponse);
 		this.panelBrowseData.refreshFieldResponses(fieldResponse);
 	}
 	

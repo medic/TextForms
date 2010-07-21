@@ -21,12 +21,11 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -47,7 +46,7 @@ import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableC
  */
 public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(BrowseDataPanelHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(BrowseDataPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/resourcemapper/browseDataPanel.xml";
 	
 	private UiGeneratorController ui;
@@ -79,7 +78,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	private PagedAdvancedTableController tableController;
 	
 	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
-		System.out.println("BrowseDataPanelHandler");
+		LOG.debug("BrowseDataPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -157,19 +156,19 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void showDateSelecter(Object textField) {
-		System.out.println("showDateSelecter");
+		LOG.debug("showDateSelecter");
 		this.ui.showDateSelecter(textField);
 	}
 	
 	public void dateChanged(Object textDate, Object buttonClear) {
-		System.out.println("dateChanged");
+		LOG.debug("dateChanged");
 		String dateText = this.ui.getText(textDate);
 		this.ui.setEnabled(buttonClear, dateText != null && dateText.length() > 0);
 		startSearch();
 	}
 	
 	public void clearDate(Object textDate, Object buttonClear) {
-		System.out.println("clearDate");
+		LOG.debug("clearDate");
 		this.ui.setText(textDate, "");
 		this.ui.setEnabled(buttonClear, false);
 		startSearch();
@@ -181,13 +180,13 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	
 	public void searchByField(Object searchField, Object buttonClear) {
 		String searchText = this.ui.getText(searchField);
-		System.out.println("searchByField: " + searchText);
+		LOG.debug("searchByField: %s", searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 		startSearch();
 	}
 	
 	public void clearSearch(Object searchField, Object buttonClear) {
-		System.out.println("clearSearch");
+		LOG.debug("clearSearch");
 		this.ui.setText(searchField, "");
 		this.searchByField(searchField, buttonClear);
 		this.ui.requestFocus(searchField);
@@ -201,7 +200,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		if (selectedSubmitter != null) {
 			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(selectedSubmitter, HospitalContact.class);
 			if (submitter != null) {
-				System.out.println("submitterChanged: " + submitter.getName());
+				LOG.debug("submitterChanged: %s", submitter.getName());
 				contact = submitter.getName();
 			}
 		}
@@ -213,7 +212,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void setSelectedField(Field field) {
-		System.out.println("setSelectedField: "+ field);
+		LOG.debug("setSelectedField: %s", field);
 		this.selectedField = field;
 		Object searchField = this.ui.find(this.mainPanel, "searchField");
 		if (field != null) {
@@ -226,7 +225,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void setSelectedContact(HospitalContact contact) {
-		System.out.println("setSelectedContact: "+ contact);
+		LOG.debug("setSelectedContact: %s", contact);
 		this.selectedContact = contact;
 		if (contact != null) {
 			int index = 0;
@@ -236,7 +235,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 					HospitalContact contactItem = (HospitalContact)attachedObject;
 					if (contact.equals(contactItem)) {
 						this.ui.setSelectedIndex(this.comboSubmitter, index);
-						System.out.println("Selecting Contact: " + contact.getName());
+						LOG.debug("Selecting Contact: %s", contact.getName());
 						break;
 					}
 				}
@@ -250,21 +249,21 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void addResponse(Object tableField) {
-		System.out.println("addResponse");
+		LOG.debug("addResponse");
 		this.editDialog.loadHospitalContacts();
 		this.editDialog.loadFieldMappings();
 		this.editDialog.show(null);
 	}
 	
 	public void editResponse(Object tableField) {
-		System.out.println("editResponse");
+		LOG.debug("editResponse");
 		this.editDialog.loadHospitalContacts();
 		this.editDialog.loadFieldMappings();
 		this.editDialog.show(this.getSelectedFieldResponse());
 	}
 	
-	public void deleteField(Object tableField) {
-		System.out.println("deleteField");
+	public void deleteField() {
+		LOG.debug("deleteField");
 		FieldResponse fieldResponse = this.getSelectedFieldResponse();
 		if (fieldResponse != null) {
 			this.fieldResponseDao.deleteFieldResponse(fieldResponse);
@@ -272,25 +271,25 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void doubleClickAction(Object selectedObject) {
-		System.out.println("doubleClickAction");
+		LOG.debug("doubleClickAction");
 		this.editDialog.loadHospitalContacts();
 		this.editDialog.loadFieldMappings();
 		this.editDialog.show(this.getSelectedFieldResponse());
 	}
 
 	public void resultsChanged() {
-		System.out.println("resultsChanged");
+		LOG.debug("resultsChanged");
 	}
 
 	public void sortChanged(String column, boolean ascending) {
-		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		LOG.debug("sortChanged: column=%s ascending=%s", column, ascending);
 		this.sortColumn = column;
 		this.sortAscending = ascending;
 		startSearch();
 	}
 	
 	public void selectionChanged(Object selectedObject) {
-		System.out.println("selectionChanged");
+		LOG.debug("selectionChanged");
 		FieldResponse fieldResponse = this.getSelectedFieldResponse();
 		if (fieldResponse != null) {
 			this.ui.setEnabled(this.editButton, true);

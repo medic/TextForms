@@ -2,6 +2,7 @@ package net.frontlinesms.plugins.resourcemapper.search;
 
 import java.util.List;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableController;
 
 import org.hibernate.Session;
@@ -17,6 +18,8 @@ import org.springframework.context.ApplicationContext;
  */
 public abstract class QueryGenerator {
 
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(QueryGenerator.class);
+	
 	protected String previousQuery;
 	
 	//paging stuff
@@ -138,7 +141,7 @@ public abstract class QueryGenerator {
 	 * @param query The query to be run
 	 */
 	protected void runQuery(String query) {
-		System.out.println(query);
+		LOG.debug(query);
 		//check if session is active
 		if (this.session == null) {
 			try {
@@ -157,14 +160,14 @@ public abstract class QueryGenerator {
 			querySuffix = querySuffix.substring(0, orderByIndex);
 		}
 		String countQuery = "SELECT COUNT(*) " + querySuffix;
-		System.out.println(countQuery);
+		LOG.debug(countQuery);
 		
 		//run the count query, obtaining the total number of results
 		long countPrevTime = System.nanoTime();
 		this.totalResults = ((Long) this.session.createQuery(countQuery).list().get(0)).intValue();
 		
 		long countElapsedTime = System.nanoTime() - countPrevTime;
-		System.out.println("Count Time: " + countElapsedTime/1000000.0);
+		LOG.debug("Count Time: %s", countElapsedTime/1000000.0);
 		
 		if (this.totalResults % this.pageSize == 0) {
 			this.totalPages = this.totalResults / this.pageSize;
@@ -181,7 +184,7 @@ public abstract class QueryGenerator {
 		
 		//output time elapsed
 		long elapsedTime = System.nanoTime() - prevTime;
-		System.out.println("Query Time: " + elapsedTime/1000000.0);
+		LOG.debug("Query Time: %s", elapsedTime/1000000.0);
 		
 		for (Object result : results){
 			this.session.evict(result);

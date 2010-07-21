@@ -24,12 +24,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
-
-import net.frontlinesms.FrontlineSMSConstants;
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.MessageDao;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.ChecklistResponse;
@@ -51,7 +48,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextFiel
  */
 public final class FieldResponseFactory {
 
-	private static Logger LOG = FrontlineUtils.getLogger(FieldResponseFactory.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldResponseFactory.class);
 	
 	/*
 	 * Get list of FieldResponse classes
@@ -63,7 +60,7 @@ public final class FieldResponseFactory {
 		if (fieldResponseClasses == null) {
 			fieldResponseClasses = new ArrayList<FieldResponse>();
 			for (FieldResponse fieldResponse : ServiceLoader.load(FieldResponse.class)) {
-				System.out.println("FieldResponse Discovered: " + fieldResponse);
+				LOG.debug("FieldResponse Discovered: %s", fieldResponse);
 				fieldResponseClasses.add(fieldResponse);
 		    }
 		}

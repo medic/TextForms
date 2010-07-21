@@ -47,12 +47,12 @@ public class CallbackInfo {
 		}
 		long timeoutTime = calendar.getTimeInMillis();
 		long passedTime = new GregorianCalendar().getTimeInMillis() - startTime;
-		if(timeoutTime<= passedTime){
+		if (timeoutTime<= passedTime) {
 			return true;
-		}else{
+		}
+		else{
 			return false;
 		}
-		
 	}
 	
 }

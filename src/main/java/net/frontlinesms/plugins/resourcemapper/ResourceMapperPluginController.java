@@ -21,6 +21,7 @@ import net.frontlinesms.plugins.resourcemapper.handler.fields.ChecklistHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.CodedHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.PlainTextHandler;
+import net.frontlinesms.plugins.resourcemapper.ui.ManageFieldsDialogHandler;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -31,6 +32,8 @@ import org.springframework.context.ApplicationContext;
 		hibernateConfigPath="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper.hibernate.cfg.xml")
 public class ResourceMapperPluginController extends BasePluginController implements IncomingMessageListener {
 
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperPluginController.class);
+	
 	private FrontlineSMS frontlineController;
 	
 	/** The Application Context for fetching daos and other Spring stuff */
@@ -58,7 +61,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	}
 	
 	public void deinit() {
-		System.out.println("contactDao");
+		LOG.debug("deinit");
 	}
 	
 	public void init(FrontlineSMS frontlineController, ApplicationContext appContext)	throws PluginInitialisationException {
@@ -66,27 +69,9 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
+		//BasicConfigurator.configure();
 		initListeners();
-		debugIncomingMessageEvents();
-	}
-	
-	private void initListeners(){
-		listeners = new ArrayList<MessageHandler>();
-		listeners.add(new InfoHandler(frontlineController, appContext));
-		listeners.add(new PlainTextHandler(frontlineController, appContext));
-//		listeners.add(new BooleanHandler(frontlineController, appContext));
-//		listeners.add(new CodedHandler(frontlineController, appContext));
-//		listeners.add(new ChecklistHandler(frontlineController, appContext));
-//		listeners.add(new MultiChoiceHandler(frontlineController, appContext));
-	}
-	
-	private void debugIncomingMessageEvents() {
-		System.out.println("generateSampleIncomingMessageEvents");
-		for (String message : new String[]{"info hosp", "help hosp", "? hosp", "hosp", "invalid"}) {
-			Calendar now = Calendar.getInstance();
-			String senderMsisdn = "306.341.2644";	
-			incomingMessageEvent(FrontlineMessage.createIncomingMessage(now.getTimeInMillis(), senderMsisdn, null, message));
-		}
+		//debugIncomingMessageEvents();
 	}
 	
 	/** @return {@link #frontlineController} */
@@ -99,43 +84,74 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		return this.appContext;
 	}
 	
+	private void initListeners(){
+		listeners = new ArrayList<MessageHandler>();
+		listeners.add(new InfoHandler(frontlineController, appContext));
+		listeners.add(new PlainTextHandler(frontlineController, appContext));
+		listeners.add(new BooleanHandler(frontlineController, appContext));
+		listeners.add(new ChecklistHandler(frontlineController, appContext));
+		listeners.add(new MultiChoiceHandler(frontlineController, appContext));
+	}
+	
+	private void debugIncomingMessageEvents() {
+		LOG.debug("debugIncomingMessageEvents");
+		long dateReceived = Calendar.getInstance().getTimeInMillis();
+		String senderMsisdn = "306.341.3644";	
+		for (String message : new String[] {"info hosp", "help hosp", "? hosp", "hosp", 
+											"hosp Saskatoon RUH", "city Saskatoon",
+											"power yes", "power true", "power y", "power t", "power 1",
+											"power no", "power false", "power n", "power f", "power 0",
+											"invalid"
+											}) {
+			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
+			this.messageDao.saveMessage(frontlineMessage);
+			incomingMessageEvent(frontlineMessage);
+		}
+	}
+	
 	public void incomingMessageEvent(FrontlineMessage message) {
-		System.out.println("incomingMessageEvent: " + message.getTextContent());
+		LOG.debug("-");
+		LOG.debug("ResourceMapperPluginController.incomingMessageEvent: %s", message.getTextContent());
 		if (callbacks == null){
 			callbacks = new ArrayList<CallbackInfo>();
 		}
 		//first, remove all callbacks that have timed out
-		List<CallbackInfo> toRemove = new ArrayList<CallbackInfo>();
-		for (CallbackInfo info : this.callbacks){
-			if (info.hasTimedOut()){
-				info.getHandler().callBackTimedOut(info.getPhoneNumber());
-				toRemove.add(info);
+		List<CallbackInfo> expiredCallbacks = new ArrayList<CallbackInfo>();
+		for (CallbackInfo callback : callbacks) {
+			if (callback.hasTimedOut()){
+				callback.getHandler().callBackTimedOut(callback.getPhoneNumber());
+				expiredCallbacks.add(callback);
 			}
 		}
-		if (toRemove.size() > 0) {
-			System.out.println("ToRemove: " + toRemove);
-			callbacks.removeAll(toRemove);
+		if (expiredCallbacks.size() > 0) {
+			LOG.debug("Removing %s Expired Callbacks", expiredCallbacks.size());
+			callbacks.removeAll(expiredCallbacks);
 		}
 		
 		//see if there is a handler that wants to handle the message
 		MessageHandler handler = null;
 		for (MessageHandler listener: this.listeners) {
-			if (listener.isSatisfiedBy(message.getTextContent())) {
-				handler = listener;
-				break;
+			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+			if (words.length > 0) {
+				for (String keyword : listener.getKeywords()) {
+					if (keyword.equalsIgnoreCase(words[0])) {
+						handler = listener;
+						break;
+					}
+				}			
 			}
 		}	
-		System.out.println("MessageHandler: " + handler);
+		LOG.debug("MessageHandler %s", handler);
 		
 		//now, see if there is a callback out on that message
 		CallbackHandler callbackHandler = null;
-		for (CallbackInfo info: this.callbacks) {
+		for (CallbackInfo info: callbacks) {
 			if (info.getPhoneNumber().equalsIgnoreCase(message.getSenderMsisdn())) {
 				callbackHandler = info.getHandler();
 				break;
 			}
 		}
-		System.out.println("CallbackHandler: " + callbackHandler);
+		LOG.debug("CallbackHandler %s", callbackHandler);
 		
 		if (handler != null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false) {
 			//if there is a keyword in the message and the callback handler doesn't seem
@@ -152,14 +168,18 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			//if there is no callback out on the message, give it to a keyword handler
 			handler.handleMessage(message);
 		}
+		else {
+			LOG.error("No Handler Found: %s",  message.getTextContent());
+		}
 	}
 	
 	public static void registerCallback(String msisdn, CallbackHandler handler){
+		LOG.debug("registerCallback(%s, %s)", msisdn, handler);
 		if (callbacks == null) {
 			callbacks = new ArrayList<CallbackInfo>();
 		}
 		//if there is already a callback out on that phone number, do nothing
-		for (CallbackInfo info:callbacks) {
+		for (CallbackInfo info : callbacks) {
 			if (info.getPhoneNumber().equalsIgnoreCase(msisdn)) {
 				return;
 			}
@@ -167,10 +187,11 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		callbacks.add(new CallbackInfo(msisdn, handler));
 	}
 	
-	public static void unregisterCallback(String msisdn){
+	public static void unregisterCallback(String msisdn) {
+		LOG.debug("unregisterCallback(%s)", msisdn);
 		if (callbacks != null) {
 			ArrayList<CallbackInfo> toRemove = new ArrayList<CallbackInfo>();
-			for (CallbackInfo info:callbacks) {
+			for (CallbackInfo info : callbacks) {
 				if (info.getPhoneNumber().equalsIgnoreCase(msisdn)){
 					info.getHandler().callBackTimedOut(msisdn);
 					toRemove.add(info);
@@ -180,8 +201,9 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		}
 	}
 	
-	public static void unregisterCallback(CallbackInfo info){
-		unregisterCallback(info.getPhoneNumber());
+	public static void unregisterCallback(CallbackInfo callback){
+		LOG.debug("unregisterCallback(%s)", callback);
+		unregisterCallback(callback.getPhoneNumber());
 	}
 
 }

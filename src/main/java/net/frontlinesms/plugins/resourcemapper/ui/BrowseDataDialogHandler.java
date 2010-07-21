@@ -26,15 +26,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
@@ -54,7 +53,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(ManageFieldsDialogHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(BrowseDataDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/resourcemapper/browseDataDialog.xml";
 	
 	private UiGeneratorController ui;
@@ -76,7 +75,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	private Object textHospital;
 	
 	public BrowseDataDialogHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) { 
-		System.out.println("BrowseDataDialogHandler");
+		LOG.debug("BrowseDataDialogHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -156,7 +155,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	private void setSelectedContact(HospitalContact contact) {
-		System.out.println("setSelectedContact: "+ contact);
+		LOG.debug("setSelectedContact: %s", contact);
 		if (contact != null) {
 			int index = 0;
 			for (Object comboboxChoice : this.ui.getItems(this.comboSubmitter)) {
@@ -165,7 +164,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 					HospitalContact contactItem = (HospitalContact)attachedObject;
 					if (contact.equals(contactItem)) {
 						this.ui.setSelectedIndex(this.comboSubmitter, index);
-						System.out.println("Selecting Contact: " + contact.getName());
+						LOG.debug("Selecting Contact: %s", contact.getName());
 						break;
 					}
 				}
@@ -195,12 +194,12 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	public void showDateSelecter(Object textField) {
-		System.out.println("showDateSelecter");
+		LOG.debug("showDateSelecter");
 		this.ui.showDateSelecter(textField);
 	}
 	
 	public void saveFieldResponse(Object dialog) throws DuplicateKeyException {
-		System.out.println("saveFieldResponse");
+		LOG.debug("saveFieldResponse");
 		Date dateSubmitted = this.getDateSubmitted();
 		String response = this.ui.getText(this.textResponse);
 		String hospitalId = this.ui.getText(this.textHospital);
@@ -226,21 +225,21 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 				FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), submitter.getPhoneNumber(), null, response);
 				this.messageDao.saveMessage(frontlineMessage);
 				this.fieldResponse.setMessage(frontlineMessage);
-				System.out.println("FrontlineMessage Created!");
+				LOG.debug("FrontlineMessage Created!");
 			}
 			this.fieldResponseDao.updateFieldResponse(this.fieldResponse);
 			this.callback.refreshFieldResponse(this.fieldResponse);
 			this.ui.remove(dialog);
-			System.out.println("FieldResponse Updated!");
+			LOG.debug("FieldResponse Updated!");
 		}
 		else {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), Long.toString(submitter.getId()), null, response);
 			this.messageDao.saveMessage(frontlineMessage);
-			System.out.println("FrontlineMessage Created!");
+			LOG.debug("FrontlineMessage Created!");
 			
 			FieldResponse newFieldResponse = FieldResponseFactory.createFieldResponse(frontlineMessage, submitter, dateSubmitted, hospitalId, field);
 			if (newFieldResponse != null) {
-				System.out.println("FieldResponse Created!");
+				LOG.debug("FieldResponse Created!");
 				this.fieldResponseDao.saveFieldResponse(newFieldResponse);
 			}
 			else {
@@ -282,12 +281,12 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	public void removeDialog(Object dialog) {
-		System.out.println("removeDialog");
+		LOG.debug("removeDialog");
 		this.ui.remove(dialog);
 	}
 	
 	public void submitterChanged(Object comboSubmitter, Object textHospital) {
-		System.out.println("submitterChanged");
+		LOG.debug("submitterChanged");
 		Object submitterItem = this.ui.getSelectedItem(this.comboSubmitter);
 		if (submitterItem != null) {
 			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(submitterItem);

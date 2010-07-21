@@ -21,12 +21,11 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.search.HospitalContactQueryGenerator;
@@ -44,7 +43,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class ManagePeoplePanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(BrowseDataPanelHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeoplePanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/resourcemapper/managePeoplePanel.xml";
 	
 	private UiGeneratorController ui;
@@ -74,6 +73,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	private HospitalContactDao contactDao;
 	
 	public ManagePeoplePanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
+		LOG.debug("ManagePeoplePanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -119,7 +119,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void addPerson(Object tablePeople) {
-		System.out.println("addPerson");
+		LOG.debug("addPerson");
 		this.editDialog.show(null);
 	}
 	
@@ -132,7 +132,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void deletePerson() {
-		System.out.println("deletePerson");
+		LOG.debug("deletePerson");
 		HospitalContact contact = this.getSelectedContact();
 		if (contact != null) {
 			this.contactDao.deleteHospitalContact(contact);
@@ -148,27 +148,27 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	
 	public void searchByPerson(Object searchPerson, Object tablePeople, Object buttonClear) {
 		String searchText = this.ui.getText(searchPerson);
-		System.out.println("searchByPerson: " + searchText);
+		LOG.debug("searchByPerson: %s", searchText);
 		this.queryGenerator.startSearch(searchText);
 		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 	}
 	
 	public void searchClear(Object searchPerson, Object tablePeople, Object buttonClear) {
-		System.out.println("searchClear");
+		LOG.debug("searchClear");
 		this.ui.setText(searchPerson, "");
 		this.searchByPerson(searchPerson, tablePeople, buttonClear);
 		this.ui.requestFocus(searchPerson);
 	}
 	
 	public void focus(Object component) {
-		System.out.println("focus");
+		LOG.debug("focus");
 		if (component != null) {
 			this.ui.requestFocus(component);
 		}
 	}
 	
 	public void viewResponses(Object tablePeople) {
-		System.out.println("viewResponses");
+		LOG.debug("viewResponses");
 		if (this.callback != null) {
 			this.callback.viewResponses(this.getSelectedContact());
 		}	
@@ -183,26 +183,26 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void doubleClickAction(Object selectedObject) {
-		System.out.println("doubleClickAction");
+		LOG.debug("doubleClickAction");
 		this.editDialog.show(this.getSelectedContact());
 	}
 
 	public void resultsChanged() {
-		System.out.println("resultsChanged");
+		LOG.debug("resultsChanged");
 		selectionChanged(null);
 	}
 
 	public void sortChanged(String column, boolean ascending) {
-		System.out.println(String.format("sortChanged: column=%s ascending=%s", column, ascending));
+		LOG.debug("sortChanged: column=%s ascending=%s", column, ascending);
 		String searchText = this.ui.getText(this.searchPerson);
 		this.queryGenerator.startSearch(searchText, column, ascending);
 	}
 	
 	public void selectionChanged(Object selectedObject) {
-		System.out.println("selectionChanged");
+		LOG.debug("selectionChanged");
 		HospitalContact contact = this.getSelectedContact();
 		if (contact != null) {
-			System.out.println("contact: " + contact.getId());
+			LOG.debug("contact: %s" + contact.getName());
 			this.ui.setEnabled(this.editButton, true);
 			this.ui.setEnabled(this.deleteButton, true);
 			this.ui.setEnabled(this.viewResponsesButton, true);

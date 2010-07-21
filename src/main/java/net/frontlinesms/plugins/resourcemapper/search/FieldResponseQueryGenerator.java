@@ -4,6 +4,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.search.QueryGenerator;
 import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableController;
 
@@ -13,6 +14,8 @@ import com.ibm.icu.util.Calendar;
 
 public class FieldResponseQueryGenerator extends QueryGenerator {
 
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldResponseQueryGenerator.class);
+	
 	public FieldResponseQueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable) {
 		super(appCon, resultsTable);
 	}
@@ -32,7 +35,7 @@ public class FieldResponseQueryGenerator extends QueryGenerator {
 	}
 	
 	private String getSearchQuery(String text, String sortColumn, boolean sortAscending, String dateString, String contact) {
-		System.out.println(String.format("text=%s date=%S contact=%s", text, dateString, contact));
+		LOG.debug("text=%s date=%S contact=%s", text, dateString, contact);
 		String query = "SELECT fr FROM FieldResponse fr";
 		query += " WHERE (lower(fr.hospitalId) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.mapping.name) LIKE lower('%"+text+"%')";
@@ -53,8 +56,6 @@ public class FieldResponseQueryGenerator extends QueryGenerator {
 				endDate.setTime(date);
 				endDate.set(Calendar.HOUR_OF_DAY, 23);
 				endDate.set(Calendar.MINUTE, 59);
-				System.out.println(String.format("Start: %s", startDate.getTime()));
-				System.out.println(String.format("End: %s", endDate.getTime()));
 				query += String.format(" AND fr.dateSubmitted <= %d ", endDate.getTimeInMillis());
 			} 
 			catch (Exception e) {

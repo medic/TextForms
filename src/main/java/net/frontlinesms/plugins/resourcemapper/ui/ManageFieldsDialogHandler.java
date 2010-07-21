@@ -24,13 +24,12 @@ import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineUtils;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingFactory;
@@ -46,7 +45,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	
-	private static Logger LOG = FrontlineUtils.getLogger(ManageFieldsDialogHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManageFieldsDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/resourcemapper/manageFieldsDialog.xml";
 	
 	private UiGeneratorController ui;
@@ -68,7 +67,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	private FieldMappingDao fieldMappingDao;
 	
 	public ManageFieldsDialogHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) { 
-		System.out.println("ManagePeopleDialogHandler");
+		LOG.debug("ManagePeopleDialogHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
@@ -126,7 +125,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	public void saveField(Object dialog) throws DuplicateKeyException {
-		System.out.println("saveField");
+		LOG.debug("saveField");
 		String name = this.ui.getText(this.textName);
 		String abbreviation = this.ui.getText(this.textAbbreviation);
 		String infoSnippet = this.ui.getText(this.textInfoSnippet);
@@ -135,7 +134,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		Set<String> choices = new TreeSet<String>();
 		for (Object comboItem : this.ui.getItems(this.listFieldChoices)) {
 			String comboItemText = this.ui.getAttachedObject(comboItem).toString();
-			System.out.println("comboItemText: " + comboItemText);
+			LOG.debug("comboItemText: %s", comboItemText);
 			choices.add(comboItemText);	
 		}
 		
@@ -160,12 +159,12 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			}
 			else {
 				if (this.field != null) {
-					System.out.println("Existing Field Deleted!");
+					LOG.debug("Existing Field Deleted!");
 					this.fieldMappingDao.deleteFieldMapping(this.field);
 				}
 				Field newField = FieldMappingFactory.createField(name, abbreviation, infoSnippet, type, choices);
 				if (newField != null) {
-					System.out.println("New Field Created!");
+					LOG.debug("New Field Created!");
 					this.fieldMappingDao.saveFieldMapping(newField);
 				}
 				this.callback.refreshField(newField);
@@ -173,18 +172,18 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			}
 		}
 		catch (DuplicateKeyException ex) {
-			System.out.println(ex);
+			LOG.error(ex);
 			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_DUPLICATE_ABBREV));
 		}
 	}
 	
 	public void removeDialog(Object dialog) {
-		System.out.println("removeDialog");
+		LOG.debug("removeDialog");
 		this.ui.remove(dialog);
 	}
 	
 	public void fieldTypeChanged(Object comboTypes, Object panelChoices, Object listChoices) {
-		System.out.println("typeChanged");
+		LOG.debug("typeChanged");
 		Object selectedItem = this.ui.getSelectedItem(comboTypes);
 		Object attachedObject = selectedItem != null ? this.ui.getAttachedObject(selectedItem) : null;
 		String selectedType = attachedObject != null ? attachedObject.toString() : null;
@@ -236,7 +235,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	public void deleteFieldChoice(Object listFieldChoices) {
 		Object choiceToDelete = this.ui.getSelectedItem(listFieldChoices);
 		String choiceText = this.ui.getText(choiceToDelete);
-		System.out.println("choice to delete: " + choiceText);
+		LOG.debug("choice to delete: %s", choiceText);
 		this.ui.remove(choiceToDelete);
 	}
 }

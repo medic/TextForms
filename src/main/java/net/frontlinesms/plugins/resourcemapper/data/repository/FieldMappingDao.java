@@ -52,19 +52,8 @@ public interface FieldMappingDao {
 	
 	public List<String> getAbbreviations();
 	
-	public Field getFieldForAbbreviation(String abbrev);
+	public List<String> getAbbreviationsForField(Field field);
 	
-//	/**
-//	 * Returns the mapping with the designated short code
-//	 * @param shortcode
-//	 * @return
-//	 */
-//	public Field getMappingForShortCode(String shortcode);
-//	
-//	public List<String> getShortCodes();
-//	
-//	public List<String> getAllShortCodes();
-//	
-//	public Field searchAllMappingsForForCode(String shortcode);
+	public Field getFieldForAbbreviation(String abbrev);
 	
 }
