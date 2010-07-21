@@ -69,7 +69,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.appContext = appContext;
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
 		initListeners();
-		debugIncomingMessageEvents();
+		//debugIncomingMessageEvents();
 	}
 	
 	/** @return {@link #frontlineController} */
