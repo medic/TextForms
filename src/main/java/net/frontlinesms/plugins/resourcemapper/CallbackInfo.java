@@ -3,12 +3,13 @@ package net.frontlinesms.plugins.resourcemapper;
 import java.util.Date;
 
 import net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler;
 
 import com.ibm.icu.util.Calendar;
 
+@SuppressWarnings("unchecked")
 public class CallbackInfo {
 	
+	@SuppressWarnings("unused")
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CallbackInfo.class);
 	
 	private String phoneNumber;

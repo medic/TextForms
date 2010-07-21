@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
@@ -26,6 +25,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		super(frontline, appContext);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
@@ -65,14 +65,9 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						try {
-							this.responseDao.saveFieldResponse(response);
-							//TODO generateAndPublishXML(response);
-							LOG.debug("Response Created: %s", response);
-						} 
-						catch (DuplicateKeyException ex) {
-							LOG.error("DuplicateKeyException: %s", ex);
-						}
+						this.responseDao.saveFieldResponse(response);
+						//TODO generateAndPublishXML(response);
+						LOG.debug("Response Created: %s", response);
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
@@ -91,6 +86,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handleCallback(FrontlineMessage message) {
 		LOG.debug("handleCallback: %s", message.getTextContent());
@@ -101,14 +97,9 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						try {
-							this.responseDao.saveFieldResponse(response);
-							//TODO generateAndPublishXML(response);
-							LOG.debug("FieldResponse Created: %s", response.getClass());
-						} 
-						catch (DuplicateKeyException ex) {
-							LOG.error("DuplicateKeyException: %s", ex);
-						}
+						this.responseDao.saveFieldResponse(response);
+						//TODO generateAndPublishXML(response);
+						LOG.debug("FieldResponse Created: %s", response.getClass());
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);

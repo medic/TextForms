@@ -7,7 +7,6 @@ import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 
-import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -77,8 +76,9 @@ public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContac
 		c.add(Restrictions.eq("isBlacklisted", false));
 		return super.getList(c);
 	}
+	
+	@SuppressWarnings("unchecked")
 	public List<String> getAllHospitalIds() {
-		Query q = super.getSession().createQuery(HOSPITAL_ID_QUERY);
-		return q.list();
+		return super.getSession().createQuery(HOSPITAL_ID_QUERY).list();
 	}
 }

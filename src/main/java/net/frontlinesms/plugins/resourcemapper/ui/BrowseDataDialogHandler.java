@@ -1,22 +1,3 @@
-/*
- * FrontlineSMS <http://www.frontlinesms.com>
- * Copyright 2007, 2008 kiwanja
- * 
- * This file is part of FrontlineSMS.
- * 
- * FrontlineSMS is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- * 
- * FrontlineSMS is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with FrontlineSMS. If not, see <http://www.gnu.org/licenses/>.
- */
 package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
@@ -47,10 +28,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 /*
  * BrowseDataDialogHandler
  * @author Dale Zak
- * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
+@SuppressWarnings("unused")
 public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(BrowseDataDialogHandler.class);
@@ -62,6 +41,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	
 	private Object mainDialog;
 	
+	@SuppressWarnings("unchecked")
 	private FieldResponse fieldResponse;
 	private FieldResponseDao fieldResponseDao;
 	private FieldMappingDao fieldMappingDao;
@@ -114,6 +94,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void show(FieldResponse fieldResponse) {
 		this.fieldResponse = fieldResponse;
 		this.ui.setSelectedIndex(this.comboSubmitter, 0);
@@ -198,6 +179,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		this.ui.showDateSelecter(textField);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void saveFieldResponse(Object dialog) throws DuplicateKeyException {
 		LOG.debug("saveFieldResponse");
 		Date dateSubmitted = this.getDateSubmitted();

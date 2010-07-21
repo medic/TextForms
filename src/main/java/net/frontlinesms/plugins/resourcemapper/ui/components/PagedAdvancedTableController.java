@@ -17,6 +17,7 @@ public class PagedAdvancedTableController extends AdvancedTableController {
 	protected String pagingToText;
 	protected String pagingOfText;
 	
+	@SuppressWarnings("static-access")
 	public PagedAdvancedTableController(AdvancedTableActionDelegate delegate, ApplicationContext appcon, UiGeneratorController uiController, Object table, Object panel) {
 			super(delegate, appcon, uiController, table);
 			if (panel == null) {
@@ -75,6 +76,7 @@ public class PagedAdvancedTableController extends AdvancedTableController {
 		uiController.setText(uiController.find(pagingControls, "resultsLabel"), pagingLabel);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setResults(List results){
 		super.setResults(results);

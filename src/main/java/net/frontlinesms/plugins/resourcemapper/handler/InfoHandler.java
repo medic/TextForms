@@ -61,7 +61,9 @@ public class InfoHandler implements MessageHandler {
 		else {
 			LOG.debug("(%s) %s", msisdn, text);
 		}
-		//TODO frontline.sendTextMessage(msisdn, text);
+		if (this.frontline != null) {
+			this.frontline.sendTextMessage(msisdn, text);
+		}
 	}
 
 }

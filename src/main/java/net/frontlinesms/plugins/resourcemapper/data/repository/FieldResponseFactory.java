@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.ServiceLoader;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse;
@@ -42,10 +41,8 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextFiel
 /*
  * FieldResponseFactory
  * @author Dale Zak
- * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
+@SuppressWarnings("unchecked")
 public final class FieldResponseFactory {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldResponseFactory.class);

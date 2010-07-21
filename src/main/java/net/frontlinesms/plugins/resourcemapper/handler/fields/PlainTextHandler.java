@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 
 public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	
+	@SuppressWarnings("unused")
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(PlainTextHandler.class);
 	
 	private static final PlainTextField plainTextField = new PlainTextField();

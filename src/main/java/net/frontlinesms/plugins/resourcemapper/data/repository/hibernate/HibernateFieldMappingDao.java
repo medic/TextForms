@@ -3,7 +3,6 @@ package net.frontlinesms.plugins.resourcemapper.data.repository.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -15,6 +14,7 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 
 public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements FieldMappingDao {
 
+	@SuppressWarnings("unused")
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(HibernateFieldMappingDao.class);
 	
 	protected HibernateFieldMappingDao() {

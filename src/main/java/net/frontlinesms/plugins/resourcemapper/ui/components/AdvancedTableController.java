@@ -3,7 +3,6 @@ package net.frontlinesms.plugins.resourcemapper.ui.components;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +16,6 @@ import javax.swing.ImageIcon;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationContext;
 
@@ -28,6 +26,7 @@ import org.springframework.context.ApplicationContext;
  * @author Dieterich
  * 
  */
+@SuppressWarnings("unchecked")
 public class AdvancedTableController implements ThinletUiEventHandler{
 
 	/** the thinlet table **/
@@ -47,6 +46,7 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 
 	/** The size of the results array */
 	protected int resultsSize;
+	@SuppressWarnings("unused")
 	private SessionFactory sessionFactory;
 	
 	/** Objects for determining text width **/
@@ -77,6 +77,7 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @param uiController The uiContreller
 	 * @param table the table for this controller to control - can be null
 	 */
+	@SuppressWarnings("static-access")
 	public AdvancedTableController(AdvancedTableActionDelegate delegate, ApplicationContext appcon, UiGeneratorController uiController, Object table) {
 		this.uiController = uiController;
 		this.delegate = delegate;
@@ -114,7 +115,6 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @param columnNames an arraylist of the desired titles of the columns
 	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
 	 */
-	@SuppressWarnings("static-access")
 	public void putHeader(Class headerClass, String[] columnNames, String[] columnMethods) {
 		putHeader(headerClass, columnNames, columnMethods, null, null);
 	}
@@ -127,7 +127,6 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @param columnMethods an arraylist of the methods that should be called to get the content of the rows
 	 * @param columnIcons an arraylist of iconpaths to be used for header image
 	 */
-	@SuppressWarnings("static-access")
 	public void putHeader(Class headerClass, String[] columnNames, String[] columnMethods, String[] columnIcons) {
 		putHeader(headerClass, columnNames, columnMethods, columnIcons, null);
 	}
@@ -170,6 +169,7 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * 
 	 * @param results
 	 */
+	@SuppressWarnings("static-access")
 	public void setResults(List results) {
 		resultsSize = results.size();
 		if (results.size() == 0) {
@@ -274,7 +274,6 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	 * @return
 	 */
 	private Object getAutoFitHeader(List results) {
-		Class c = getRealClass(results.get(0).getClass());
 		Object tempHeader = headers.get(currentClass);
 		for (Object column : uiController.getItems(tempHeader)) {
 			uiController.setWidth(column, getColumnWidth(column, results, currentClass));
@@ -382,7 +381,6 @@ public class AdvancedTableController implements ThinletUiEventHandler{
 	}
 
 	public void headerClicked() {
-		 int index = uiController.getSelectedIndex(getCurrentHeader());
 		 Object selected = uiController.getSelectedItem(getCurrentHeader());
 		 String sort = uiController.getChoice(selected, "sort");
 		 boolean ascending = sort.equals("ascent") ?  true : false;

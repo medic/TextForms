@@ -2,9 +2,6 @@ package net.frontlinesms.plugins.resourcemapper.data.repository;
 
 import java.util.List;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
@@ -50,10 +47,25 @@ public interface FieldMappingDao {
 	 */
 	public void updateFieldMappingWithoutDuplicateHandling(Field field);
 	
+
+	/**
+	 * Get all abbreviationss
+	 * @return collection of abbreviations
+	 */
 	public List<String> getAbbreviations();
 	
+	/**
+	 * Get abbreviation for given Field
+	 * @param field Field
+	 * @return collection of abbreviations
+	 */
 	public List<String> getAbbreviationsForField(Field field);
 	
+	/**
+	 * Get Field for associated abbreviation 
+	 * @param abbrev abbreviation
+	 * @return Field
+	 */
 	public Field getFieldForAbbreviation(String abbrev);
 	
 }

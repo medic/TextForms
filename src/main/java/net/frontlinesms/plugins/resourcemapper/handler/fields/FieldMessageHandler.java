@@ -6,7 +6,6 @@ import org.dom4j.Document;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
-import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -41,6 +40,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 	
 	protected abstract boolean isValidResponse(String[] words);
 	
+	@SuppressWarnings("unchecked")
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
@@ -60,14 +60,9 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						try {
-							this.responseDao.saveFieldResponse(response);
-							//TODO generateAndPublishXML(response);
-							LOG.debug("FieldResponse Created: %s", response.getClass());
-						} 
-						catch (DuplicateKeyException ex) {
-							LOG.error("DuplicateKeyException: %s", ex);
-						}
+						this.responseDao.saveFieldResponse(response);
+						//TODO generateAndPublishXML(response);
+						LOG.debug("FieldResponse Created: %s", response.getClass());
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
@@ -117,6 +112,8 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		else {
 			LOG.debug("(%s) %s", msisdn, text);
 		}
-		//TODO frontline.sendTextMessage(msisdn, text);
+		if (this.frontline != null) {
+			this.frontline.sendTextMessage(msisdn, text);
+		}
 	}
 }

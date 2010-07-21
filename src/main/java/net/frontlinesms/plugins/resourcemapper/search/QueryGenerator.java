@@ -140,6 +140,7 @@ public abstract class QueryGenerator {
 	 * and performance measurement
 	 * @param query The query to be run
 	 */
+	@SuppressWarnings("unchecked")
 	protected void runQuery(String query) {
 		LOG.debug(query);
 		//check if session is active

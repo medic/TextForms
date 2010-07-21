@@ -86,6 +86,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		this.panelManageFields.refreshFields(field);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void refreshFieldResponse(FieldResponse fieldResponse) {
 		LOG.debug("refreshFieldResponse: %s", fieldResponse);
 		this.panelBrowseData.refreshFieldResponses(fieldResponse);

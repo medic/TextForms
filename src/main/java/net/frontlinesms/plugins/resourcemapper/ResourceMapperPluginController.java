@@ -83,6 +83,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	}
 	
 	private void initListeners(){
+		LOG.debug("initListeners");
 		listeners = new ArrayList<MessageHandler>();
 		listeners.add(new InfoHandler(frontlineController, appContext));
 		listeners.add(new BooleanHandler(frontlineController, appContext));
@@ -91,6 +92,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		listeners.add(new PlainTextHandler(frontlineController, appContext));
 	}
 	
+	@SuppressWarnings("unused")
 	private void debugIncomingMessageEvents() {
 		LOG.debug("debugIncomingMessageEvents");
 		long dateReceived = Calendar.getInstance().getTimeInMillis();
@@ -111,6 +113,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void incomingMessageEvent(FrontlineMessage message) {
 		LOG.debug("-");
 		LOG.debug("incomingMessageEvent: %s", message.getTextContent());
@@ -181,6 +184,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void registerCallback(String msisdn, CallbackHandler handler){
 		LOG.debug("registerCallback(%s, %s)", msisdn, handler);
 		if (callbacks == null) {

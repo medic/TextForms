@@ -40,10 +40,8 @@ import net.frontlinesms.plugins.resourcemapper.ui.components.PagedAdvancedTableC
 /*
  * BrowseDataPanelHandler
  * @author Dale Zak
- * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
+@SuppressWarnings("unused")
 public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(BrowseDataPanelHandler.class);
@@ -123,7 +121,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 									   new String []{"dateSubmitted", 
 													 "submitter.name",
 													 "hospitalId",
-													 "mapping.name",
+													 "mapping.class",
 													 "mapping.abbreviation",
 													 "mapping.name",
 													 "message.textMessageContent"});
@@ -151,6 +149,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void refreshFieldResponses(FieldResponse fieldResponse) {
 		startSearch();
 	}
@@ -262,6 +261,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.editDialog.show(this.getSelectedFieldResponse());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void deleteField() {
 		LOG.debug("deleteField");
 		FieldResponse fieldResponse = this.getSelectedFieldResponse();
@@ -288,6 +288,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		startSearch();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void selectionChanged(Object selectedObject) {
 		LOG.debug("selectionChanged");
 		FieldResponse fieldResponse = this.getSelectedFieldResponse();
@@ -301,6 +302,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private FieldResponse getSelectedFieldResponse() {
 		final Object selectedRow = this.ui.getSelectedItem(this.tableFields);
 		if (selectedRow != null) {

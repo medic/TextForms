@@ -7,10 +7,8 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldRespons
 /*
  * ResourcesMapperCallback
  * @author Dale Zak
- * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
+@SuppressWarnings("unchecked")
 public interface ResourceMapperCallback {
 	public void viewResponses(HospitalContact contact);
 	public void viewResponses(Field field);

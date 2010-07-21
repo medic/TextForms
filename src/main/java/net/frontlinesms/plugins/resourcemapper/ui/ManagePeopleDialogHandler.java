@@ -35,10 +35,8 @@ import net.frontlinesms.ui.UiGeneratorController;
 /*
  * ManageFieldsPanelHandler
  * @author Dale Zak
- * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
+@SuppressWarnings("unused")
 public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeopleDialogHandler.class);
