@@ -17,6 +17,10 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 	
 	private static final MultiChoiceField multiChoiceField = new MultiChoiceField();
 	
+	public MultiChoiceHandler() {
+		super(null, null);
+	}
+	
 	public MultiChoiceHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}

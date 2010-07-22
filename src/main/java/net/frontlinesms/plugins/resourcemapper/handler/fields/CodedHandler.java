@@ -22,6 +22,10 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CodedHandler.class);
 	protected final HashMap<String, Field> callbacks = new HashMap<String, Field>();
 	
+	public CodedHandler() {
+		super(null, null);
+	}
+	
 	public CodedHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}

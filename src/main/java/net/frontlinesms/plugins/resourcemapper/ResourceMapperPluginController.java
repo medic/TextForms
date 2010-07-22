@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
@@ -16,13 +15,9 @@ import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
-import net.frontlinesms.plugins.resourcemapper.handler.InfoHandler;
 import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.BooleanHandler;
+import net.frontlinesms.plugins.resourcemapper.handler.MessageHandlerFactory;
 import net.frontlinesms.plugins.resourcemapper.handler.fields.CallbackHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.ChecklistHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler;
-import net.frontlinesms.plugins.resourcemapper.handler.fields.PlainTextHandler;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -34,8 +29,6 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperPluginController.class);
 	
 	private FrontlineSMS frontlineController;
-	
-	/** The Application Context for fetching daos and other Spring stuff */
 	private ApplicationContext appContext;
 	
 	private Object mainTab;
@@ -59,16 +52,24 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		return mainTab;
 	}
 	
+	/**
+	 * De-initialize ResourceMapperPluginController
+	 */
 	public void deinit() {
 		LOG.debug("deinit");
 	}
 	
-	public void init(FrontlineSMS frontlineController, ApplicationContext appContext)	throws PluginInitialisationException {
+	/**
+	 * Initialize ResourceMapperPluginController
+	 * @param frontlineController FrontlineSMS
+	 * @param appContext ApplicationContext
+	 */
+	public void init(FrontlineSMS frontlineController, ApplicationContext appContext) throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
 		frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
-		initListeners();
+		this.listeners = MessageHandlerFactory.getHandlers(frontlineController, appContext);
 		//debugIncomingMessageEvents();
 	}
 	
@@ -82,22 +83,12 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		return this.appContext;
 	}
 	
-	private void initListeners(){
-		LOG.debug("initListeners");
-		listeners = new ArrayList<MessageHandler>();
-		listeners.add(new InfoHandler(frontlineController, appContext));
-		listeners.add(new BooleanHandler(frontlineController, appContext));
-		listeners.add(new ChecklistHandler(frontlineController, appContext));
-		listeners.add(new MultiChoiceHandler(frontlineController, appContext));
-		listeners.add(new PlainTextHandler(frontlineController, appContext));
-	}
-	
 	@SuppressWarnings("unused")
 	private void debugIncomingMessageEvents() {
 		LOG.debug("debugIncomingMessageEvents");
 		long dateReceived = Calendar.getInstance().getTimeInMillis();
 		String senderMsisdn = "306.341.3644";	
-		for (String message : new String[] {"info hosp", "help hosp", "? hosp", "hosp", 
+		for (String message : new String[] {"info hosp", "help city", "? power", "hosp", 
 											"hosp Saskatoon RUH", "city Saskatoon",
 											"power", "power yes", "power true", "power y", "power t", "power 1",
 											"power no", "power false", "power n", "power f", "power 0",
@@ -105,17 +96,21 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 											"info day", "day", "1", "day", "tuesday",
 											"day 1", "day 7", "day monday",
 											"pet", "pet 1", "pet 3", "pet cat", "pet cat, dog", "pet 1, cat", "pet cat, shark, dog",
-											"invalid", ""
+											"invalid", "1", ""
 											}) {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
 			this.messageDao.saveMessage(frontlineMessage);
 			incomingMessageEvent(frontlineMessage);
 		}
 	}
-	
+
+	/**
+	 * Handle incoming messages to FrontlineSMS
+	 * @param message FrontlineMessage
+	 */
 	@SuppressWarnings("unchecked")
 	public void incomingMessageEvent(FrontlineMessage message) {
-		LOG.debug("-");
+		LOG.debug(" ");
 		LOG.debug("incomingMessageEvent: %s", message.getTextContent());
 		if (callbacks == null) {
 			callbacks = new ArrayList<CallbackInfo>();
@@ -139,7 +134,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		
 		//see if there is a handler that wants to handle the message
 		MessageHandler handler = null;
-		for (MessageHandler listener: this.listeners) {
+		for (MessageHandler listener : this.listeners) {
 			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
 			if (words.length > 0) {
 				for (String keyword : listener.getKeywords()) {
@@ -150,11 +145,13 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				}			
 			}
 		}	
-		//LOG.debug("MessageHandler: %s", handler);
+		if (handler != null) {
+			LOG.debug("Handler Detected: %s", handler.getClass().getSimpleName());
+		}
 		
 		//now, see if there is a callback out on that message
 		CallbackHandler callbackHandler = null;
-		for (CallbackInfo info: callbacks) {
+		for (CallbackInfo info : callbacks) {
 			if (info.getPhoneNumber().equalsIgnoreCase(message.getSenderMsisdn())) {
 				callbackHandler = info.getHandler();
 				break;
@@ -180,10 +177,15 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			handler.handleMessage(message);
 		}
 		else {
-			LOG.error("No Handler Found: %s",  message.getTextContent());
+			LOG.error("No Handler Found For Message '%s'",  message.getTextContent());
 		}
 	}
 	
+	/**
+	 * Register callback
+	 * @param msisdn HospitalContact phone number
+	 * @param handler CallbackHandler
+	 */
 	@SuppressWarnings("unchecked")
 	public static void registerCallback(String msisdn, CallbackHandler handler){
 		LOG.debug("registerCallback(%s, %s)", msisdn, handler);
@@ -199,6 +201,10 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		callbacks.add(new CallbackInfo(msisdn, handler));
 	}
 	
+	/**
+	 * Unregister callback
+	 * @param msisdn HospitalContact phone number 
+	 */
 	public static void unregisterCallback(String msisdn) {
 		LOG.debug("unregisterCallback(%s)", msisdn);
 		if (callbacks != null) {
@@ -213,6 +219,10 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		}
 	}
 	
+	/**
+	 * Unregister callback
+	 * @param callback CallbackInfo
+	 */
 	public static void unregisterCallback(CallbackInfo callback) {
 		LOG.debug("unregisterCallback(%s)", callback);
 		unregisterCallback(callback.getPhoneNumber());

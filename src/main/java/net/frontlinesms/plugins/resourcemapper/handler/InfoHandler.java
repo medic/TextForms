@@ -20,20 +20,35 @@ public class InfoHandler implements MessageHandler {
 	protected ApplicationContext appContext;
 	protected FieldMappingDao mappingDao;
 	
+	public InfoHandler() {
+		this(null, null);
+	}
+	
 	public InfoHandler(FrontlineSMS frontline, ApplicationContext appContext) {
+		setFrontline(frontline);
+		setApplicationContext(appContext);
+	}
+	
+	public void setFrontline(FrontlineSMS frontline) {
 		this.frontline = frontline;
+	}
+	
+	public void setApplicationContext(ApplicationContext appContext) { 
 		this.appContext = appContext;
-		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+		if (appContext != null) {
+			this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+		}
 	}
 	
 	public Collection<String> getKeywords() {
+		//TODO load these values from properties file
 		List<String> results = new ArrayList<String>();
 		results.add("info");
 		results.add("help");
 		results.add("?");
 		return results;
 	}
-
+	
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ");

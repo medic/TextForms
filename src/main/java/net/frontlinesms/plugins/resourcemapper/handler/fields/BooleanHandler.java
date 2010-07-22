@@ -15,6 +15,10 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	
 	private static final BooleanField booleanField = new BooleanField();
 	
+	public BooleanHandler() {
+		super(null, null);
+	}
+	
 	public BooleanHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}

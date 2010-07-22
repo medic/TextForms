@@ -17,6 +17,10 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	
 	private static final ChecklistField checklistField = new ChecklistField();
 	
+	public ChecklistHandler() {
+		super(null, null);
+	}
+	
 	public ChecklistHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}

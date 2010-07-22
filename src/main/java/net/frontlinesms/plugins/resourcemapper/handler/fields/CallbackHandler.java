@@ -8,6 +8,10 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 public abstract class CallbackHandler<M extends Field> extends FieldMessageHandler<M> {
 
+	public CallbackHandler() {
+		super(null, null);
+	}
+	
 	public CallbackHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}

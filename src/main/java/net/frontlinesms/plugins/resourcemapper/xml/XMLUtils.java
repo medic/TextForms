@@ -8,17 +8,14 @@ import org.apache.abdera.model.AtomDate;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.dom4j.Namespace;
 import org.dom4j.tree.DefaultDocument;
 
 public class XMLUtils {
-
 	
+	@SuppressWarnings("unchecked")
 	public static Document getInitializedDocument(FieldResponse response){
 		DocumentFactory factory = DocumentFactory.getInstance();
 		Document doc = factory.createDocument();
-		Namespace atom = new Namespace("atom","http://www.w3.org/2005/Atom");
-		Namespace have = new Namespace("have","urn:oasis:names:tc:emergency:EDXL:HAVE:1.0");
 		doc.addElement("atom:entry")
 				.addNamespace("atom", "http://www.w3.org/2005/Atom")
 				.addNamespace("have", "urn:oasis:names:tc:emergency:EDXL:HAVE:1.0");

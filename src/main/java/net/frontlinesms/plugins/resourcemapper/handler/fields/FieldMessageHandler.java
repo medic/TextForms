@@ -31,12 +31,26 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 	protected FieldResponseDao responseDao;
 	protected HospitalContactDao contactDao;
 	
+	public FieldMessageHandler() {
+		this(null, null);
+	}
+	
 	public FieldMessageHandler(FrontlineSMS frontline, ApplicationContext appContext){
+		setFrontline(frontline);
+		setApplicationContext(appContext);
+	}
+	
+	public void setFrontline(FrontlineSMS frontline) {
 		this.frontline = frontline;
+	}
+	
+	public void setApplicationContext(ApplicationContext appContext) { 
 		this.appContext = appContext;
-		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
-		this.responseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
-		this.contactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		if (appContext != null) {
+			this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+			this.responseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
+			this.contactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		}
 	}
 	
 	protected abstract boolean isValidResponse(String[] words);

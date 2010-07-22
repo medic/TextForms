@@ -15,6 +15,10 @@ public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	
 	private static final PlainTextField plainTextField = new PlainTextField();
 	
+	public PlainTextHandler() {
+		super(null, null);
+	}
+	
 	public PlainTextHandler(FrontlineSMS frontline, ApplicationContext appContext) {
 		super(frontline, appContext);
 	}
