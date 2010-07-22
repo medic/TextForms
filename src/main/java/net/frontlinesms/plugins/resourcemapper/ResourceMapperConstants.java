@@ -18,7 +18,7 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_RESPONSE = "plugins.resourcemapper.table.response";
 	public static final String TABLE_DATE = "plugins.resourcemapper.table.date";
 	public static final String TABLE_SUBMITTER = "plugins.resourcemapper.table.submitter";
-	public static final String TABLE_ABBREV = "plugins.resourcemapper.table.abbreviation";
+	public static final String TABLE_KEYWORD = "plugins.resourcemapper.table.keyword";
 	public static final String TABLE_HOSPITAL = "plugins.resourcemapper.table.hospital";
 	public static final String TABLE_TYPE = "plugins.resourcemapper.table.type";
 	public static final String TABLE_PHONE = "plugins.resourcemapper.table.phone";
@@ -37,7 +37,7 @@ public final class ResourceMapperConstants {
 	public static final String BOOLEAN_TRUE = "plugins.resourcemapper.true";
 	public static final String BOOLEAN_FALSE = "plugins.resourcemapper.false";
 	
-	public static final String ALERT_DUPLICATE_ABBREV = "plugins.resourcemapper.alert.duplicate.abbrev";
+	public static final String ALERT_DUPLICATE_KEYWORD = "plugins.resourcemapper.alert.duplicate.keyword";
 	public static final String ALERT_ERROR_CREATE_RESPONSE = "plugins.resourcemapper.alert.create.response";
 	public static final String ALERT_ERROR_SAVE_RESPONSE = "plugins.resourcemapper.alert.save.response";
 	public static final String ALERT_MISSING_CONTACT_NAME = "plugins.resourcemapper.alert.missing.contact.name";
@@ -45,7 +45,7 @@ public final class ResourceMapperConstants {
 	public static final String ALERT_MISSING_CONTACT_PHONE = "plugins.resourcemapper.alert.missing.contact.phone";
 	public static final String ALERT_MISSING_CONTACT_EMAIL = "plugins.resourcemapper.alert.missing.contact.email";	
 	public static final String ALERT_MISSING_FIELD_NAME = "plugins.resourcemapper.alert.missing.field.name";
-	public static final String ALERT_MISSING_FIELD_ABBREV = "plugins.resourcemapper.alert.missing.field.abbrev";
+	public static final String ALERT_MISSING_FIELD_KEYWORD = "plugins.resourcemapper.alert.missing.field.keyword";
 	public static final String ALERT_MISSING_FIELD_TYPE = "plugins.resourcemapper.alert.missing.field.type";
 	public static final String ALERT_MISSING_RESPONSE_SUBMITTER = "plugins.resourcemapper.alert.missing.response.submitter";
 	public static final String ALERT_MISSING_RESPONSE_FIELD = "plugins.resourcemapper.alert.missing.response.field";	

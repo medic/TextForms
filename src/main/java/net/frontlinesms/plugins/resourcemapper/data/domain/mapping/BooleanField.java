@@ -17,8 +17,8 @@ public class BooleanField extends CodedField {
 		this(null, null);
 	}
 	
-	public BooleanField(String fullName, String abbreviation) {
-		super(fullName, abbreviation, null);
+	public BooleanField(String fullName, String keyword) {
+		super(fullName, keyword, null);
 		List<String> yesAndNo = new ArrayList<String>();
 		//the only possibilities are 0 and 1, since this is a boolean field
 		yesAndNo.add("0");

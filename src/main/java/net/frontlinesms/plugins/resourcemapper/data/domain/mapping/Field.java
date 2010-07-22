@@ -28,9 +28,9 @@ public abstract class Field {
 	
 	public Field() {}
 	
-	public Field(String name, String abbreviation) {
+	public Field(String name, String keyword) {
 		this.name = name;
-		this.abbreviation = abbreviation;
+		this.keyword = keyword;
 	}
 	
 	@Id 
@@ -57,17 +57,17 @@ public abstract class Field {
 	}
 	
 	/**
-	 * The 'textable' abbreviation for this field
+	 * The 'textable' keyword for this field
 	 */
-	@Column(name="abbreviation", unique=true, nullable=false)
-	protected String abbreviation;
+	@Column(name="keyword", unique=true, nullable=false)
+	protected String keyword;
 	
-	public String getAbbreviation() {
-		return abbreviation;
+	public String getKeyword() {
+		return keyword;
 	}
 	
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 	
 	/**

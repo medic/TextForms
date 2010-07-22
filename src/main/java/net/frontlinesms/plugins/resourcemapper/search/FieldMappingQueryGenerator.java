@@ -24,7 +24,7 @@ public class FieldMappingQueryGenerator extends QueryGenerator {
 	private String getSearchQuery(String text, String sortColumn, boolean sortAscending) {
 		String query = "SELECT f FROM Field f";
 		query += " WHERE lower(f.name) LIKE lower('%"+text+"%')";
-		query += " OR lower(f.abbreviation) LIKE lower('%"+text+"%')";
+		query += " OR lower(f.keyword) LIKE lower('%"+text+"%')";
 		if (sortColumn != null && sortColumn.length() > 0) {
 			if (sortAscending) {
 				query += String.format(" ORDER BY f.%s ASC", sortColumn);

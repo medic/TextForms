@@ -39,7 +39,7 @@ public class FieldResponseQueryGenerator extends QueryGenerator {
 		String query = "SELECT fr FROM FieldResponse fr";
 		query += " WHERE (lower(fr.hospitalId) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.mapping.name) LIKE lower('%"+text+"%')";
-		query += " OR lower(fr.mapping.abbreviation) LIKE lower('%"+text+"%'))";
+		query += " OR lower(fr.mapping.keyword) LIKE lower('%"+text+"%'))";
 		if (contact != null && contact.length() > 0) {
 			query += " AND lower(fr.submitter.name) LIKE lower('%"+contact+"%')";
 		}

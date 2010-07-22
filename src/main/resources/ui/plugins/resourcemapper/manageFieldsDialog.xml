@@ -4,8 +4,8 @@
 	<label name="labelName" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.fieldname" for="textName" valign="top"/>
 	<textarea name="textName" rows="1" columns="50" weightx="1"/>
 	
-	<label name="labelAbbreviation" text="i18n.plugins.resourcemapper.abbreviation" icon="/icons/description.png" for="textAbbreviation" valign="top" />
-	<textarea name="textAbbreviation"  rows="1" columns="50" weightx="1" />
+	<label name="labelKeyword" text="i18n.plugins.resourcemapper.keyword" icon="/icons/description.png" for="textKeyword" valign="top" />
+	<textarea name="textKeyword"  rows="1" columns="50" weightx="1" />
 	
 	<label name="labelFieldTypes" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" for="comboFieldTypes" valign="top" />
 	<combobox name="comboFieldTypes" editable="false" action="fieldTypeChanged(this, panelFieldChoices, listFieldChoices)" weightx="1"/>

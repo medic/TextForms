@@ -87,7 +87,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		this.ui.removeAll(this.comboFieldTypes);
 		this.ui.add(this.comboFieldTypes, this.ui.createComboboxChoice("", null));
 		for (Field fieldClass : this.fieldMappingDao.getAllFieldMappings()) {
-			String fieldDisplayName = String.format("%s : %s (%s)", fieldClass.getName(), fieldClass.getAbbreviation(), fieldClass.getTypeLabel());
+			String fieldDisplayName = String.format("%s : %s (%s)", fieldClass.getName(), fieldClass.getKeyword(), fieldClass.getTypeLabel());
 			Object comboBoxChoice = this.ui.createComboboxChoice(fieldDisplayName, fieldClass);
 			this.ui.setIcon(comboBoxChoice, "/icons/keyword.png");
 			this.ui.add(this.comboFieldTypes, comboBoxChoice);

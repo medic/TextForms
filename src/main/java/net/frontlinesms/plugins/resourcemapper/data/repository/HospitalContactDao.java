@@ -7,7 +7,6 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 
 public interface HospitalContactDao {
 
-	
 	public List<HospitalContact> getAllHospitalContacts();
 	
 	public List<HospitalContact> getAllHospitalContacts(int startIndex, int limit);

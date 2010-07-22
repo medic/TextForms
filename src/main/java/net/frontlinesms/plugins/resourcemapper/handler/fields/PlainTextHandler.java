@@ -24,7 +24,7 @@ public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	}
 
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getAbbreviationsForField(plainTextField);
+		return this.mappingDao.getKeywordsForField(plainTextField);
 	}
 	
 	protected boolean isValidResponse(String[] words) {

@@ -136,16 +136,16 @@ public abstract class FieldResponse<M extends Field> {
 		return null;
 	}
 	
-	public String getMappingAbbreviation() {
+	public String getMappingKeyword() {
 		if (this.mapping != null) {
-			return this.mapping.getAbbreviation();
+			return this.mapping.getKeyword();
 		}
 		return null;
 	}
 	
 	public String getMappingDisplayName() {
 		if (this.mapping != null) {
-			return String.format("%s : %s (%s)", this.mapping.getName(), this.mapping.getAbbreviation(), this.mapping.getTypeLabel());
+			return String.format("%s : %s (%s)", this.mapping.getName(), this.mapping.getKeyword(), this.mapping.getTypeLabel());
 		}
 		return null;
 	}

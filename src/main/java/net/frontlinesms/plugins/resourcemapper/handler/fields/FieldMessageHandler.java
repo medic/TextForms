@@ -60,7 +60,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
 		if (words.length == 1) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 			}
@@ -69,7 +69,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 			}	
 		}
 		else if (isValidResponse(words)) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {

@@ -54,13 +54,13 @@ public final class FieldMappingFactory {
 		return fieldClasses;
 	}private static List<Field> fieldClasses = null;
 	
-	public static Field createField(String name, String abbrev, String infoSnippet, String type, List<String> choices) {
+	public static Field createField(String name, String keyword, String infoSnippet, String type, List<String> choices) {
 		for (Field fieldClass : getFieldClasses()) {
 			if (fieldClass.getType().equalsIgnoreCase(type)) {
 				try {
 					Field field = fieldClass.getClass().newInstance();
 					field.setName(name);
-					field.setAbbreviation(abbrev);
+					field.setKeyword(keyword);
 					field.setInfoSnippet(infoSnippet);
 					field.setChoices(choices);
 					LOG.debug("Field Created: " + field);

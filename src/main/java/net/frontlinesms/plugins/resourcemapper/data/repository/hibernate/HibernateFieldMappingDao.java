@@ -45,27 +45,27 @@ public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements
 		return super.getAll();
 	}
 
-	public List<String> getAbbreviations() {
-		List<String> abbreviations = new ArrayList<String>();
+	public List<String> getKeywords() {
+		List<String> keywords = new ArrayList<String>();
 		for (Field field : super.getAll()) {
-			abbreviations.add(field.getAbbreviation());
+			keywords.add(field.getKeyword());
 		}
-		return abbreviations;
+		return keywords;
 	}
 	
-	public List<String> getAbbreviationsForField(Field field) {
-		List<String> abbreviations = new ArrayList<String>();
+	public List<String> getKeywordsForField(Field field) {
+		List<String> keywords = new ArrayList<String>();
 		DetachedCriteria criteria = super.getCriterion();
 		criteria.add(Restrictions.eq("class", field.getType()));
 		for (Field f : super.getList(criteria)) {
-			abbreviations.add(f.getAbbreviation());
+			keywords.add(f.getKeyword());
 		}
-		return abbreviations;
+		return keywords;
 	}
 	
-	public Field getFieldForAbbreviation(String abbrev) {
+	public Field getFieldForKeyword(String keyword) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("abbreviation", abbrev));
+		criteria.add(Restrictions.eq("keyword", keyword));
 		return super.getUnique(criteria);
 	}
 	

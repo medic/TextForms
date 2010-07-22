@@ -54,7 +54,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	private Field field;
 	
 	private Object textName;
-	private Object textAbbreviation;
+	private Object textKeyword;
 	private Object textInfoSnippet;
 	private Object comboFieldTypes;
 	private Object listFieldChoices; 
@@ -72,7 +72,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.mainDialog = this.ui.loadComponentFromFile(DIALOG_XML, this);
 		
 		this.textName = this.ui.find(this.mainDialog, "textName");
-		this.textAbbreviation = this.ui.find(this.mainDialog, "textAbbreviation");
+		this.textKeyword = this.ui.find(this.mainDialog, "textKeyword");
 		this.textInfoSnippet = this.ui.find(this.mainDialog, "textInfoSnippet");
 		this.comboFieldTypes = this.ui.find(this.mainDialog, "comboFieldTypes");
 		this.listFieldChoices = this.ui.find(this.mainDialog, "listFieldChoices");
@@ -88,7 +88,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.field = field;
 		if (field != null) {
 			this.ui.setText(this.textName, field.getName());
-			this.ui.setText(this.textAbbreviation, field.getAbbreviation());
+			this.ui.setText(this.textKeyword, field.getKeyword());
 			this.ui.setText(this.textInfoSnippet, field.getInfoSnippet());
 			this.ui.setSelectedIndex(this.comboFieldTypes, -1);
 			for (int index = 0; index < this.ui.getCount(this.comboFieldTypes); index++) {
@@ -104,7 +104,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		}
 		else {
 			this.ui.setText(this.textName, "");
-			this.ui.setText(this.textAbbreviation, "");
+			this.ui.setText(this.textKeyword, "");
 			this.ui.setText(this.textInfoSnippet, "");
 			this.ui.setSelectedIndex(this.comboFieldTypes, 0);
 			this.ui.removeAll(this.listFieldChoices);
@@ -125,7 +125,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	public void saveField(Object dialog) throws DuplicateKeyException {
 		LOG.debug("saveField");
 		String name = this.ui.getText(this.textName);
-		String abbreviation = this.ui.getText(this.textAbbreviation);
+		String keyword = this.ui.getText(this.textKeyword);
 		String infoSnippet = this.ui.getText(this.textInfoSnippet);
 		Object fieldType = this.ui.getSelectedItem(this.comboFieldTypes);
 		String type = (String)this.ui.getAttachedObject(fieldType);
@@ -140,15 +140,15 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			if (name == null || name.length() == 0) {
 				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_NAME));
 			}
-			else if (abbreviation == null || abbreviation.length() == 0) {
-				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_ABBREV));
+			else if (keyword == null || keyword.length() == 0) {
+				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_KEYWORD));
 			}
 			else if (type == null || type.length() == 0) {
 				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_TYPE));
 			}
 			else if (this.field != null && this.field.getType().equalsIgnoreCase(type)) {
 				this.field.setName(name);
-				this.field.setAbbreviation(abbreviation);
+				this.field.setKeyword(keyword);
 				this.field.setInfoSnippet(infoSnippet);
 				this.field.setChoices(choices);
 				this.fieldMappingDao.updateFieldMapping(this.field);
@@ -160,7 +160,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 					LOG.debug("Existing Field Deleted!");
 					this.fieldMappingDao.deleteFieldMapping(this.field);
 				}
-				Field newField = FieldMappingFactory.createField(name, abbreviation, infoSnippet, type, choices);
+				Field newField = FieldMappingFactory.createField(name, keyword, infoSnippet, type, choices);
 				if (newField != null) {
 					LOG.debug("New Field Created!");
 					this.fieldMappingDao.saveFieldMapping(newField);
@@ -171,7 +171,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		}
 		catch (DuplicateKeyException ex) {
 			LOG.error(ex);
-			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_DUPLICATE_ABBREV));
+			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_DUPLICATE_KEYWORD));
 		}
 	}
 	

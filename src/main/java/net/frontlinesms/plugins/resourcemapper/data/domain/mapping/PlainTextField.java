@@ -21,8 +21,8 @@ public class PlainTextField extends Field {
 		super(null, null);
 	}
 
-	public PlainTextField(String fullName, String abbreviation) {
-		super(fullName, abbreviation);
+	public PlainTextField(String fullName, String keyword) {
+		super(fullName, keyword);
 	}
 	
 	@Override

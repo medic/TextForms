@@ -13,6 +13,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.MultiChoiceFi
 
 public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 	
+	@SuppressWarnings("unused")
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(MultiChoiceHandler.class);
 	
 	private static final MultiChoiceField multiChoiceField = new MultiChoiceField();
@@ -26,13 +27,13 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 	}
 
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getAbbreviationsForField(multiChoiceField);
+		return this.mappingDao.getKeywordsForField(multiChoiceField);
 	}
 	
 	@Override
 	protected boolean isValidResponse(String[] words) {
 		if (words != null && words.length > 1) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				List<String> choices = field.getChoices();
 				return isValidInteger(choices, words[1]) || isValidString(choices, words[1]);
@@ -51,7 +52,6 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 				return true;
 			}
 			else {
-				LOG.error("Choices: %s Invalid: %s", choices, message.getTextContent());
 				return false;
 			}
 		}

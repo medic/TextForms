@@ -1,7 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -14,16 +13,11 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 public class ChecklistField extends CodedField {
 	
 	public ChecklistField() {
-		super();
+		super(null, null, null);
 	}
 	
-	public ChecklistField(String name, String abbreviation, List<String> choices) {
-		super(name, abbreviation, choices);
-	}
-
-	public ChecklistField(String shortCode, String pathToElement) {
-		super(shortCode, pathToElement);
-		this.setChoices(new ArrayList<String>());
+	public ChecklistField(String name, String keyword, List<String> choices) {
+		super(name, keyword, choices);
 	}
 
 	@Override

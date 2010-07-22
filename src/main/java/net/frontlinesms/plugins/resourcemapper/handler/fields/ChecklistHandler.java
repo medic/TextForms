@@ -26,7 +26,7 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	}
 
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getAbbreviationsForField(checklistField);
+		return this.mappingDao.getKeywordsForField(checklistField);
 	}
 	
 	@Override
@@ -39,13 +39,13 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 		Field field = this.callbacks.get(message.getSenderMsisdn());
 		if (field != null) {
 			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
-			return words != null && words.length == 1 && areValidChoices(field.getAbbreviation(), words[0]);
+			return words != null && words.length == 1 && areValidChoices(field.getKeyword(), words[0]);
 		}
 		return false;
 	}
 	
 	private boolean areValidChoices(String keyword, String words) {
-		Field field = this.mappingDao.getFieldForAbbreviation(keyword);
+		Field field = this.mappingDao.getFieldForKeyword(keyword);
 		if (field != null) {
 			List<String> choices = field.getChoices();
 			LOG.debug("keyword:%s words:%s choices:%s", keyword, words, choices);

@@ -17,15 +17,15 @@ public class MultiChoiceField extends CodedField {
 		super();
 	}
 	
-	public MultiChoiceField(String name, String abbreviation, List<String> choices) {
-		super(name, abbreviation, choices);
-	}
-
-	public MultiChoiceField(String shortCode, String pathToElement) {
-		super(shortCode, pathToElement);
+	public MultiChoiceField(String name, String keyword) {
+		super(name, keyword);
 		this.setChoices(new ArrayList<String>());
 	}
-
+		
+	public MultiChoiceField(String name, String keyword, List<String> choices) {
+		super(name, keyword, choices);
+	}
+		
 	@Override
 	public String getType() {
 		return "multichoice";

@@ -24,7 +24,7 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	}
 
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getAbbreviationsForField(booleanField);
+		return this.mappingDao.getKeywordsForField(booleanField);
 	}
 	
 	@Override

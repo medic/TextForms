@@ -16,8 +16,8 @@
 		<label name="labelName" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.fieldname" valign="top"/>
 		<label name="labelNameValue"  weightx="1" font="bold 12"/>
 		
-		<label name="labelAbbreviation" text="i18n.plugins.resourcemapper.abbreviation" icon="/icons/description.png" valign="top" />
-		<label name="labelAbbreviationValue" weightx="1"  font="bold 12"/>
+		<label name="labelKeyword" text="i18n.plugins.resourcemapper.keyword" icon="/icons/description.png" valign="top" />
+		<label name="labelKeywordValue" weightx="1"  font="bold 12"/>
 		
 		<label name="labelType" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" valign="top" />
 		<label name="labelTypeValue" weightx="1" font="bold 12"/>

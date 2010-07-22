@@ -3,14 +3,12 @@ package net.frontlinesms.plugins.resourcemapper;
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.listener.IncomingMessageListener;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
@@ -36,7 +34,6 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	private List<MessageHandler> listeners;
 	private static ArrayList<CallbackInfo> callbacks;
 	private ResourceMapperThinletTabController tabController;
-	private MessageDao messageDao;
 	
 	public String getName() {
 		return getI18NString("resourcemapper.tab.title");
@@ -68,9 +65,13 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.frontlineController = frontlineController;
 		frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
-		this.messageDao = (MessageDao)appContext.getBean("messageDao");
 		this.listeners = MessageHandlerFactory.getHandlers(frontlineController, appContext);
-		//debugIncomingMessageEvents();
+		
+		//Un-comment to generate debug information
+//		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+//		resourceMapperDebug.createDebugContacts();
+//		resourceMapperDebug.createDebugFields();
+//		resourceMapperDebug.createDebugResponses();
 	}
 	
 	/** @return {@link #frontlineController} */
@@ -83,27 +84,6 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		return this.appContext;
 	}
 	
-	@SuppressWarnings("unused")
-	private void debugIncomingMessageEvents() {
-		LOG.debug("debugIncomingMessageEvents");
-		long dateReceived = Calendar.getInstance().getTimeInMillis();
-		String senderMsisdn = "306.341.3644";	
-		for (String message : new String[] {"info hosp", "help city", "? power", "hosp", 
-											"hosp Saskatoon RUH", "city Saskatoon",
-											"power", "power yes", "power true", "power y", "power t", "power 1",
-											"power no", "power false", "power n", "power f", "power 0",
-											"power yyy",
-											"info day", "day", "1", "day", "tuesday",
-											"day 1", "day 7", "day monday",
-											"pet", "pet 1", "pet 3", "pet cat", "pet cat, dog", "pet 1, cat", "pet cat, shark, dog",
-											"invalid", "1", ""
-											}) {
-			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
-			this.messageDao.saveMessage(frontlineMessage);
-			incomingMessageEvent(frontlineMessage);
-		}
-	}
-
 	/**
 	 * Handle incoming messages to FrontlineSMS
 	 * @param message FrontlineMessage
@@ -145,9 +125,6 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 				}			
 			}
 		}	
-		if (handler != null) {
-			LOG.debug("Handler Detected: %s", handler.getClass().getSimpleName());
-		}
 		
 		//now, see if there is a callback out on that message
 		CallbackHandler callbackHandler = null;

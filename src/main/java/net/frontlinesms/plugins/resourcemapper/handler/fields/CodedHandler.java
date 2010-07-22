@@ -37,7 +37,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		String content = message.getTextContent().replaceFirst("[\\s]", " ");
 		String[] words = content.split(" ", 2);
 		if (words.length == 1) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				if (field.getChoices() != null) {
 					StringBuilder reply = new StringBuilder();
@@ -53,7 +53,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 					sendReply(message.getSenderMsisdn(), reply.toString(), false);
 					LOG.debug("Register Callback for '%s'", content);
 					ResourceMapperPluginController.registerCallback(message.getSenderMsisdn(), this);
-					this.callbacks.put(message.getSenderMsisdn(), mappingDao.getFieldForAbbreviation(content));
+					this.callbacks.put(message.getSenderMsisdn(), mappingDao.getFieldForKeyword(content));
 				}
 				else {
 					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
@@ -64,7 +64,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 			}	
 		}
 		else if (isValidResponse(words)) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[0]);
+			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
@@ -155,8 +155,8 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 	}
 	
 	protected boolean isValidInteger(List<String> choices, String answer) {
-		if (isValidInteger(answer)) {
-			int value = Integer.parseInt(answer);
+		if (answer != null && isValidInteger(answer.trim())) {
+			int value = Integer.parseInt(answer.trim());
 			if (value > 0 && value <= choices.size()) {
 				return true;
 			}

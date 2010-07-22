@@ -58,7 +58,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	private Object tableFields;
 	
 	private Object labelNameValue;
-	private Object labelAbbreviationValue;
+	private Object labelKeywordValue;
 	private Object labelTypeValue;
 	private Object labelInfoValue;
 	private Object listChoices;
@@ -84,7 +84,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.panelFields = this.ui.find(this.mainPanel, "panelFields");
 		
 		this.labelNameValue = this.ui.find(this.mainPanel, "labelNameValue");
-		this.labelAbbreviationValue = this.ui.find(this.mainPanel, "labelAbbreviationValue");
+		this.labelKeywordValue = this.ui.find(this.mainPanel, "labelKeywordValue");
 		this.labelTypeValue = this.ui.find(this.mainPanel, "labelTypeValue");
 		this.labelInfoValue = this.ui.find(this.mainPanel, "labelInfoValue");
 		this.listChoices = this.ui.find(this.mainPanel, "listChoices");
@@ -99,11 +99,11 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableFields, this.panelFields);
 		this.tableController.putHeader(Field.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), 
-													getI18NString(ResourceMapperConstants.TABLE_ABBREV), 
+													getI18NString(ResourceMapperConstants.TABLE_KEYWORD), 
 													getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
-									   new String[]{"getName", "getAbbreviation", "getTypeLabel"},
+									   new String[]{"getName", "getKeyword", "getTypeLabel"},
 									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
-									   new String[]{"name", "abbreviation", "class"});
+									   new String[]{"name", "keyword", "class"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -205,7 +205,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setEnabled(this.deleteButton, true);
 			this.ui.setEnabled(this.viewResponsesButton, true);
 			this.ui.setText(this.labelNameValue, field.getName());
-			this.ui.setText(this.labelAbbreviationValue, field.getAbbreviation());
+			this.ui.setText(this.labelKeywordValue, field.getKeyword());
 			this.ui.setText(this.labelTypeValue, field.getTypeLabel());
 			this.ui.setText(this.labelInfoValue, field.getInfoSnippet());
 			this.ui.removeAll(this.listChoices);
@@ -225,7 +225,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setEnabled(this.deleteButton, false);
 			this.ui.setEnabled(this.viewResponsesButton, false);
 			this.ui.setText(this.labelNameValue, "");
-			this.ui.setText(this.labelAbbreviationValue, "");
+			this.ui.setText(this.labelKeywordValue, "");
 			this.ui.setText(this.labelTypeValue, "");
 			this.ui.setText(this.labelInfoValue, "");
 			this.ui.removeAll(this.listChoices);

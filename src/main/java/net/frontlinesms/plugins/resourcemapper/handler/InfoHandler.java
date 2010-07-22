@@ -56,7 +56,7 @@ public class InfoHandler implements MessageHandler {
 			sendReply(message.getSenderMsisdn(), "Welcome to ResourceMapper!", false);
 		}
 		else if (words.length == 2) {
-			Field field = this.mappingDao.getFieldForAbbreviation(words[1]);
+			Field field = this.mappingDao.getFieldForKeyword(words[1]);
 			if (field != null) {
 				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 			}

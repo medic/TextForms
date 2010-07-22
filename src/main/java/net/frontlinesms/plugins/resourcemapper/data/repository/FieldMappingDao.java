@@ -49,23 +49,23 @@ public interface FieldMappingDao {
 	
 
 	/**
-	 * Get all abbreviationss
-	 * @return collection of abbreviations
+	 * Get all keywords
+	 * @return collection of keywords
 	 */
-	public List<String> getAbbreviations();
+	public List<String> getKeywords();
 	
 	/**
-	 * Get abbreviation for given Field
+	 * Get keyword for given Field
 	 * @param field Field
-	 * @return collection of abbreviations
+	 * @return collection of keywords
 	 */
-	public List<String> getAbbreviationsForField(Field field);
+	public List<String> getKeywordsForField(Field field);
 	
 	/**
-	 * Get Field for associated abbreviation 
-	 * @param abbrev abbreviation
+	 * Get Field for associated keyword 
+	 * @param keyword keyword
 	 * @return Field
 	 */
-	public Field getFieldForAbbreviation(String abbrev);
+	public Field getFieldForKeyword(String keyword);
 	
 }

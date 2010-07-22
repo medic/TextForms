@@ -21,12 +21,12 @@ public abstract class CodedField extends PlainTextField {
 		super();
 	}
 	
-	public CodedField(String name, String abbreviation) {
-		super(name, abbreviation);
+	public CodedField(String name, String keyword) {
+		super(name, keyword);
 	}
 	
-	public CodedField(String shortCode, String pathToElement, List<String> choices) {
-		super(shortCode, pathToElement);
+	public CodedField(String name, String keyword, List<String> choices) {
+		super(name, keyword);
 		this.choices = choices;
 	}
 	
