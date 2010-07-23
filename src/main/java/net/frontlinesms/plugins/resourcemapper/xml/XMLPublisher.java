@@ -10,13 +10,12 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 public class XMLPublisher {
 
 	public static synchronized void publish(String xmlDocument) {
-		if(ResourceMapperProperties.getInstance().isInDebugMode()){
+		if (ResourceMapperProperties.isDebugMode()) {
 			System.out.println(xmlDocument);
 			return;
 		}
-		try
-		{
-		    URL url = new URL(ResourceMapperProperties.getInstance().getProperties().get("atom.url"));
+		try {
+		    URL url = new URL(ResourceMapperProperties.getPublishURL());
 		    URLConnection con = url.openConnection();
 
 		    // specify that we will send output and accept input
@@ -41,7 +40,7 @@ public class XMLPublisher {
 		    char[] cbuf = new char[ 2048 ];
 		    int num;
 
-		    while ( -1 != (num=reader.read( cbuf )))
+		    while ( -1 != (num=reader.read(cbuf)))
 		    {
 		        buf.append( cbuf, 0, num );
 		    }
@@ -49,8 +48,7 @@ public class XMLPublisher {
 		    String result = buf.toString();
 		    System.err.println( "\nResponse from server after POST:\n" + result );
 		}
-		catch( Throwable t )
-		{
+		catch (Throwable t) {
 		    t.printStackTrace( System.out );
 		}
 

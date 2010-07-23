@@ -7,6 +7,9 @@
 	<label name="labelKeyword" text="i18n.plugins.resourcemapper.keyword" icon="/icons/description.png" for="textKeyword" valign="top" />
 	<textarea name="textKeyword"  rows="1" columns="50" weightx="1" />
 	
+	<label name="labelSchema" text="i18n.plugins.resourcemapper.schema" icon="/icons/httpRequest.png" for="textSchema" valign="top" />
+	<textarea name="textSchema" wrap="true" columns="50" rows="1" weightx="1"/>
+	
 	<label name="labelFieldTypes" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" for="comboFieldTypes" valign="top" />
 	<combobox name="comboFieldTypes" editable="false" action="fieldTypeChanged(this, panelFieldChoices, listFieldChoices)" weightx="1"/>
 	

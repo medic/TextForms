@@ -9,7 +9,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 
 @Entity
-public class CodedResponse<M extends CodedField> extends FieldResponse<M> {
+public abstract class CodedResponse<M extends CodedField> extends FieldResponse<M> {
 
 	public CodedResponse() {
 		super();

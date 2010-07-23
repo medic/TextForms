@@ -62,6 +62,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	private Object labelTypeValue;
 	private Object labelInfoValue;
 	private Object listChoices;
+	private Object labelSchemaValue;
 	
 	private Object editButton;
 	private Object deleteButton;
@@ -88,7 +89,8 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.labelTypeValue = this.ui.find(this.mainPanel, "labelTypeValue");
 		this.labelInfoValue = this.ui.find(this.mainPanel, "labelInfoValue");
 		this.listChoices = this.ui.find(this.mainPanel, "listChoices");
-		
+		this.labelSchemaValue = this.ui.find(this.mainPanel, "labelSchemaValue");
+			
 		this.editDialog = new ManageFieldsDialogHandler(this.ui, this.appContext, callback);
 		this.editButton = this.ui.find(this.mainPanel, "buttonEditField");
 		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteField");
@@ -100,10 +102,11 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.putHeader(Field.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_FIELDNAME), 
 													getI18NString(ResourceMapperConstants.TABLE_KEYWORD), 
-													getI18NString(ResourceMapperConstants.TABLE_TYPE)}, 
-									   new String[]{"getName", "getKeyword", "getTypeLabel"},
-									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png"},
-									   new String[]{"name", "keyword", "class"});
+													getI18NString(ResourceMapperConstants.TABLE_TYPE),
+													getI18NString(ResourceMapperConstants.TABLE_SCHEMA)}, 
+									   new String[]{"getName", "getKeyword", "getTypeLabel", "getSchemaName"},
+									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png", "/icons/httpRequest.png"},
+									   new String[]{"name", "keyword", "class", "schemaName"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -208,6 +211,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelKeywordValue, field.getKeyword());
 			this.ui.setText(this.labelTypeValue, field.getTypeLabel());
 			this.ui.setText(this.labelInfoValue, field.getInfoSnippet());
+			this.ui.setText(this.labelSchemaValue, field.getSchemaName());
 			this.ui.removeAll(this.listChoices);
 			if ("boolean".equalsIgnoreCase(field.getType())) {
 				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
@@ -228,6 +232,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelKeywordValue, "");
 			this.ui.setText(this.labelTypeValue, "");
 			this.ui.setText(this.labelInfoValue, "");
+			this.ui.setText(this.labelSchemaValue, "");
 			this.ui.removeAll(this.listChoices);
 		}
 	}

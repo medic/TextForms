@@ -56,8 +56,7 @@ public class PagedAdvancedTableController extends AdvancedTableController {
 	}
 	
 	private void updatePagingControls(){
-		System.out.println(this.getQueryGenerator().getTotalResults());
-		if(getQueryGenerator().getTotalResults() == 0){
+		if (getQueryGenerator().getTotalResults() == 0) {
 			uiController.setEnabled(uiController.find(pagingControls, "rightPageButton"), false);
 			uiController.setEnabled(uiController.find(pagingControls, "leftPageButton"), false);
 			uiController.setText(uiController.find(pagingControls, "resultsLabel"), this.noResultsText);

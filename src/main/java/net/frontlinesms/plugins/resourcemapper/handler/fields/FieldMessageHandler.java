@@ -141,8 +141,10 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 	
 	protected boolean isValidInteger(String word) {
 		try {
-			Integer.parseInt(word);
-			return true;
+			if (word != null) {
+				Integer.parseInt(word.trim());
+				return true;	
+			}
 		} 
 		catch (NumberFormatException nfe) {
 			//do nothing

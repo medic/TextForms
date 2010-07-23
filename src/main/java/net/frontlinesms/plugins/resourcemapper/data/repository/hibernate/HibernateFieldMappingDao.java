@@ -22,7 +22,12 @@ public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements
 	}
 	
 	public void saveFieldMapping(Field field) throws DuplicateKeyException {
-		super.save(field);
+		try {
+			super.save(field);
+		}
+		catch (Exception ex) {
+			LOG.error("Exception: %s", ex);
+		}
 	}
 
 	public void saveFieldMappingWithoutDuplicateHandling(Field field) {

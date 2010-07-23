@@ -7,21 +7,22 @@ import javax.persistence.Entity;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.MultiChoiceField;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField;
 
 @Entity
-public class MultiChoiceResponse extends CodedResponse<MultiChoiceField> {
+public class DateResponse extends FieldResponse<DateField> {
 
-	public MultiChoiceResponse() {
+	public DateResponse() {
 		super();
 	}
 
-	public MultiChoiceResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, MultiChoiceField mapping) {
+	public DateResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, DateField mapping) {
 		super(message, submitter, dateSubmitted, hospitalId, mapping);
 	}
-	
+
 	@Override
 	public boolean isResponseFor(Field field) {
-		return field.getClass() == MultiChoiceField.class;
+		return field.getClass() == DateField.class;
 	}
+	
 }

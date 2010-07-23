@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.IntegerField;
 
 @Entity
@@ -19,4 +20,9 @@ public class IntegerResponse extends FieldResponse<IntegerField> {
 		super(message, submitter, dateSubmitted, hospitalId, mapping);
 	}
 
+	@Override
+	public boolean isResponseFor(Field field) {
+		return field.getClass() == IntegerField.class;
+	}
+	
 }

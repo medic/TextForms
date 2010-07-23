@@ -14,6 +14,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
@@ -21,6 +22,9 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class FieldResponse<M extends Field> {
 
+	@SuppressWarnings("unused")
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldResponse.class);
+	
 	public FieldResponse() {}
 
 	public FieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, M mapping) {
@@ -152,4 +156,6 @@ public abstract class FieldResponse<M extends Field> {
 	public long getFid() {
 		return fid;
 	}
+	
+	public abstract boolean isResponseFor(Field field);
 }

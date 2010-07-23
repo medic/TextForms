@@ -60,6 +60,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	private Object listFieldChoices; 
 	private Object panelFieldChoices;
 	private Object textFieldChoice;
+	private Object textSchema;
 	private Object buttonFieldAdd;
 	
 	private FieldMappingDao fieldMappingDao;
@@ -74,10 +75,11 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.textName = this.ui.find(this.mainDialog, "textName");
 		this.textKeyword = this.ui.find(this.mainDialog, "textKeyword");
 		this.textInfoSnippet = this.ui.find(this.mainDialog, "textInfoSnippet");
-		this.comboFieldTypes = this.ui.find(this.mainDialog, "comboFieldTypes");
+		this.comboFieldTypes = this.ui.find(this.mainDialog, "comboFieldTypes"); 
 		this.listFieldChoices = this.ui.find(this.mainDialog, "listFieldChoices");
 		this.panelFieldChoices = this.ui.find(this.mainDialog, "panelFieldChoices");
 		this.textFieldChoice = this.ui.find(this.mainDialog, "textFieldChoice");	
+		this.textSchema = this.ui.find(this.mainDialog, "textSchema");
 		this.buttonFieldAdd = this.ui.find(this.mainDialog, "buttonFieldAdd");
 		this.fieldMappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
 		
@@ -90,6 +92,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textName, field.getName());
 			this.ui.setText(this.textKeyword, field.getKeyword());
 			this.ui.setText(this.textInfoSnippet, field.getInfoSnippet());
+			this.ui.setText(this.textSchema, field.getSchemaName());
 			this.ui.setSelectedIndex(this.comboFieldTypes, -1);
 			for (int index = 0; index < this.ui.getCount(this.comboFieldTypes); index++) {
 				Object comboTypeItem = this.ui.getItem(this.comboFieldTypes, index);
@@ -106,6 +109,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textName, "");
 			this.ui.setText(this.textKeyword, "");
 			this.ui.setText(this.textInfoSnippet, "");
+			this.ui.setText(this.textSchema, "");
 			this.ui.setSelectedIndex(this.comboFieldTypes, 0);
 			this.ui.removeAll(this.listFieldChoices);
 		}
@@ -127,6 +131,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		String name = this.ui.getText(this.textName);
 		String keyword = this.ui.getText(this.textKeyword);
 		String infoSnippet = this.ui.getText(this.textInfoSnippet);
+		String schema = this.ui.getText(this.textSchema);
 		Object fieldType = this.ui.getSelectedItem(this.comboFieldTypes);
 		String type = (String)this.ui.getAttachedObject(fieldType);
 		List<String> choices = new ArrayList<String>();
@@ -135,7 +140,6 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			LOG.debug("comboItemText: %s", comboItemText);
 			choices.add(comboItemText);	
 		}
-		
 		try {
 			if (name == null || name.length() == 0) {
 				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_NAME));
@@ -150,6 +154,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 				this.field.setName(name);
 				this.field.setKeyword(keyword);
 				this.field.setInfoSnippet(infoSnippet);
+				this.field.setSchemaName(schema);
 				this.field.setChoices(choices);
 				this.fieldMappingDao.updateFieldMapping(this.field);
 				this.callback.refreshField(this.field);
@@ -160,7 +165,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 					LOG.debug("Existing Field Deleted!");
 					this.fieldMappingDao.deleteFieldMapping(this.field);
 				}
-				Field newField = FieldMappingFactory.createField(name, keyword, infoSnippet, type, choices);
+				Field newField = FieldMappingFactory.createField(name, keyword, infoSnippet, type, schema, choices);
 				if (newField != null) {
 					LOG.debug("New Field Created!");
 					this.fieldMappingDao.saveFieldMapping(newField);

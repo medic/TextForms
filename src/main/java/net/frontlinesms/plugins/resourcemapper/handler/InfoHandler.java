@@ -1,12 +1,12 @@
 package net.frontlinesms.plugins.resourcemapper.handler;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
@@ -41,12 +41,7 @@ public class InfoHandler implements MessageHandler {
 	}
 	
 	public Collection<String> getKeywords() {
-		//TODO load these values from properties file
-		List<String> results = new ArrayList<String>();
-		results.add("info");
-		results.add("help");
-		results.add("?");
-		return results;
+		return Arrays.asList(ResourceMapperProperties.getInfoKeywords());
 	}
 	
 	public void handleMessage(FrontlineMessage message) {

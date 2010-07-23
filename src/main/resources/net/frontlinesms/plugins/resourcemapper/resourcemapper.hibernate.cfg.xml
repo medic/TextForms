@@ -6,6 +6,8 @@
 		
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.IntegerField" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField" />
@@ -13,6 +15,8 @@
 		
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.PlainTextResponse" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.IntegerResponse" />
+		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.DateResponse" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.CodedResponse" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse" />
 		<mapping class="net.frontlinesms.plugins.resourcemapper.data.domain.response.ChecklistResponse" />

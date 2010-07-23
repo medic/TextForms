@@ -5,6 +5,7 @@ import java.util.Collection;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
 
 import org.springframework.context.ApplicationContext;
@@ -35,17 +36,18 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	
 	@Override
 	protected boolean isValidResponse(String[] words) {
-		return words != null && words.length > 1 && isValidBoolean(words[1]);
+		return words != null && words.length == 2 && isValidBoolean(words[1]);
 	}
 	
 	private boolean isValidBoolean(String word) {
-		//TODO move these values into properties file
-		for (String possible : new String [] {"yes", "y", "true", "t", "1", "no", "n", "false", "f", "0"}) {
-			if (possible.equalsIgnoreCase(word)) {
-				return true;
-			}
+		if (word != null) {
+			for (String possible : ResourceMapperProperties.getBooleanValues()) {
+				if (possible.trim().equalsIgnoreCase(word.trim())) {
+					return true;
+				}
+			}	
 		}
-		LOG.error("Invalid Boolean: %s", word);
+		LOG.error("Invalid Boolean Value: %s", word);
 		return false;
 	}
 

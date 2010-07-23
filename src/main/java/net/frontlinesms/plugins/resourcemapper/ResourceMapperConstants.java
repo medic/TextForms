@@ -21,6 +21,7 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_KEYWORD = "plugins.resourcemapper.table.keyword";
 	public static final String TABLE_HOSPITAL = "plugins.resourcemapper.table.hospital";
 	public static final String TABLE_TYPE = "plugins.resourcemapper.table.type";
+	public static final String TABLE_SCHEMA = "plugins.resourcemapper.table.schema";
 	public static final String TABLE_PHONE = "plugins.resourcemapper.table.phone";
 	
 	public static final String TABLE_RESULTS = "plugins.resourcemapper.table.paging.results";
@@ -30,6 +31,7 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_OF = "plugins.resourcemapper.table.paging.of";
 	public static final String TYPE_PLAINTEXT = "plugins.resourcemapper.type.plaintext";
 	public static final String TYPE_INTEGER = "plugins.resourcemapper.type.integer";
+	public static final String TYPE_DATE = "plugins.resourcemapper.type.date";
 	public static final String TYPE_BOOLEAN = "plugins.resourcemapper.type.boolean";
 	public static final String TYPE_CHECKLIST = "plugins.resourcemapper.type.checklist";
 	public static final String TYPE_MULTICHOICE = "plugins.resourcemapper.type.multichoice";

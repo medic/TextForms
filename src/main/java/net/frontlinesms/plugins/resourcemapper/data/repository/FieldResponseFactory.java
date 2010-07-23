@@ -49,7 +49,7 @@ public final class FieldResponseFactory {
 		if (fieldResponseClasses == null) {
 			fieldResponseClasses = new ArrayList<FieldResponse>();
 			for (FieldResponse fieldResponse : ServiceLoader.load(FieldResponse.class)) {
-				LOG.debug("FieldResponse Discovered: %s", fieldResponse);
+				LOG.debug("FieldResponse Discovered: %s", fieldResponse.getClass().getSimpleName());
 				fieldResponseClasses.add(fieldResponse);
 		    }
 		}
@@ -67,7 +67,7 @@ public final class FieldResponseFactory {
 	 */
 	public static FieldResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, Field field) {
 		for (FieldResponse fieldResponseClass : getFieldResponseClasses()) {
-			if (fieldResponseClass.getMappingType().equalsIgnoreCase(field.getType())) {
+			if (fieldResponseClass.isResponseFor(field)) {
 				try {
 					FieldResponse fieldResponse = fieldResponseClass.getClass().newInstance();
 					fieldResponse.setMessage(message);

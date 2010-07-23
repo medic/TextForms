@@ -63,7 +63,7 @@ public final class FieldMappingFactory {
 	 * @param choices Field choices
 	 * @return Field
 	 */
-	public static Field createField(String name, String keyword, String infoSnippet, String type, List<String> choices) {
+	public static Field createField(String name, String keyword, String infoSnippet, String type, String schemaName, List<String> choices) {
 		for (Field fieldClass : getFieldClasses()) {
 			if (fieldClass.getType().equalsIgnoreCase(type)) {
 				try {
@@ -71,6 +71,7 @@ public final class FieldMappingFactory {
 					field.setName(name);
 					field.setKeyword(keyword);
 					field.setInfoSnippet(infoSnippet);
+					field.setSchemaName(schemaName);
 					field.setChoices(choices);
 					LOG.debug("Field Created: %s", field.getClass().getSimpleName());
 					return field;

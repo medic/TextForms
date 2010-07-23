@@ -1,5 +1,6 @@
 net.frontlinesms.plugins.resourcemapper.data.domain.response.PlainTextResponse
 net.frontlinesms.plugins.resourcemapper.data.domain.response.IntegerResponse
 net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse
+net.frontlinesms.plugins.resourcemapper.data.domain.response.DateResponse
 net.frontlinesms.plugins.resourcemapper.data.domain.response.ChecklistResponse
 net.frontlinesms.plugins.resourcemapper.data.domain.response.MultiChoiceResponse

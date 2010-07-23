@@ -2,5 +2,6 @@ net.frontlinesms.plugins.resourcemapper.handler.InfoHandler
 net.frontlinesms.plugins.resourcemapper.handler.fields.PlainTextHandler
 net.frontlinesms.plugins.resourcemapper.handler.fields.IntegerHandler
 net.frontlinesms.plugins.resourcemapper.handler.fields.BooleanHandler
+net.frontlinesms.plugins.resourcemapper.handler.fields.DateHandler
 net.frontlinesms.plugins.resourcemapper.handler.fields.MultiChoiceHandler
 net.frontlinesms.plugins.resourcemapper.handler.fields.ChecklistHandler

@@ -33,7 +33,7 @@ public final class MessageHandlerFactory {
 			LOG.debug("Loading Handlers...");
 			try {
 				for (MessageHandler handler : ServiceLoader.load(MessageHandler.class)) {
-					LOG.debug("Loaded Handler: %s", handler.getClass().getSimpleName());
+					LOG.debug("Loading Handler: %s", handler.getClass().getSimpleName());
 					handler.setFrontline(frontline);
 					handler.setApplicationContext(appContext);
 					handlerClasses.add(handler);

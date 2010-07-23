@@ -22,6 +22,21 @@ public class ResourceMapperLogger extends Logger {
 	public void debug(String format, Object ... args) {
 		debug(String.format(format, args));
 	}
+	
+	public void debug(String format, String [] args) {
+		StringBuffer sb = new StringBuffer();
+		for (String arg : args) {
+			if (sb.length() > 0) {
+				 sb.append(",");
+			}
+			else {
+				 sb.append("[");
+			}
+			sb.append(arg);
+		}
+		sb.append("]");
+		debug(String.format(format, sb));
+	}
 
 	@Override
 	public void debug(Object text) {
@@ -34,6 +49,21 @@ public class ResourceMapperLogger extends Logger {
 	
 	public void error(String format, Object ... args) {
 		error(String.format(format, args));
+	}
+	
+	public void error(String format, String [] args) {
+		StringBuffer sb = new StringBuffer();
+		for (String arg : args) {
+			if (sb.length() > 0) {
+				 sb.append(",");
+			}
+			else {
+				 sb.append("[");
+			}
+			sb.append(arg);
+		}
+		sb.append("]");
+	    error(String.format(format, sb));
 	}
 	
 	@Override
