@@ -31,9 +31,8 @@ public abstract class FieldResponse<M extends Field> {
 		this.mapping = mapping;
 	}
 	
-	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(unique=true,nullable=false,updatable=false)
+	@Column(unique=true, nullable=false, updatable=false)
 	private long fid;
 
 	@OneToOne(cascade={},targetEntity=FrontlineMessage.class)

@@ -138,4 +138,15 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 			this.frontline.sendTextMessage(msisdn, text);
 		}
 	}
+	
+	protected boolean isValidInteger(String word) {
+		try {
+			Integer.parseInt(word);
+			return true;
+		} 
+		catch (NumberFormatException nfe) {
+			//do nothing
+		}
+		return false;
+	}
 }

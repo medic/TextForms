@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.MessageDao;
+import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingFactory;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
@@ -38,8 +39,10 @@ public class ResourceMapperDebug {
 	
 	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
 		try {
-			this.hospitalContactDao.saveHospitalContact(new HospitalContact(name, phoneNumber, emailAddress, active, hospitalId));
-			LOG.debug("Contact Created [%s, %s, %s, %s]", name, phoneNumber, emailAddress, hospitalId);
+			HospitalContact hospitalContact = new HospitalContact(name, phoneNumber, emailAddress, active, hospitalId);
+			LOG.debug("Contact Created [%s, %s, %s, %s]", hospitalContact.getName(), hospitalContact.getPhoneNumber(), hospitalContact.getEmailAddress(), hospitalContact.getHospitalId());
+			this.hospitalContactDao.saveHospitalContact(hospitalContact);
+			LOG.debug("Contact Saved [%s, %s, %s, %s]", hospitalContact.getName(), hospitalContact.getPhoneNumber(), hospitalContact.getEmailAddress(), hospitalContact.getHospitalId());
 		} 
 		catch (DuplicateKeyException ex) {
 			LOG.error("Contact Exists [%s, %s, %s, %s]", name, phoneNumber, emailAddress, hospitalId);
@@ -48,17 +51,22 @@ public class ResourceMapperDebug {
 	
 	public void createDebugFields() {
 		LOG.debug("createDebugFields");
-		createField("Hospital Name", "name", "Plain Text. Reply with 'name' keyword followed by name of hospital.", "plaintext", null);
-		createField("Hospital Power", "power", "Boolean. Reply with 'power' keyword followed by your answer.", "boolean", null);
-		createField("Hospital Type", "type", "Checklist. Reply with 'type' keyword followed by your answers.", "checklist", new String [] {"Military", "University", "Clinic", "Private", "Public"});
-		createField("Hospital Services", "serv", "Multiple Choice. Reply with 'serv' keyword followed by your answer.", "multichoice", new String [] {"Emergency", "Ambulance", "Dental", "MRI", "CT Scan"});
+		createField("Hospital Name", "name", "Reply with 'name' keyword followed by name of hospital.", "plaintext", null);
+		createField("Hospital Power", "power", "Reply with 'power' keyword followed by your boolean answer.", "boolean", null);
+		//createField("Hospital Beds", "beds", "Reply with 'beds' keyword followed by number of beds.", "integer", null);
+		createField("Hospital Type", "type", "Reply with 'type' keyword followed by your checklist answers.", "checklist", 
+						new String [] {"Military", "University", "Clinic", "Private", "Public"});
+		createField("Hospital Services", "serv", "Reply with 'serv' keyword followed by your multiple choice answer.", "multichoice", 
+						new String [] {"Emergency", "Ambulance", "Dental", "MRI", "CT Scan"});
 	}
 	
 	public void createField(String name, String keyword, String infoSnippet, String type, String [] choices) {
 		try {
-			List<String> choiceList = choices != null ? Arrays.asList(choices)  : null;
-			this.fieldMappingDao.saveFieldMapping(FieldMappingFactory.createField(name, keyword, infoSnippet, type, choiceList));
-			LOG.debug("Field Created [%s, %s, %s]", name, keyword, type);
+			List<String> choiceList = choices != null ? Arrays.asList(choices) : null;
+			Field field = FieldMappingFactory.createField(name, keyword, infoSnippet, type, choiceList);
+			LOG.debug("Field Created [%s, %s, %s]", field.getName(), field.getKeyword(), field.getType());
+			this.fieldMappingDao.saveFieldMapping(field);
+			LOG.debug("Field Saved [%s, %s, %s]", field.getName(), field.getKeyword(), field.getType());
 		} 
 		catch (DuplicateKeyException e) {
 			LOG.error("Field Exists [%s, %s, %s]", name, keyword, type);
@@ -86,6 +94,8 @@ public class ResourceMapperDebug {
 											"serv", "1", "serv dental", "serv 2",
 											"serv 0", //invalid service index
 											"serv invalid", //invalid service
+											//"beds 143", 
+											//"beds abc123", //invalid in
 											"invalid", "1", "" //invalid responses
 											}) {
 			createResponse(dateReceived, senderMsisdn, message);
@@ -95,7 +105,9 @@ public class ResourceMapperDebug {
 	public void createResponse(long dateReceived, String senderMsisdn, String message) {
 		try {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
+			LOG.debug("Response Created [%s, %s, %s]", frontlineMessage.getDate(), frontlineMessage.getSenderMsisdn(), frontlineMessage.getTextContent());
 			this.messageDao.saveMessage(frontlineMessage);
+			LOG.debug("Response Saved [%s, %s, %s]", frontlineMessage.getDate(), frontlineMessage.getSenderMsisdn(), frontlineMessage.getTextContent());
 			pluginController.incomingMessageEvent(frontlineMessage);
 		}
 		catch (Exception ex) {

@@ -65,13 +65,13 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.frontlineController = frontlineController;
 		frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
-		this.listeners = MessageHandlerFactory.getHandlers(frontlineController, appContext);
+		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
 		
 		//Un-comment to generate debug information
-//		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
-//		resourceMapperDebug.createDebugContacts();
-//		resourceMapperDebug.createDebugFields();
-//		resourceMapperDebug.createDebugResponses();
+		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+		resourceMapperDebug.createDebugContacts();
+		resourceMapperDebug.createDebugFields();
+		resourceMapperDebug.createDebugResponses();
 	}
 	
 	/** @return {@link #frontlineController} */
@@ -154,7 +154,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 			handler.handleMessage(message);
 		}
 		else {
-			LOG.error("No Handler Found For Message '%s'",  message.getTextContent());
+			LOG.error("No Handler Found For '%s'",  message.getTextContent());
 		}
 	}
 	

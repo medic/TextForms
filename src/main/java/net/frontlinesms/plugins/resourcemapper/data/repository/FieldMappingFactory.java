@@ -37,7 +37,7 @@ public final class FieldMappingFactory {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldMappingFactory.class);
 	
-	/*
+	/**
 	 * Get list of Field classes
 	 * (To add a new Field classes to the project, append a new row to the file
 	 * /resources/META-INF/services/net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field
@@ -47,13 +47,22 @@ public final class FieldMappingFactory {
 		if (fieldClasses == null) {
 			fieldClasses = new ArrayList<Field>();
 			for (Field field : ServiceLoader.load(Field.class)) {
-				LOG.debug("Field Discovered: %s", field);
+				LOG.debug("Field Discovered: %s", field.getClass().getSimpleName());
 				fieldClasses.add(field);
 		    }
 		}
 		return fieldClasses;
 	}private static List<Field> fieldClasses = null;
 	
+	/**
+	 * Create instance of Field for associated type
+	 * @param name Field name
+	 * @param keyword Field keyword
+	 * @param infoSnippet Field info snippet
+	 * @param type Field type
+	 * @param choices Field choices
+	 * @return Field
+	 */
 	public static Field createField(String name, String keyword, String infoSnippet, String type, List<String> choices) {
 		for (Field fieldClass : getFieldClasses()) {
 			if (fieldClass.getType().equalsIgnoreCase(type)) {
@@ -63,16 +72,18 @@ public final class FieldMappingFactory {
 					field.setKeyword(keyword);
 					field.setInfoSnippet(infoSnippet);
 					field.setChoices(choices);
-					LOG.debug("Field Created: " + field);
+					LOG.debug("Field Created: %s", field.getClass().getSimpleName());
 					return field;
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} 
+				catch (InstantiationException ex) {
+					LOG.error("InstantiationException: %s", ex);
+				} 
+				catch (IllegalAccessException ex) {
+					LOG.error("InstantiationException: %s", ex);
 				}
 			}
 		}
-		LOG.error("Unable to find class for type: " + type);
+		LOG.error("Unable to find class for field: %s", type);
 		return null;
 	}
 	

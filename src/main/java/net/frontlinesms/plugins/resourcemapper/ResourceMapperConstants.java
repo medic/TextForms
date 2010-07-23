@@ -28,7 +28,8 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_NO_SEARCH_RESULTS = "plugins.resourcemapper.table.paging.no.search.results";
 	public static final String TABLE_TO = "plugins.resourcemapper.table.paging.to";
 	public static final String TABLE_OF = "plugins.resourcemapper.table.paging.of";
-	public static final String TYPE_PLAIN_TEXT = "plugins.resourcemapper.type.plaintext";
+	public static final String TYPE_PLAINTEXT = "plugins.resourcemapper.type.plaintext";
+	public static final String TYPE_INTEGER = "plugins.resourcemapper.type.integer";
 	public static final String TYPE_BOOLEAN = "plugins.resourcemapper.type.boolean";
 	public static final String TYPE_CHECKLIST = "plugins.resourcemapper.type.checklist";
 	public static final String TYPE_MULTICHOICE = "plugins.resourcemapper.type.multichoice";

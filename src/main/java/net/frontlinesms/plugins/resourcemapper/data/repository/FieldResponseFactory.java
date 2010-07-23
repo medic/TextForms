@@ -27,16 +27,8 @@ import java.util.ServiceLoader;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.BooleanResponse;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.ChecklistResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.MultiChoiceResponse;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.PlainTextResponse;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.MultiChoiceField;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 
 /*
  * FieldResponseFactory
@@ -47,7 +39,7 @@ public final class FieldResponseFactory {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldResponseFactory.class);
 	
-	/*
+	/**
 	 * Get list of FieldResponse classes
 	 * (To add a new Reminder classes to the project, append a new row to the file
 	 * /resources/META-INF/services/net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse
@@ -64,36 +56,38 @@ public final class FieldResponseFactory {
 		return fieldResponseClasses;
 	}private static List<FieldResponse> fieldResponseClasses = null;
 	
+	/**
+	 * Create instance of FieldRespone for associated Field mapping
+	 * @param message FrontlineMessage
+	 * @param submitter HospitalContact
+	 * @param dateSubmitted date submitted
+	 * @param hospitalId Hospital ID
+	 * @param field Field
+	 * @return FieldResponse
+	 */
 	public static FieldResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, Field field) {
-		if (field.getClass() == PlainTextField.class) {
-			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (PlainTextField)field);
+		for (FieldResponse fieldResponseClass : getFieldResponseClasses()) {
+			if (fieldResponseClass.getMappingType().equalsIgnoreCase(field.getType())) {
+				try {
+					FieldResponse fieldResponse = fieldResponseClass.getClass().newInstance();
+					fieldResponse.setMessage(message);
+					fieldResponse.setSubmitter(submitter);
+					fieldResponse.setDateSubmitted(dateSubmitted);
+					fieldResponse.setHospitalId(hospitalId);
+					fieldResponse.setMapping(field);
+					LOG.debug("FieldResponse Created: %s", fieldResponse.getClass().getSimpleName());
+					return fieldResponse;
+				}
+				catch (InstantiationException ex) {
+					LOG.error("InstantiationException: %s", ex);
+				} 
+				catch (IllegalAccessException ex) {
+					LOG.error("InstantiationException: %s", ex);
+				}
+			}
 		}
-		else if (field.getClass() == BooleanField.class) {
-			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (BooleanField)field);
-		}
-		else if (field.getClass() == ChecklistField.class) {
-			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (ChecklistField)field);
-		}
-		else if (field.getClass() == MultiChoiceField.class) {
-			return createFieldResponse(message, submitter, dateSubmitted, hospitalId, (MultiChoiceField)field);
-		}
+		LOG.error("Unable to find class for field: %s", field.getType());
 		return null;
-	}
-	
-	public static PlainTextResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, PlainTextField field) {
-		return new PlainTextResponse(message, submitter, dateSubmitted, hospitalId, field);
-	}
-	
-	public static BooleanResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, BooleanField field) {
-		return new BooleanResponse(message, submitter, dateSubmitted, hospitalId, field);
-	}
-	
-	public static ChecklistResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, ChecklistField field) {
-		return new ChecklistResponse(message, submitter, dateSubmitted, hospitalId, field);
-	}
-	
-	public static MultiChoiceResponse createFieldResponse(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, MultiChoiceField field) {
-		return new MultiChoiceResponse(message, submitter, dateSubmitted, hospitalId, field);
 	}
 	
 }

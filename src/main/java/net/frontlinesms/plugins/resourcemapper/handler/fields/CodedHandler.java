@@ -143,17 +143,6 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		this.callbacks.remove(msisdn);
 	}
 
-	protected boolean isValidInteger(String word) {
-		try {
-			Integer.parseInt(word);
-			return true;
-		} 
-		catch (NumberFormatException nfe) {
-			//do nothing
-		}
-		return false;
-	}
-	
 	protected boolean isValidInteger(List<String> choices, String answer) {
 		if (answer != null && isValidInteger(answer.trim())) {
 			int value = Integer.parseInt(answer.trim());

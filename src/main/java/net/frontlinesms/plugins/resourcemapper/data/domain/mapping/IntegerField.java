@@ -9,41 +9,41 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
- * A field that stores plain text only
- * @author dieterichlawson
+ * A field that stores an integer value
+ * @author Dale Zak
  *
  */
 @Entity
-@DiscriminatorValue(value="plaintext")
-public class PlainTextField extends Field {
+@DiscriminatorValue(value="integer")
+public class IntegerField extends Field {
 
-	public PlainTextField() {
+	public IntegerField() {
 		super(null, null);
 	}
 
-	public PlainTextField(String fullName, String keyword) {
+	public IntegerField(String fullName, String keyword) {
 		super(fullName, keyword);
 	}
 	
 	@Override
 	public void setChoices(List<String> choices) {
-		//do nothing for PlainTextField
+		//do nothing for IntegerField
 	}
 	
 	@Override
 	public List<String> getChoices() {
-		//return nothing for PlainTextField
+		//return nothing for IntegerField
 		return null;
 	}
 	
 	@Override
 	public String getType() {
-		return "plaintext";
+		return "integer";
 	}
 	
 	@Override
 	public String getTypeLabel() {
-		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_PLAINTEXT);
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_INTEGER);
 	}
 
 	@Override
