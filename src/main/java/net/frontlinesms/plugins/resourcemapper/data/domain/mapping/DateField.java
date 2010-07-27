@@ -46,13 +46,4 @@ public class DateField extends Field {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_DATE);
 	}
 
-	@Override
-	public String[] getAdditionalInstructions() {
-		return null;
-	}
-
-	@Override
-	public String getPathToElement() {
-		return null;
-	}
 }

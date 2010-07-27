@@ -25,4 +25,19 @@ public class IntegerResponse extends FieldResponse<IntegerField> {
 		return field.getClass() == IntegerField.class;
 	}
 	
+	@Override
+	public String getResponseValue() {
+		String[] words = this.toWords(2);
+		if (words != null && words.length == 1) {
+			return toIntegerString(words[0]);
+		}
+		else if (words != null && words.length == 2) {
+			return toIntegerString(words[1]);
+		}
+		return null;
+	}
+	
+	private String toIntegerString(String word) {
+		return this.isValidInteger(word) ? word : null;
+	}
 }

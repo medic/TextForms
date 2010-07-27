@@ -73,14 +73,19 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		else {
 			LOG.debug("RELEASE MODE");
 		}
-		LOG.debug("Boolean Values: %s", ResourceMapperProperties.getBooleanValues());
+		LOG.debug("Boolean TRUE Values: %s", ResourceMapperProperties.getBooleanTrueValues());
+		LOG.debug("Boolean FALSE Values: %s", ResourceMapperProperties.getBooleanFalseValues());
 		LOG.debug("Info Keywords: %s", ResourceMapperProperties.getInfoKeywords());
 		
 		//Un-comment to generate debug information
-		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
-		resourceMapperDebug.createDebugContacts();
-		resourceMapperDebug.createDebugFields();
-		resourceMapperDebug.createDebugResponses();
+//		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+//		resourceMapperDebug.createDebugContacts();
+//		resourceMapperDebug.createDebugFields();
+//		resourceMapperDebug.createDebugResponses();
+//		resourceMapperDebug.createResponseOutputs();
+//		resourceMapperDebug.createUploadXMLDocument();
+//		resourceMapperDebug.createUploadJSONDocument();
+//		resourceMapperDebug.createUploadCSVDocument();
 	}
 	
 	/** @return {@link #frontlineController} */

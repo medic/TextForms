@@ -46,13 +46,4 @@ public class IntegerField extends Field {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_INTEGER);
 	}
 
-	@Override
-	public String[] getAdditionalInstructions() {
-		return null;
-	}
-
-	@Override
-	public String getPathToElement() {
-		return null;
-	}
 }

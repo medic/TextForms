@@ -41,11 +41,16 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	
 	private boolean isValidBoolean(String word) {
 		if (word != null) {
-			for (String possible : ResourceMapperProperties.getBooleanValues()) {
-				if (possible.trim().equalsIgnoreCase(word.trim())) {
+			for (String yes : ResourceMapperProperties.getBooleanTrueValues()) {
+				if (yes.trim().equalsIgnoreCase(word.trim())) {
 					return true;
 				}
-			}	
+			}
+			for (String no : ResourceMapperProperties.getBooleanFalseValues()) {
+				if (no.trim().equalsIgnoreCase(word.trim())) {
+					return true;
+				}
+			}
 		}
 		LOG.error("Invalid Boolean Value: %s", word);
 		return false;

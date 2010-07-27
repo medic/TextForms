@@ -24,4 +24,16 @@ public class PlainTextResponse extends FieldResponse<PlainTextField> {
 	public boolean isResponseFor(Field field) {
 		return field.getClass() == PlainTextField.class;
 	}
+	
+	@Override
+	public String getResponseValue() {
+		String[] words = this.toWords(2);
+		if (words != null && words.length == 1) {
+			return words[0].trim();
+		}
+		else if (words != null && words.length == 2) {
+			return words[1].trim();
+		}
+		return null;
+	}
 }

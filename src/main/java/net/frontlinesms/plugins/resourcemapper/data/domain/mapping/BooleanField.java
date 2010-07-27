@@ -47,13 +47,4 @@ public class BooleanField extends CodedField {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.TYPE_BOOLEAN);
 	}
 	
-	@Override
-	public String[] getAdditionalInstructions() {
-		return null;
-	}
-
-	@Override
-	public String getPathToElement() {
-		return null;
-	}
 }

@@ -3,6 +3,7 @@ package net.frontlinesms.plugins.resourcemapper.data.domain.response;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -146,6 +147,13 @@ public abstract class FieldResponse<M extends Field> {
 		return null;
 	}
 	
+	public String getMappingSchema() {
+		if (this.mapping != null) {
+			return this.mapping.getSchemaName();
+		}
+		return null;
+	}
+	
 	public String getMappingDisplayName() {
 		if (this.mapping != null) {
 			return String.format("%s : %s (%s)", this.mapping.getName(), this.mapping.getKeyword(), this.mapping.getTypeLabel());
@@ -158,4 +166,62 @@ public abstract class FieldResponse<M extends Field> {
 	}
 	
 	public abstract boolean isResponseFor(Field field);
+	
+	public abstract String getResponseValue();
+	
+	protected String[] toWords(int limit) {
+		String textContent = this.getMessage().getTextContent();
+		if (textContent != null) {
+			return textContent.replaceFirst("[\\s]", " ").split(" ", limit);
+		}
+		return new String[0];
+	}
+	
+	protected boolean isValidInteger(String word) {
+		try {
+			if (word != null) {
+				Integer.parseInt(word.trim());
+				return true;	
+			}
+		} 
+		catch (NumberFormatException nfe) {
+			//do nothing
+		}
+		return false;
+	}
+	
+	protected boolean isValidInteger(List<String> choices, String answer) {
+		if (answer != null && isValidInteger(answer.trim())) {
+			int value = Integer.parseInt(answer.trim());
+			if (value > 0 && value <= choices.size()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected boolean isValidString(List<String> choices, String answer) {
+		if (choices != null && choices.size() > 0 && answer != null && answer.length() > 0) {
+			String answerTrimmed = answer.trim();
+			for (String choice : choices) {
+				//TODO improve fuzzy string comparison logic
+				if (choice.equalsIgnoreCase(answerTrimmed) || 
+					choice.toLowerCase().startsWith(answerTrimmed.toLowerCase())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	protected String toString(List<String> list) {
+		StringBuffer sb = new StringBuffer();
+		for (String value : list) {
+			if (sb.length() > 0) {
+				 sb.append(",");
+			}
+			sb.append(value);
+		}
+		return sb.toString();
+	}
 }

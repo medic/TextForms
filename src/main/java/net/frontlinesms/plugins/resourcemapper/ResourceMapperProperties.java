@@ -8,7 +8,8 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	
 	private static final String DEBUG_MODE = "debug.mode";
 	private static final String PUBLISH_URL = "publish.url";
-	private static final String BOOLEAN_VALUES = "boolean.values";
+	private static final String BOOLEAN_VALUES_YES = "boolean.values.yes";
+	private static final String BOOLEAN_VALUES_NO = "boolean.values.no";
 	private static final String INFO_KEYWORDS = "info.keywords";
 	private static final String TRUE = "true";
 	private static final String FALSE = "false";
@@ -52,13 +53,22 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 		getInstance().saveToDisk();
 	}
 	
-	public static String [] getBooleanValues() {
-		return getInstance().loadArray(BOOLEAN_VALUES, "yes,true,1,no,false,0");
+	public static String [] getBooleanTrueValues() {
+		return getInstance().loadArray(BOOLEAN_VALUES_YES, "yes,true,1");
 	}
 	
-	public static void setBooleanValues(String [] values) {
-		LOG.debug("setBooleanValues: %s", values);
-		getInstance().saveArray(BOOLEAN_VALUES, values);
+	public static void setBooleanTrueValues(String [] values) {
+		LOG.debug("setBooleanTrueValues: %s", values);
+		getInstance().saveArray(BOOLEAN_VALUES_YES, values);
+	}
+	
+	public static String [] getBooleanFalseValues() {
+		return getInstance().loadArray(BOOLEAN_VALUES_NO, "no,false,0");
+	}
+	
+	public static void setBooleanFalseValues(String [] values) {
+		LOG.debug("setBooleanFalseValues: %s", values);
+		getInstance().saveArray(BOOLEAN_VALUES_NO, values);
 	}
 	
 	public static String [] getInfoKeywords() {

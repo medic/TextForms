@@ -2,6 +2,7 @@ package net.frontlinesms.plugins.resourcemapper;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -10,11 +11,17 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
+import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingFactory;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
+import net.frontlinesms.plugins.resourcemapper.upload.CSVDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.JSONDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.XMLDocument;
 
+@SuppressWarnings("unchecked")
 public class ResourceMapperDebug {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperDebug.class);
@@ -23,12 +30,14 @@ public class ResourceMapperDebug {
 	private MessageDao messageDao;
 	private HospitalContactDao hospitalContactDao;
 	private FieldMappingDao fieldMappingDao;
+	private FieldResponseDao fieldResponseDao;
 	
 	public ResourceMapperDebug(ResourceMapperPluginController pluginController, ApplicationContext appContext) {
 		this.pluginController = pluginController;
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
 		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
 		this.fieldMappingDao = (FieldMappingDao)appContext.getBean("fieldMappingDao");
+		this.fieldResponseDao = (FieldResponseDao)appContext.getBean("fieldResponseDao");
 	}
 	
 	public void createDebugContacts() {
@@ -88,7 +97,8 @@ public class ResourceMapperDebug {
 											"power yes", "power true", "power 1",
 											"power no", "power false", "power 0",
 											"power yyy", //invalid response
-											"type", "military", "type university, Public", "type 1, 3",
+											"type", "military", "type university, Public", "type 1, 3", "type 1-3", "type 1,3-5",
+											"type 3-6", //invalid type range
 											"type 6", //invalid type
 											"type invalid", //invalid type
 											"serv", "1", "serv dental", "serv 2",
@@ -116,4 +126,56 @@ public class ResourceMapperDebug {
 		}
 	}
 	
+	public void createUploadXMLDocument() {
+		LOG.debug("createUploadXMLDocument");
+		
+		XMLDocument document = new XMLDocument("resources");
+		document.addNamespace("status", "http://schemas.google.com/status/2010");
+		document.addNamespace("gs", "http://schemas.google.com/spreadsheets/2006");
+		
+		document.addElement("author", this.getAuthor());
+		
+		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
+			document.addFieldResponse(fieldResponse);
+		}
+		
+		LOG.debug(document.toString());
+	}
+	
+	public void createUploadJSONDocument() {
+		LOG.debug("createUploadJSONDocument");
+		JSONDocument document = new JSONDocument();
+		document.addItem("author", getAuthor());
+		document.addItem("date", new Date());
+		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
+			document.addFieldResponse(fieldResponse);
+		}
+		LOG.debug(document.toString());
+	}
+	
+	public void createUploadCSVDocument() {
+		LOG.debug("createUploadCSVDocument");
+		CSVDocument document = new CSVDocument();
+		document.addItem("author", getAuthor());
+		document.addItem("date", new Date());
+		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
+			document.addFieldResponse(fieldResponse);
+		}
+		LOG.debug(document.toString());
+	}
+	
+	public void createResponseOutputs() {
+		LOG.debug("createResponseOutputs");
+		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
+			LOG.debug("Response: %s", fieldResponse.getMessageText());
+			LOG.debug("%s : %s : %s", fieldResponse.getMappingType(), fieldResponse.getMappingName(), fieldResponse.getResponseValue());
+		}
+	}
+	
+	private String getAuthor() {
+		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
+			return contact.getPhoneNumber();
+		}
+		return null;
+	}
 }
