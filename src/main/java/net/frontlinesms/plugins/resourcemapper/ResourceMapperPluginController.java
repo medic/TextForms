@@ -67,6 +67,7 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.appContext = appContext;
 		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
 		
+		ResourceMapperProperties.setDebugMode(true);
 		if (ResourceMapperProperties.isDebugMode()) {
 			LOG.debug("DEBUG MODE");
 		}
@@ -78,14 +79,15 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		LOG.debug("Info Keywords: %s", ResourceMapperProperties.getInfoKeywords());
 		
 		//Un-comment to generate debug information
-//		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
 //		resourceMapperDebug.createDebugContacts();
 //		resourceMapperDebug.createDebugFields();
 //		resourceMapperDebug.createDebugResponses();
 //		resourceMapperDebug.createResponseOutputs();
-//		resourceMapperDebug.createUploadXMLDocument();
-//		resourceMapperDebug.createUploadJSONDocument();
-//		resourceMapperDebug.createUploadCSVDocument();
+		resourceMapperDebug.createUploadXMLDocument();
+		resourceMapperDebug.createUploadJSONDocument();
+		resourceMapperDebug.createUploadCSVDocument();
+		resourceMapperDebug.createUploadGoogleDocument();
 	}
 	
 	/** @return {@link #frontlineController} */

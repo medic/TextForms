@@ -40,11 +40,16 @@ public class ResourceMapperLogger extends Logger {
 
 	@Override
 	public void debug(Object text) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(this.getName());
-		stringBuilder.append(" - ");
-		stringBuilder.append(text);
-		System.out.println(stringBuilder);
+		if (ResourceMapperProperties.isDebugMode()) {
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append(this.getName());
+			stringBuilder.append(" - ");
+			stringBuilder.append(text);
+			System.out.println(stringBuilder);
+		}
+		else {
+			super.debug(text);
+		}
 	}
 	
 	public void error(String format, Object ... args) {
@@ -68,11 +73,16 @@ public class ResourceMapperLogger extends Logger {
 	
 	@Override
 	public void error(Object text) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(this.getName());
-		stringBuilder.append(" - ");
-		stringBuilder.append(text);
-		System.err.println(stringBuilder);
+		if (ResourceMapperProperties.isDebugMode()) {
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append(this.getName());
+			stringBuilder.append(" - ");
+			stringBuilder.append(text);
+			System.err.println(stringBuilder);
+		}
+		else {
+			super.error(text);
+		}
 	}
 	
 }

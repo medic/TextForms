@@ -1,10 +1,13 @@
 package net.frontlinesms.plugins.resourcemapper.upload;
 
+import java.util.Map;
 import java.util.HashMap;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
@@ -20,9 +23,14 @@ public class XMLDocument extends UploadDocument {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLDocument.class);
 	
-	private final HashMap<String, String> namespaces = new HashMap<String, String>();
+	/**
+	 * Map of Namespaces
+	 */
+	private final Map<String, Namespace> namespaces = new HashMap<String, Namespace>();
 	
-	private String entryElementName;
+	/**
+	 * XML Document
+	 */
 	private Document document;
 	
 	/**
@@ -30,19 +38,9 @@ public class XMLDocument extends UploadDocument {
 	 * @param rootElementName root element name
 	 */
 	public XMLDocument(String rootElementName) {
-		this(rootElementName, null);
-	}
-	
-	/**
-	 * XMLDocument
-	 * @param rootElementName root element name
-	 * @param entryElementName entry element name
-	 */
-	public XMLDocument(String rootElementName, String entryElementName) {
 		DocumentFactory factory = DocumentFactory.getInstance();
 		this.document = factory.createDocument();
 		this.document.addElement(rootElementName);
-		this.entryElementName = entryElementName;
 	}
 	
 	/**
@@ -52,8 +50,8 @@ public class XMLDocument extends UploadDocument {
 	public String toString() {
 		Element rootElement = this.document.getRootElement();
 		//add namespaces
-		for (String key : this.namespaces.keySet()) {
-			rootElement.addNamespace(key, this.namespaces.get(key));
+		for (Namespace namespace : this.namespaces.values()) {
+			rootElement.addNamespace(namespace.getPrefix(), namespace.getURI());
 		}
 		//add responses
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
@@ -61,17 +59,8 @@ public class XMLDocument extends UploadDocument {
 			if (schema != null && schema.length() > 0) {
 				String responseValue = fieldResponse.getResponseValue();
 				if (responseValue != null) {
-					if (this.entryElementName != null) {
-						Element entry = rootElement.addElement(this.entryElementName);
-						entry.addAttribute("name", schema);
-						entry.setText(responseValue);	
-						entry.addComment(fieldResponse.getMessageText());
-					}
-					else {
-						Element entry = rootElement.addElement(schema);
-						entry.setText(responseValue);
-						entry.addComment(fieldResponse.getMessageText());
-					}
+					Element entry = rootElement.addElement(schema);
+					entry.setText(responseValue);
 				}
 				else {
 					LOG.error("ResponseValue is NULL for %s", schema);
@@ -83,11 +72,11 @@ public class XMLDocument extends UploadDocument {
 	
 	/**
 	 * Add XML namespace
-	 * @param key key
-	 * @param value namespace
+	 * @param prefix prefix
+	 * @param uri uri
 	 */
-	public void addNamespace(String key, String value) {
-		this.namespaces.put(key, value);
+	public void addNamespace(String prefix, String uri) {
+		this.namespaces.put(prefix, new Namespace(prefix, uri));
 	}
 	
 	/**
@@ -113,11 +102,11 @@ public class XMLDocument extends UploadDocument {
 	 * Add XML Element
 	 * @param name name
 	 * @param value value
-	 * @param namespace XML namespce
+	 * @param namespacePrefix XML namespace prefix
 	 * @return Element
 	 */
-	public Element addElement(String name, String value, String namespace) {
-		return addElement(null, name, value, namespace);
+	public Element addElement(String name, String value, String namespacePrefix) {
+		return addElement(null, name, value, namespacePrefix);
 	}
 	
 	/**
@@ -136,15 +125,15 @@ public class XMLDocument extends UploadDocument {
 	 * @param parent Element parent
 	 * @param name element name
 	 * @param value element value
-	 * @param namespace XML namespace
+	 * @param namespace XML namespace prefix
 	 * @return Element
 	 */
-	public Element addElement(Element parent, String name, String value, String namespace) {
+	public Element addElement(Element parent, String name, String value, String namespacePrefix) {
 		if (parent == null) {
 			parent = this.document.getRootElement();
 		}
-		Element element = (namespace != null)
-			? parent.addElement(name, namespace)
+		Element element = (namespacePrefix != null && this.namespaces.containsKey(namespacePrefix))
+			? parent.addElement(new QName(name, this.namespaces.get(namespacePrefix)))
 			: parent.addElement(name);
 		if (value != null) {
 			element.setText(value);
