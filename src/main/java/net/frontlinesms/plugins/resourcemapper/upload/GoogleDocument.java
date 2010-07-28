@@ -11,9 +11,11 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
  * Upload Google Document
@@ -28,6 +30,10 @@ public class GoogleDocument extends UploadDocument {
 	private Namespace atom = new Namespace("atom", "http://www.w3.org/2005/Atom");
 	private Namespace status = new Namespace("status", "http://schemas.google.com/status/2010");
 	private Namespace gs = new Namespace("gs", "http://schemas.google.com/spreadsheets/2006");
+	
+	public GoogleDocument() {
+		
+	}
 	
 	/**
 	 * XML Document
@@ -105,6 +111,11 @@ public class GoogleDocument extends UploadDocument {
 			}
 		}
 		return this.document.asXML();
+	}
+	
+	@Override
+	public String getTitle() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_GOOGLE);
 	}
 	
 }

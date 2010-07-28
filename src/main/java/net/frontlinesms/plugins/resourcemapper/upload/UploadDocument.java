@@ -95,4 +95,11 @@ public abstract class UploadDocument {
 	 */
 	@Override
 	public abstract String toString();
+	
+	/**
+	 * Get title
+	 * @return
+	 */
+	public abstract String getTitle();
+	
 }

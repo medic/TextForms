@@ -71,7 +71,6 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
 						this.responseDao.saveFieldResponse(response);
-						//TODO generateAndPublishXML(response);
 						LOG.debug("Response Created: %s", response);
 						try {
 							contact.setLastResponse(new Date());
@@ -80,6 +79,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
+						this.publishResponse(response);
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
@@ -110,7 +110,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
 						this.responseDao.saveFieldResponse(response);
-						//TODO generateAndPublishXML(response);
+						this.publishResponse(response);
 						LOG.debug("FieldResponse Created: %s", response.getClass());
 						try {
 							contact.setLastResponse(new Date());

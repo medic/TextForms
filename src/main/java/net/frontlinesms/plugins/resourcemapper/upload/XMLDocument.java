@@ -9,9 +9,11 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
  * Upload XML Document
@@ -32,6 +34,10 @@ public class XMLDocument extends UploadDocument {
 	 * XML Document
 	 */
 	private Document document;
+	
+	public XMLDocument() {
+		
+	}
 	
 	/**
 	 * XMLDocument
@@ -139,6 +145,11 @@ public class XMLDocument extends UploadDocument {
 			element.setText(value);
 		}
 		return element;
+	}
+	
+	@Override
+	public String getTitle() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_XML);
 	}
 	
 }

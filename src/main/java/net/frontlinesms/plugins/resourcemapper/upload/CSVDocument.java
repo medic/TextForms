@@ -3,8 +3,10 @@ package net.frontlinesms.plugins.resourcemapper.upload;
 import java.util.Map;
 import java.util.HashMap;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
  * Upload JSON Document
@@ -63,6 +65,11 @@ public class CSVDocument extends UploadDocument {
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public String getTitle() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_CSV);
 	}
 	
 }

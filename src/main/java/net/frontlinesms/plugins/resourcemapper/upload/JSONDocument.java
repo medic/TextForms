@@ -6,8 +6,10 @@ import java.util.HashMap;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
  * Upload JSON Document
@@ -66,6 +68,11 @@ public class JSONDocument extends UploadDocument {
 			}
 		}
 		return json.toString();
+	}
+	
+	@Override
+	public String getTitle() {
+		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_JSON);
 	}
 	
 }

@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper;
 
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
+
 /*
  * RemindersConstants
  * @author Dale Zak
@@ -54,5 +56,10 @@ public final class ResourceMapperConstants {
 	public static final String ALERT_MISSING_RESPONSE_FIELD = "plugins.resourcemapper.alert.missing.response.field";	
 	public static final String ALERT_MISSING_RESPONSE_DATE = "plugins.resourcemapper.alert.missing.response.date";
 	public static final String ALERT_MISSING_RESPONSE_TEXT = "plugins.resourcemapper.alert.missing.response.text";
+	
+	public static final String DOCUMENT_UPLOAD_XML = "plugins.resourcemapper.document.upload.xml";
+	public static final String DOCUMENT_UPLOAD_JSON = "plugins.resourcemapper.document.upload.json";
+	public static final String DOCUMENT_UPLOAD_CSV = "plugins.resourcemapper.document.upload.csv";
+	public static final String DOCUMENT_UPLOAD_GOOGLE = "plugins.resourcemapper.document.upload.google";
 	
 }
