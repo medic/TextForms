@@ -66,6 +66,22 @@ public class GoogleDocument extends UploadDocument {
 		this.hospitalId = hospitalId;
 	}
 	
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public String getPhoneNumber() {
+		return this.phoneNumber;
+	}
+	
+	public void setHospitalId(String hospitalId) {
+		this.hospitalId = hospitalId;
+	}
+	
+	public String getHospitalId() {
+		return this.hospitalId;
+	}
+	
 	/**
 	 * Generate XML document for uploading
 	 */
@@ -118,4 +134,8 @@ public class GoogleDocument extends UploadDocument {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_GOOGLE);
 	}
 	
+	@Override
+	public String getPanelXML() {
+		return "/ui/plugins/resourcemapper/upload/uploadGoogleDocument.xml";
+	}
 }

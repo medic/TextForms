@@ -72,4 +72,9 @@ public class CSVDocument extends UploadDocument {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_CSV);
 	}
 	
+	@Override
+	public String getPanelXML() {
+		return "/ui/plugins/resourcemapper/upload/uploadCSVDocument.xml";
+	}
+
 }

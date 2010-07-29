@@ -46,7 +46,9 @@ public class XMLDocument extends UploadDocument {
 	public XMLDocument(String rootElementName) {
 		DocumentFactory factory = DocumentFactory.getInstance();
 		this.document = factory.createDocument();
-		this.document.addElement(rootElementName);
+		if (rootElementName != null) {
+			this.document.addElement(rootElementName);
+		}
 	}
 	
 	/**
@@ -152,4 +154,23 @@ public class XMLDocument extends UploadDocument {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_XML);
 	}
 	
+	@Override
+	public String getPanelXML() {
+		return "/ui/plugins/resourcemapper/upload/uploadXMLDocument.xml";
+	}
+	
+	/**
+	 * Handle changing of root element name from UI
+	 * @param textRootElement component
+	 */
+	public void rootElementChanged(Object textRootElement) {
+		String rootElementName = this.ui.getText(textRootElement);
+		LOG.debug("rootElementChanged: %s", rootElementName);
+		if (rootElementName != null) {
+			if (this.document.getRootElement() != null) {
+				this.document.remove(this.document.getRootElement());
+			}
+			this.document.addElement(rootElementName);
+		}
+	}
 }

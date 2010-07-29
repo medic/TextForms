@@ -75,4 +75,8 @@ public class JSONDocument extends UploadDocument {
 		return InternationalisationUtils.getI18NString(ResourceMapperConstants.DOCUMENT_UPLOAD_JSON);
 	}
 	
+	@Override
+	public String getPanelXML() {
+		return "/ui/plugins/resourcemapper/upload/uploadJSONDocument.xml";
+	}
 }

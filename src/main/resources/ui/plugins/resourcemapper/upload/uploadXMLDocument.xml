@@ -1,0 +1,4 @@
+<panel columns="2" gap="10" weightx="1">
+	<label name="labelRootElement" text="XML Root Element" valign="top" />
+	<textfield name="textRootElement" weightx="1" action="rootElementChanged(this)"/>
+</panel>

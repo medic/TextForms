@@ -12,6 +12,8 @@ import java.util.List;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
+import net.frontlinesms.ui.ThinletUiEventHandler;
+import net.frontlinesms.ui.UiGeneratorController;
 
 /**
  * Upload Document
@@ -19,11 +21,21 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldRespons
  *
  */
 @SuppressWarnings("unchecked")
-public abstract class UploadDocument {
+public abstract class UploadDocument implements ThinletUiEventHandler {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(UploadDocument.class);
 	
 	private final List<FieldResponse> fieldResponses = new ArrayList<FieldResponse>();
+	
+	protected UiGeneratorController ui;
+	
+	public void setUiGeneratorController(UiGeneratorController ui) {
+		this.ui = ui;
+	}
+	
+	public UiGeneratorController getUiGeneratorController() {
+		return this.ui;
+	}
 	
 	/**
 	 * Add FieldResponse
@@ -101,5 +113,11 @@ public abstract class UploadDocument {
 	 * @return
 	 */
 	public abstract String getTitle();
+	
+	/**
+	 * The XML file for component options
+	 * @return
+	 */
+	public abstract String getPanelXML();
 	
 }

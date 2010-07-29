@@ -28,6 +28,7 @@ public final class UploadDocumentFactory {
 			LOG.debug("Loading UploadDocuments...");
 			try {
 				for (UploadDocument uploadDocument : ServiceLoader.load(UploadDocument.class)) {
+					LOG.debug("Loaded: %s", uploadDocument.getTitle());
 					uploadClasses.add(uploadDocument);
 			    }
 			}

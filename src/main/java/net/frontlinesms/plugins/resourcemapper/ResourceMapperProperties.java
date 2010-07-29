@@ -1,5 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper;
 
+import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.UploadDocumentFactory;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class ResourceMapperProperties extends UserHomeFilePropertySet {
@@ -8,9 +10,11 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	
 	private static final String DEBUG_MODE = "debug.mode";
 	private static final String PUBLISH_URL = "publish.url";
-	private static final String BOOLEAN_VALUES_YES = "boolean.values.yes";
-	private static final String BOOLEAN_VALUES_NO = "boolean.values.no";
+	private static final String BOOLEAN_VALUES_TRUE = "boolean.values.true";
+	private static final String BOOLEAN_VALUES_FALSE = "boolean.values.false";
+	private static final String UPLOAD_DOCUMENT = "upload.document";
 	private static final String INFO_KEYWORDS = "info.keywords";
+	private static final String REGISTER_KEYWORDS = "register.keywords";
 	private static final String TRUE = "true";
 	private static final String FALSE = "false";
 	private static final String SEPARATOR = ",";
@@ -54,21 +58,21 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	}
 	
 	public static String [] getBooleanTrueValues() {
-		return getInstance().loadArray(BOOLEAN_VALUES_YES, "yes,true,1");
+		return getInstance().loadArray(BOOLEAN_VALUES_TRUE, "yes,true,1");
 	}
 	
 	public static void setBooleanTrueValues(String [] values) {
 		LOG.debug("setBooleanTrueValues: %s", values);
-		getInstance().saveArray(BOOLEAN_VALUES_YES, values);
+		getInstance().saveArray(BOOLEAN_VALUES_TRUE, values);
 	}
 	
 	public static String [] getBooleanFalseValues() {
-		return getInstance().loadArray(BOOLEAN_VALUES_NO, "no,false,0");
+		return getInstance().loadArray(BOOLEAN_VALUES_FALSE, "no,false,0");
 	}
 	
 	public static void setBooleanFalseValues(String [] values) {
 		LOG.debug("setBooleanFalseValues: %s", values);
-		getInstance().saveArray(BOOLEAN_VALUES_NO, values);
+		getInstance().saveArray(BOOLEAN_VALUES_FALSE, values);
 	}
 	
 	public static String [] getInfoKeywords() {
@@ -79,6 +83,15 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 		LOG.debug("setInfoKeywords: %s", keywords);
 		getInstance().saveArray(INFO_KEYWORDS, keywords);
 	}
+	
+	public static String [] getRegisterKeywords() {
+		return getInstance().loadArray(REGISTER_KEYWORDS, "register");
+	}
+	
+	public static void setRegisterKeywords(String [] keywords) {
+		LOG.debug("setRegisterKeywords: %s", keywords);
+		getInstance().saveArray(REGISTER_KEYWORDS, keywords);
+	}
 
 	private void saveArray(String keyword, String [] values) {
 		StringBuffer sb = new StringBuffer();
@@ -88,7 +101,7 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 			}
 			sb.append(value);
 		}
-	    LOG.debug("setInfoValues: %s", sb);
+	    LOG.debug("saveArray: %s", sb);
 		getInstance().setProperty(keyword, sb.toString());
 		getInstance().saveToDisk();
 	}
@@ -101,5 +114,30 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 			getInstance().saveToDisk();
 		}
 		return propertyValue.split(SEPARATOR);
+	}
+	
+	public static UploadDocument getUploadDocumentHandler() {
+		String uploadDocumentTitle = getInstance().getProperty(UPLOAD_DOCUMENT);
+		if (uploadDocumentTitle != null && uploadDocumentTitle.length() > 0) {
+			//TODO store this value in variable
+			for (UploadDocument uploadDocument : UploadDocumentFactory.getHandlerClasses()) {
+				if (uploadDocumentTitle.equalsIgnoreCase(uploadDocument.getTitle())) {
+					return uploadDocument;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static void setUploadDocumentHandler(UploadDocument uploadDocument) {
+		if (uploadDocument != null) {
+			LOG.debug("setUploadDocumentHandler: %s", uploadDocument.getTitle());
+			getInstance().setProperty(UPLOAD_DOCUMENT, uploadDocument.getTitle());	
+		}
+		else {
+			LOG.debug("setUploadDocumentHandler: NULL");
+			getInstance().setProperty(UPLOAD_DOCUMENT, null);	
+		}
+		getInstance().saveToDisk();
 	}
 }

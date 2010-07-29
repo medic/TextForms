@@ -67,17 +67,6 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.appContext = appContext;
 		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
 		
-		ResourceMapperProperties.setDebugMode(true);
-		if (ResourceMapperProperties.isDebugMode()) {
-			LOG.debug("DEBUG MODE");
-		}
-		else {
-			LOG.debug("RELEASE MODE");
-		}
-		LOG.debug("Boolean TRUE Values: %s", ResourceMapperProperties.getBooleanTrueValues());
-		LOG.debug("Boolean FALSE Values: %s", ResourceMapperProperties.getBooleanFalseValues());
-		LOG.debug("Info Keywords: %s", ResourceMapperProperties.getInfoKeywords());
-		
 		//Un-comment to generate debug information
 //		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
 //		resourceMapperDebug.createDebugContacts();

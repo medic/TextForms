@@ -24,7 +24,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	private ManagePeoplePanelHandler panelManagePeople;
 	private ManageFieldsPanelHandler panelManageFields;
 	private BrowseDataPanelHandler panelBrowseData;
-	private UploadOptionsPanelHandler uploadOptions;
+	private ManageOptionsPanelHandler panelManageOptions;
 	
 	public ResourceMapperThinletTabController(UiGeneratorController uiController, ApplicationContext appContext){
 		LOG.debug("ResourceMapperThinletTabController");
@@ -35,7 +35,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
 		this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
 		this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
-		this.uploadOptions = new UploadOptionsPanelHandler(this.ui, this.appContext, this);
+		this.panelManageOptions = new ManageOptionsPanelHandler(this.ui, this.appContext, this);
 		taskChanged(this.ui.find(this.mainTab, "listTasks"));
 	}
 
@@ -56,8 +56,8 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		else if ("data".equalsIgnoreCase(selectedProperty)) {
 			showBrowseDataPanel(null, null);
 		}
-		else if ("upload".equalsIgnoreCase(selectedProperty)) {
-			showUploadOptionsPanel();
+		else if ("options".equalsIgnoreCase(selectedProperty)) {
+			showManageOptionsPanel();
 		}
 	}
 	
@@ -115,8 +115,8 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		this.ui.add(this.mainPanel, this.panelManageFields.getMainPanel());
 	}
 	
-	private void showUploadOptionsPanel() {
+	private void showManageOptionsPanel() {
 		this.ui.removeAll(this.mainPanel);
-		this.ui.add(this.mainPanel, this.uploadOptions.getMainPanel());
+		this.ui.add(this.mainPanel, this.panelManageOptions.getMainPanel());
 	}
 }
