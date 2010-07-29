@@ -190,7 +190,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 			ResourceMapperProperties.setInfoKeywords(values);
 		}
 		else if (list == this.listRegister) {
-		
+			ResourceMapperProperties.setRegisterKeywords(values);
 		}
 	}
 	

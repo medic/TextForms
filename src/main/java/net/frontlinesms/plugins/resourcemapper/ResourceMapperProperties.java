@@ -85,7 +85,7 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	}
 	
 	public static String [] getRegisterKeywords() {
-		return getInstance().loadArray(REGISTER_KEYWORDS, "register");
+		return getInstance().loadArray(REGISTER_KEYWORDS, "register,login");
 	}
 	
 	public static void setRegisterKeywords(String [] keywords) {
