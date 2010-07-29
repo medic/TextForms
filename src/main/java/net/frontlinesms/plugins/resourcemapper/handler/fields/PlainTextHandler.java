@@ -2,31 +2,35 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Collection;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField;
 
-import org.springframework.context.ApplicationContext;
-
+/**
+ * PlainTextHandler
+ * @author dalezak
+ *
+ */
 public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	
 	@SuppressWarnings("unused")
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(PlainTextHandler.class);
 	
+	/**
+	 * PlainTextField
+	 */
 	private static final PlainTextField plainTextField = new PlainTextField();
 	
-	public PlainTextHandler() {
-		super(null, null);
-	}
+	/**
+	 * PlainTextHandler
+	 */
+	public PlainTextHandler() {}
 	
-	public PlainTextHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		super(frontline, appContext);
-	}
-
+	@Override
 	public Collection<String> getKeywords() {
 		return this.mappingDao.getKeywordsForField(plainTextField);
 	}
 	
+	@Override
 	protected boolean isValidResponse(String[] words) {
 		return words != null && words.length > 1 && isValidString(words[1]);
 	}

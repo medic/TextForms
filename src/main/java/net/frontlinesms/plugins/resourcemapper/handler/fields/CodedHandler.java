@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
@@ -15,27 +14,32 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFactory;
 
-import org.springframework.context.ApplicationContext;
-
+/**
+ * CodedHandler
+ * @author dalezak
+ *
+ * @param <M> CodedField
+ */
 public abstract class CodedHandler<M extends CodedField> extends CallbackHandler<M> {
 
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CodedHandler.class);
+	
+	/**
+	 * Map of callbacks
+	 */
 	protected final HashMap<String, Field> callbacks = new HashMap<String, Field>();
 	
-	public CodedHandler() {
-		super(null, null);
-	}
-	
-	public CodedHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		super(frontline, appContext);
-	}
+	/**
+	 * CodedHandler
+	 */
+	public CodedHandler() {}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String content = message.getTextContent().replaceFirst("[\\s]", " ");
-		String[] words = content.split(" ", 2);
+		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
@@ -66,7 +70,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		else if (isValidResponse(words)) {
 			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
-				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
@@ -74,7 +78,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						LOG.debug("Response Created: %s", response);
 						try {
 							contact.setLastResponse(new Date());
-							this.contactDao.updateHospitalContact(contact);
+							this.hospitalContactDao.updateHospitalContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
@@ -105,7 +109,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		if (shouldHandleCallbackMessage(message)) {
 			Field field = this.callbacks.get(message.getSenderMsisdn());
 			if (field != null) {
-				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
@@ -114,7 +118,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						LOG.debug("FieldResponse Created: %s", response.getClass());
 						try {
 							contact.setLastResponse(new Date());
-							this.contactDao.updateHospitalContact(contact);
+							this.hospitalContactDao.updateHospitalContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);

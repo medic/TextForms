@@ -3,28 +3,31 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
+/**
+ * ChecklistHandler
+ * @author dalezak
+ *
+ */
 public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	
-	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ChecklistHandler.class);
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ChecklistHandler.class);	
 	
+	/**
+	 * ChecklistField
+	 */
 	private static final ChecklistField checklistField = new ChecklistField();
 	
-	public ChecklistHandler() {
-		super(null, null);
-	}
+	/**
+	 * ChecklistHandler
+	 */
+	public ChecklistHandler() {}
 	
-	public ChecklistHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		super(frontline, appContext);
-	}
-
+	@Override
 	public Collection<String> getKeywords() {
 		return this.mappingDao.getKeywordsForField(checklistField);
 	}
@@ -38,7 +41,7 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
 		Field field = this.callbacks.get(message.getSenderMsisdn());
 		if (field != null) {
-			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+			String[] words = this.toWords(message.getTextContent(), 2);
 			return words != null && words.length == 1 && areValidChoices(field.getKeyword(), words[0]);
 		}
 		return false;
@@ -48,7 +51,6 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 		Field field = this.mappingDao.getFieldForKeyword(keyword);
 		if (field != null) {
 			List<String> choices = field.getChoices();
-			LOG.debug("keyword:%s words:%s choices:%s", keyword, words, choices);
 			//TODO improve this if-else logic
 			if (words.indexOf(",") > -1) {
 				for (String answer : words.split(",")) {

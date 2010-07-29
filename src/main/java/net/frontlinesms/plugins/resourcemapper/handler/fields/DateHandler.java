@@ -5,31 +5,35 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField;
 
-import org.springframework.context.ApplicationContext;
-
+/**
+ * DateHandler
+ * @author dalezak
+ *
+ */
 public class DateHandler extends FieldMessageHandler<DateField> {
 	
 	@SuppressWarnings("unused")
-	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(DateHandler.class);
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(DateHandler.class);	
 	
+	/**
+	 * DateField
+	 */
 	private static final DateField dateField = new DateField();
 	
-	public DateHandler() {
-		super(null, null);
-	}
+	/**
+	 * DateHandler
+	 */
+	public DateHandler() {}
 	
-	public DateHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		super(frontline, appContext);
-	}
-
+	@Override
 	public Collection<String> getKeywords() {
 		return this.mappingDao.getKeywordsForField(dateField);
 	}
 	
+	@Override
 	protected boolean isValidResponse(String[] words) {
 		return words != null && words.length == 2 && isValidDate(words[1]);
 	}

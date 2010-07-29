@@ -3,7 +3,6 @@ package net.frontlinesms.plugins.resourcemapper.handler;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
@@ -12,41 +11,43 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 
 import org.springframework.context.ApplicationContext;
 
-public class InfoHandler implements MessageHandler {
+/**
+ * InfoHandler
+ * @author dalezak
+ *
+ */
+public class InfoHandler extends MessageHandler {
 	
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(InfoHandler.class);
 	
-	protected FrontlineSMS frontline;
-	protected ApplicationContext appContext;
+	/**
+	 * FieldMappingDao
+	 */
 	protected FieldMappingDao mappingDao;
 	
-	public InfoHandler() {
-		this(null, null);
-	}
+	/**
+	 * InfoHandler
+	 */
+	public InfoHandler() {}
 	
-	public InfoHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		setFrontline(frontline);
-		setApplicationContext(appContext);
-	}
-	
-	public void setFrontline(FrontlineSMS frontline) {
-		this.frontline = frontline;
-	}
-	
+	/**
+	 * Set ApplicationContext
+	 * @param appContext appContext
+	 */
+	@Override
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.appContext = appContext;
-		if (appContext != null) {
-			this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
-		}
+		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
 	}
 	
+	@Override
 	public Collection<String> getKeywords() {
 		return Arrays.asList(ResourceMapperProperties.getInfoKeywords());
 	}
 	
+	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ");
+		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			sendReply(message.getSenderMsisdn(), "Welcome to ResourceMapper!", false);
 		}
@@ -61,18 +62,6 @@ public class InfoHandler implements MessageHandler {
 		}
 		else {
 			sendReply(message.getSenderMsisdn(), "Welcome to ResourceMapper!", false);
-		}
-	}
-	
-	protected void sendReply(String msisdn, String text, boolean error) {
-		if (error) {
-			LOG.error("(%s) %s", msisdn, text);
-		}
-		else {
-			LOG.debug("(%s) %s", msisdn, text);
-		}
-		if (this.frontline != null) {
-			this.frontline.sendTextMessage(msisdn, text);
 		}
 	}
 

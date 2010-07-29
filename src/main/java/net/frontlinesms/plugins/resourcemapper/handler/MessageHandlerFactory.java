@@ -42,6 +42,9 @@ public final class MessageHandlerFactory {
 			catch (ServiceConfigurationError ex) {
 				LOG.error("ServiceConfigurationError: %s", ex);
 			}
+			catch (Exception ex) {
+				LOG.error("Exception: %s", ex);
+			}
 		}
 		return handlerClasses;
 	}private static List<MessageHandler> handlerClasses = null;

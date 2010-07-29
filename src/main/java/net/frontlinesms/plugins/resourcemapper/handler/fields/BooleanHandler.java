@@ -2,35 +2,38 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Collection;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField;
 
-import org.springframework.context.ApplicationContext;
-
+/**
+ * BooleanHandler
+ * @author dalezak
+ *
+ */
 public class BooleanHandler extends CodedHandler<BooleanField> {
 	
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(BooleanHandler.class);
 	
+	/**
+	 * BooleanField
+	 */
 	private static final BooleanField booleanField = new BooleanField();
 	
-	public BooleanHandler() {
-		super(null, null);
-	}
+	/**
+	 * BooleanHandler
+	 */
+	public BooleanHandler() {}
 	
-	public BooleanHandler(FrontlineSMS frontline, ApplicationContext appContext) {
-		super(frontline, appContext);
-	}
-
+	@Override
 	public Collection<String> getKeywords() {
 		return this.mappingDao.getKeywordsForField(booleanField);
 	}
 	
 	@Override
 	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
-		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+		String[] words = this.toWords(message.getTextContent(), 2);
 		return words != null && words.length == 1 && isValidBoolean(words[0]);
 	}
 	
@@ -41,13 +44,13 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	
 	private boolean isValidBoolean(String word) {
 		if (word != null) {
-			for (String yes : ResourceMapperProperties.getBooleanTrueValues()) {
-				if (yes.trim().equalsIgnoreCase(word.trim())) {
+			for (String trueValue : ResourceMapperProperties.getBooleanTrueValues()) {
+				if (trueValue.trim().equalsIgnoreCase(word.trim())) {
 					return true;
 				}
 			}
-			for (String no : ResourceMapperProperties.getBooleanFalseValues()) {
-				if (no.trim().equalsIgnoreCase(word.trim())) {
+			for (String falseValue : ResourceMapperProperties.getBooleanFalseValues()) {
+				if (falseValue.trim().equalsIgnoreCase(word.trim())) {
 					return true;
 				}
 			}

@@ -60,7 +60,7 @@ public class ResourceMapperDebug {
 	
 	public void createDebugFields() {
 		LOG.debug("createDebugFields");
-		createField("Hospital Name", "name", "Reply with 'name' keyword followed by name of hospital.", "plaintext", "hospital_name", null);
+		createField("Hospital Address", "addr", "Reply with 'addr' keyword followed by hospital address.", "plaintext", "hospital_address", null);
 		createField("Hospital Power", "power", "Reply with 'power' keyword followed by your boolean answer.", "boolean", "hospital_power", null);
 		createField("Hospital Beds", "beds", "Reply with 'beds' keyword followed by number of beds.", "integer", "hospital_beds", null);
 		createField("Hospital Available", "date", "Reply with 'date' keyword followed by date hospital opened.", "date", "hospital_date", null);
@@ -92,8 +92,10 @@ public class ResourceMapperDebug {
 			break;
 		}
 		
-		for (String message : new String[] {"info name", "help power", "? type", 
-											"name Saskatoon RUH", //ignore previous callback, handled by plaintext handler
+		for (String message : new String[] {"info addr", "help power", "? type", 
+											"register", 
+											"register Saskatoon RUH 2",
+											"addr 123 University Dr, Saskatoon", //ignore previous callback, handled by plaintext handler
 											"power", "yes", //callback
 											"power yes", "power true", "power 1",
 											"power no", "power false", "power 0",

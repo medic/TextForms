@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.context.ApplicationContext;
 
-import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
@@ -17,37 +16,38 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFact
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
 
-public abstract class FieldMessageHandler<M extends Field> implements MessageHandler {
+public abstract class FieldMessageHandler<M extends Field> extends MessageHandler {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldMessageHandler.class);
 	
-	protected FrontlineSMS frontline;
-	protected ApplicationContext appContext;
-	
+	/**
+	 * FieldMappingDao
+	 */
 	protected FieldMappingDao mappingDao;
+	
+	/**
+	 * FieldResponseDao
+	 */
 	protected FieldResponseDao responseDao;
-	protected HospitalContactDao contactDao;
 	
-	public FieldMessageHandler() {
-		this(null, null);
-	}
+	/**
+	 * HospitalContactDao
+	 */
+	protected HospitalContactDao hospitalContactDao;
 	
-	public FieldMessageHandler(FrontlineSMS frontline, ApplicationContext appContext){
-		setFrontline(frontline);
-		setApplicationContext(appContext);
-	}
+	/**
+	 * FieldMessageHandler
+	 */
+	public FieldMessageHandler() {}
 	
-	public void setFrontline(FrontlineSMS frontline) {
-		this.frontline = frontline;
-	}
-	
+	/**
+	 * Set ApplicationContext
+	 * @param appContext appContext
+	 */
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.appContext = appContext;
-		if (appContext != null) {
-			this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
-			this.responseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
-			this.contactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
-		}
+		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+		this.responseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
+		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
 	protected abstract boolean isValidResponse(String[] words);
@@ -55,7 +55,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 	@SuppressWarnings("unchecked")
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
+		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
@@ -68,7 +68,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		else if (isValidResponse(words)) {
 			Field field = this.mappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
-				HospitalContact contact = this.contactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
@@ -76,7 +76,7 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 						LOG.debug("FieldResponse Created: %s", response.getClass());
 						try {
 							contact.setLastResponse(new Date());
-							this.contactDao.updateHospitalContact(contact);
+							this.hospitalContactDao.updateHospitalContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
@@ -97,18 +97,6 @@ public abstract class FieldMessageHandler<M extends Field> implements MessageHan
 		}
 		else {
 			sendReply(message.getSenderMsisdn(), String.format("Invalid Response Received '%s'", message.getTextContent()), true);
-		}
-	}
-	
-	protected void sendReply(String msisdn, String text, boolean error) {
-		if (error) {
-			LOG.error("(%s) %s", msisdn, text);
-		}
-		else {
-			LOG.debug("(%s) %s", msisdn, text);
-		}
-		if (this.frontline != null) {
-			this.frontline.sendTextMessage(msisdn, text);
 		}
 	}
 	
