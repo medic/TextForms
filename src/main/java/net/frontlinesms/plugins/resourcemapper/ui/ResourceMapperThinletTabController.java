@@ -40,9 +40,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 		this.panelManageOptions = new ManageOptionsPanelHandler(this.ui, this.appContext, this);
 		
 		taskChanged(this.listTasks);
-		
 	}
-	
 
 	public Object getTab(){
 		return mainTab;

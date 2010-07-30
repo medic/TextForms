@@ -9,13 +9,17 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldRespons
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
- * Upload JSON Document
+ * Upload CSV Document
  * @author dalezak
  *
  */
 public class CSVDocument extends UploadDocument {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(JSONDocument.class);
+	
+	/**
+	 * Collection of additional items
+	 */
 	private Map<String, Object> items = new HashMap<String, Object>();
 	
 	/**
@@ -39,6 +43,23 @@ public class CSVDocument extends UploadDocument {
 	@SuppressWarnings("unchecked")
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		//author
+		if (this.phoneNumber != null) {
+			if (sb.length() > 0) {
+				sb.append("\n");
+			}
+			sb.append("author,");
+			sb.append(this.phoneNumber);
+		}
+		//hospital id
+		if (this.hospitalId != null) {
+			if (sb.length() > 0) {
+				sb.append("\n");
+			}
+			sb.append("hospital,");
+			sb.append(this.hospitalId);
+		}
+		//items
 		for (String key : this.items.keySet()) {
 			if (sb.length() > 0) {
 				sb.append("\n");
@@ -47,6 +68,7 @@ public class CSVDocument extends UploadDocument {
 			sb.append(",");
 			sb.append(this.items.get(key));
 		}
+		//responses
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();
 			if (schema != null && schema.length() > 0) {

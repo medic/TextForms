@@ -25,8 +25,32 @@ public abstract class UploadDocument implements ThinletUiEventHandler {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(UploadDocument.class);
 	
+	/**
+	 * Implementing class needs to define toString() method
+	 */
+	@Override
+	public abstract String toString();
+	
+	/**
+	 * Get title
+	 * @return
+	 */
+	public abstract String getTitle();
+	
+	/**
+	 * The XML file for component options
+	 * @return
+	 */
+	public abstract String getPanelXML();
+	
+	/**
+	 * Collection of field responses
+	 */
 	private final List<FieldResponse> fieldResponses = new ArrayList<FieldResponse>();
 	
+	/**
+	 * UiGeneratorController
+	 */
 	protected UiGeneratorController ui;
 	
 	public void setUiGeneratorController(UiGeneratorController ui) {
@@ -35,6 +59,32 @@ public abstract class UploadDocument implements ThinletUiEventHandler {
 	
 	public UiGeneratorController getUiGeneratorController() {
 		return this.ui;
+	}
+	
+	/**
+	 * Phone Number
+	 */
+	protected String phoneNumber;
+	
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public String getPhoneNumber() {
+		return this.phoneNumber;
+	}
+	
+	/**
+	 * Hospital ID
+	 */
+	protected String hospitalId; 
+
+	public void setHospitalId(String hospitalId) {
+		this.hospitalId = hospitalId;
+	}
+	
+	public String getHospitalId() {
+		return this.hospitalId;
 	}
 	
 	/**
@@ -101,23 +151,5 @@ public abstract class UploadDocument implements ThinletUiEventHandler {
 		}
 		return true;
 	}
-	
-	/**
-	 * Implementing class needs to define toString() method
-	 */
-	@Override
-	public abstract String toString();
-	
-	/**
-	 * Get title
-	 * @return
-	 */
-	public abstract String getTitle();
-	
-	/**
-	 * The XML file for component options
-	 * @return
-	 */
-	public abstract String getPanelXML();
 	
 }

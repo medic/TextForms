@@ -86,6 +86,13 @@ public abstract class FieldResponse<M extends Field> {
 		return null;
 	}
 
+	public String getSubmitterHospitalId() {
+		if (this.submitter != null) {
+			return this.submitter.getHospitalId();
+		}
+		return null;
+	}
+	
 	public void setSubmitter(HospitalContact submitter) {
 		this.submitter = submitter;
 	}

@@ -17,6 +17,8 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFactory;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
+import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.UploadDocumentFactory;
 
 /**
  * FieldMessageHandler
@@ -128,10 +130,21 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 		return false;
 	}
 	
-	protected boolean publishResponse(FieldResponse<M> response) {
-		if (response != null) {
-			//TODO call the selected UploadDocument handler
-			LOG.debug("publishResponse: %s", response);
+	/**
+	 * Publish Response
+	 * @param fieldResponse FieldResponse
+	 * @return true if successful
+	 */
+	protected boolean publishResponse(FieldResponse<M> fieldResponse) {
+		if (fieldResponse != null) {
+			LOG.debug("publishResponse: %s", fieldResponse);
+			UploadDocument uploadDocument = UploadDocumentFactory.createUploadDocument();
+			if (uploadDocument != null) {
+				uploadDocument.setPhoneNumber(fieldResponse.getSubmitterPhone());
+				uploadDocument.setHospitalId(fieldResponse.getSubmitterHospitalId());
+				uploadDocument.addFieldResponse(fieldResponse);
+				return uploadDocument.upload();
+			}
 		}
 		else {
 			LOG.error("publishResponse: NULL");

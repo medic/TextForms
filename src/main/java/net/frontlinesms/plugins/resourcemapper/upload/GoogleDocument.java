@@ -18,76 +18,48 @@ import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
- * Upload Google Document
+ * Upload Google XML Document
  * @author dalezak
  *
  */
 @SuppressWarnings("unchecked")
 public class GoogleDocument extends UploadDocument {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLDocument.class);
-	
-	private Namespace atom = new Namespace("atom", "http://www.w3.org/2005/Atom");
-	private Namespace status = new Namespace("status", "http://schemas.google.com/status/2010");
-	private Namespace gs = new Namespace("gs", "http://schemas.google.com/spreadsheets/2006");
-	
-	public GoogleDocument() {
-		
-	}
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLDocument.class);
 	
 	/**
-	 * XML Document
+	 * Atom Namespace
 	 */
-	private Document document;
+	private static final Namespace NAMESPACE_ATOM = new Namespace("atom", "http://www.w3.org/2005/Atom");
 	
 	/**
-	 * Phone Number
+	 * Status Namespace
 	 */
-	private String phoneNumber;
+	private static final Namespace NAMESPACE_STATUS = new Namespace("status", "http://schemas.google.com/status/2010");
 	
 	/**
-	 * Hospital ID
+	 * GS Namespace
 	 */
-	private String hospitalId; 
+	private static final Namespace NAMESPACE_GS = new Namespace("gs", "http://schemas.google.com/spreadsheets/2006");
 	
 	/**
 	 * GoogleDocument
-	 * @param phoneNumber Phone Number
-	 * @param hospitalID Hospital ID
 	 */
-	public GoogleDocument(String phoneNumber, String hospitalId) {
-		DocumentFactory factory = DocumentFactory.getInstance();
-		this.document = factory.createDocument();
-		Element rootElement = this.document.addElement("entry");
-		rootElement.addNamespace("", this.atom.getURI());
-		rootElement.addNamespace(this.status.getPrefix(), this.status.getURI());
-		rootElement.addNamespace(this.gs.getPrefix(), this.gs.getURI());
-		this.phoneNumber = phoneNumber;
-		this.hospitalId = hospitalId;
-	}
-	
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-	
-	public String getPhoneNumber() {
-		return this.phoneNumber;
-	}
-	
-	public void setHospitalId(String hospitalId) {
-		this.hospitalId = hospitalId;
-	}
-	
-	public String getHospitalId() {
-		return this.hospitalId;
-	}
+	public GoogleDocument() { }
 	
 	/**
-	 * Generate XML document for uploading
+	 * Generate Google XML document for uploading
 	 */
 	@Override
 	public String toString() {
-		Element rootElement = this.document.getRootElement();
+		DocumentFactory factory = DocumentFactory.getInstance();
+		Document document = factory.createDocument();
+		
+		//root
+		Element rootElement = document.addElement("entry");
+		rootElement.addNamespace("", NAMESPACE_ATOM.getURI());
+		rootElement.addNamespace(NAMESPACE_STATUS.getPrefix(), NAMESPACE_STATUS.getURI());
+		rootElement.addNamespace(NAMESPACE_GS.getPrefix(), NAMESPACE_GS.getURI());
 		
 		//author
 		Element authorElement = rootElement.addElement("author");
@@ -97,27 +69,27 @@ public class GoogleDocument extends UploadDocument {
 		}
 		
 		//subject
-		Element subjectElement = rootElement.addElement(new QName("subject", this.status));
+		Element subjectElement = rootElement.addElement(new QName("subject", NAMESPACE_STATUS));
 		if (this.hospitalId != null) {
 			subjectElement.setText(this.hospitalId);
 		}
 		
 		//observed
-		Element observedElement = rootElement.addElement(new QName("observed", this.status));
+		Element observedElement = rootElement.addElement(new QName("observed", NAMESPACE_STATUS));
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT-2"));
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		observedElement.setText(dateFormat.format(now.getTime()));
 		
 		//add responses
-		Element reportElement = rootElement.addElement(new QName("report", this.status));
+		Element reportElement = rootElement.addElement(new QName("report", NAMESPACE_STATUS));
 		reportElement.addAttribute("type", "{http://schemas.google.com/status/2010}record");
-		Element recordElement = reportElement.addElement(new QName("record", this.status));
+		Element recordElement = reportElement.addElement(new QName("record", NAMESPACE_STATUS));
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();
 			if (schema != null && schema.length() > 0) {
 				String responseValue = fieldResponse.getResponseValue();
 				if (responseValue != null) {
-					Element entry = recordElement.addElement(new QName("field", this.gs));
+					Element entry = recordElement.addElement(new QName("field", NAMESPACE_GS));
 					entry.addAttribute("name", schema);
 					entry.setText(responseValue);
 				}
@@ -126,7 +98,7 @@ public class GoogleDocument extends UploadDocument {
 				}
 			}
 		}
-		return this.document.asXML();
+		return document.asXML();
 	}
 	
 	@Override

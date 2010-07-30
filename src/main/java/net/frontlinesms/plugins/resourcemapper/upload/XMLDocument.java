@@ -35,8 +35,11 @@ public class XMLDocument extends UploadDocument {
 	 */
 	private Document document;
 	
+	/**
+	 * XMLDocument
+	 */
 	public XMLDocument() {
-		
+		this(null);
 	}
 	
 	/**
@@ -49,6 +52,9 @@ public class XMLDocument extends UploadDocument {
 		if (rootElementName != null) {
 			this.document.addElement(rootElementName);
 		}
+		else {
+			this.document.addElement("root");
+		}
 	}
 	
 	/**
@@ -57,6 +63,14 @@ public class XMLDocument extends UploadDocument {
 	@Override
 	public String toString() {
 		Element rootElement = this.document.getRootElement();
+		//author
+		if (this.phoneNumber != null) {
+			this.addElement("author", this.phoneNumber);
+		}
+		//hospital id
+		if (this.hospitalId != null) {
+			this.addElement("hospital", this.hospitalId);
+		}
 		//add namespaces
 		for (Namespace namespace : this.namespaces.values()) {
 			rootElement.addNamespace(namespace.getPrefix(), namespace.getURI());

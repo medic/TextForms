@@ -2,7 +2,6 @@ package net.frontlinesms.plugins.resourcemapper;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -20,6 +19,7 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.upload.CSVDocument;
 import net.frontlinesms.plugins.resourcemapper.upload.GoogleDocument;
 import net.frontlinesms.plugins.resourcemapper.upload.JSONDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
 import net.frontlinesms.plugins.resourcemapper.upload.XMLDocument;
 
 @SuppressWarnings("unchecked")
@@ -132,12 +132,9 @@ public class ResourceMapperDebug {
 	
 	public void createUploadXMLDocument() {
 		LOG.debug("createUploadXMLDocument");
-		
-		XMLDocument document = new XMLDocument("resources");
-		document.addNamespace("status", "http://schemas.google.com/status/2010");
-		document.addNamespace("gs", "http://schemas.google.com/spreadsheets/2006");
-		document.addElement("author", this.getAuthor());
-		
+		UploadDocument document = new XMLDocument();
+		document.setPhoneNumber(this.getAuthor());
+		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
 			document.addFieldResponse(fieldResponse);
 		}
@@ -147,10 +144,9 @@ public class ResourceMapperDebug {
 	
 	public void createUploadJSONDocument() {
 		LOG.debug("createUploadJSONDocument");
-		
-		JSONDocument document = new JSONDocument();
-		document.addItem("author", getAuthor());
-		document.addItem("date", new Date());
+		UploadDocument document = new JSONDocument();
+		document.setPhoneNumber(this.getAuthor());
+		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
 			document.addFieldResponse(fieldResponse);
 		}
@@ -159,9 +155,9 @@ public class ResourceMapperDebug {
 	
 	public void createUploadCSVDocument() {
 		LOG.debug("createUploadCSVDocument");
-		CSVDocument document = new CSVDocument();
-		document.addItem("author", getAuthor());
-		document.addItem("date", new Date());
+		UploadDocument document = new CSVDocument();
+		document.setPhoneNumber(this.getAuthor());
+		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
 			document.addFieldResponse(fieldResponse);
 		}
@@ -170,7 +166,9 @@ public class ResourceMapperDebug {
 	
 	public void createUploadGoogleDocument() {
 		LOG.debug("createUploadGoogleDocument");
-		GoogleDocument document = new GoogleDocument(this.getAuthor(), this.getHospitalId());
+		UploadDocument document = new GoogleDocument();
+		document.setPhoneNumber(this.getAuthor());
+		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
 			document.addFieldResponse(fieldResponse);
 		}

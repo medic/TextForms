@@ -19,6 +19,8 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 public class JSONDocument extends UploadDocument {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(JSONDocument.class);
+	
+	//Collection of additional items
 	private Map<String, Object> items = new HashMap<String, Object>();
 	
 	/**
@@ -42,6 +44,25 @@ public class JSONDocument extends UploadDocument {
 	@SuppressWarnings("unchecked")
 	public String toString() {
 		JSONObject json = new JSONObject();
+		//author
+		if (this.phoneNumber != null) {
+			try {
+				json.put("author", this.phoneNumber);
+			} 
+			catch (JSONException ex) {
+				LOG.error("JSONException: %s", ex);
+			}
+		}
+		//hospital id
+		if (this.hospitalId != null) {
+			try {
+				json.put("hospital", this.hospitalId);
+			} 
+			catch (JSONException ex) {
+				LOG.error("JSONException: %s", ex);
+			}
+		}
+		//items
 		for (String key : this.items.keySet()) {
 			try {
 				json.put(key, this.items.get(key));
@@ -50,6 +71,7 @@ public class JSONDocument extends UploadDocument {
 				LOG.error("JSONException: %s", ex);
 			}	
 		}
+		//responses
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();
 			if (schema != null && schema.length() > 0) {
@@ -79,4 +101,5 @@ public class JSONDocument extends UploadDocument {
 	public String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/uploadJSONDocument.xml";
 	}
+	
 }

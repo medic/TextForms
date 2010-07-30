@@ -6,6 +6,7 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 
 /*
  * UploadDocumentFactory
@@ -39,4 +40,24 @@ public final class UploadDocumentFactory {
 		return uploadClasses;
 	}private static List<UploadDocument> uploadClasses = null;
 	
+	/**
+	 * Create UploadDocument for currently selected type
+	 * @return
+	 */
+	public static UploadDocument createUploadDocument() {
+		UploadDocument uploadDocument = ResourceMapperProperties.getUploadDocumentHandler();
+		if (uploadDocument != null) {
+			try {
+				//create instance of currently selected UploadDocument class
+				return uploadDocument.getClass().newInstance();
+			} 
+			catch (InstantiationException ex) {
+				LOG.error("InstantiationException: %s", ex);
+			} 
+			catch (IllegalAccessException ex) {
+				LOG.error("IllegalAccessException: %s", ex);
+			}
+		}
+		return null;
+	}
 }
