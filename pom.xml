@@ -29,5 +29,15 @@
 			<artifactId>frontlinesms</artifactId>
 			<version>1.6.15-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>net.frontlinesms.core.mms</groupId>
+			<artifactId>mmsgateway</artifactId>
+			<version>0.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>net.frontlinesms.core</groupId>
+			<artifactId>frontlinesms-email</artifactId>
+			<version>0.0.4</version>
+		</dependency>
 	</dependencies>
 </project>

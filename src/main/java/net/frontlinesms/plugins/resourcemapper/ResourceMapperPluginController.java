@@ -67,16 +67,18 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 		this.appContext = appContext;
 		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
 		
-		//Un-comment to generate debug information
-//		ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
-//		resourceMapperDebug.createDebugContacts();
-//		resourceMapperDebug.createDebugFields();
-//		resourceMapperDebug.createDebugResponses();
-//		resourceMapperDebug.createResponseOutputs();
-//		resourceMapperDebug.createUploadXMLDocument();
-//		resourceMapperDebug.createUploadJSONDocument();
-//		resourceMapperDebug.createUploadCSVDocument();
-//		resourceMapperDebug.createUploadGoogleDocument();
+		if (ResourceMapperProperties.isDebugMode()) {
+			LOG.debug("Running ResourceMapperDebug...");
+			ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+			resourceMapperDebug.createDebugContacts();
+			resourceMapperDebug.createDebugFields();
+			resourceMapperDebug.createDebugResponses();
+			resourceMapperDebug.createResponseOutputs();
+			resourceMapperDebug.createUploadXMLDocument();
+			resourceMapperDebug.createUploadJSONDocument();
+			resourceMapperDebug.createUploadCSVDocument();
+			resourceMapperDebug.createUploadGoogleDocument();
+		}
 	}
 	
 	/** @return {@link #frontlineController} */
