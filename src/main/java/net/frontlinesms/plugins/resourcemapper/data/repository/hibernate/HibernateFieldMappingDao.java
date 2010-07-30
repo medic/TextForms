@@ -14,7 +14,6 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 
 public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements FieldMappingDao {
 
-	@SuppressWarnings("unused")
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(HibernateFieldMappingDao.class);
 	
 	protected HibernateFieldMappingDao() {
@@ -70,7 +69,7 @@ public class HibernateFieldMappingDao extends BaseHibernateDao<Field> implements
 	
 	public Field getFieldForKeyword(String keyword) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("keyword", keyword));
+		criteria.add(Restrictions.eq("keyword", keyword.trim()));
 		return super.getUnique(criteria);
 	}
 	

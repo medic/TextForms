@@ -41,12 +41,12 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 
 	@Override
 	protected Object initThinletTab(UiGeneratorController uiController) {
-		tabController = new ResourceMapperThinletTabController(uiController, appContext);
-		return tabController.getTab();
+		this.tabController = new ResourceMapperThinletTabController(uiController, this.appContext);
+		return this.tabController.getTab();
 	}
 
 	public Object getTab(){
-		return mainTab;
+		return this.mainTab;
 	}
 	
 	/**
@@ -63,13 +63,13 @@ public class ResourceMapperPluginController extends BasePluginController impleme
 	 */
 	public void init(FrontlineSMS frontlineController, ApplicationContext appContext) throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
-		frontlineController.addIncomingMessageListener(this);
+		this.frontlineController.addIncomingMessageListener(this);
 		this.appContext = appContext;
 		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
 		
 		if (ResourceMapperProperties.isDebugMode()) {
 			LOG.debug("Running ResourceMapperDebug...");
-			ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, appContext);
+			ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this, this.appContext);
 			resourceMapperDebug.createDebugContacts();
 			resourceMapperDebug.createDebugFields();
 			resourceMapperDebug.createDebugResponses();

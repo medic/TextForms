@@ -51,7 +51,7 @@ public abstract class MessageHandler {
 	}
 	
 	protected String arrayToString(String [] args) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {
 			if (sb.length() > 0) {
 				 sb.append(",");

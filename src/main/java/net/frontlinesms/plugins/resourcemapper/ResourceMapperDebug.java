@@ -121,7 +121,9 @@ public class ResourceMapperDebug {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
 			this.messageDao.saveMessage(frontlineMessage);
 			LOG.debug("Response Created [%s, %s, %s]", dateReceived, senderMsisdn, message);
-			pluginController.incomingMessageEvent(frontlineMessage);
+			if (pluginController != null) {
+				pluginController.incomingMessageEvent(frontlineMessage);
+			}
 		}
 		catch (Exception ex) {
 			LOG.error("Exception: %s", ex);

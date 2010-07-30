@@ -6,6 +6,7 @@ import java.util.Collection;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -59,7 +60,7 @@ public class RegisterHandler extends MessageHandler {
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);
-					sendReply(message.getSenderMsisdn(), String.format("Problem updating contact information"), true);
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorUpdateContact(contact.getDisplayName()), true);
 				}
 			}
 			else {
@@ -70,12 +71,12 @@ public class RegisterHandler extends MessageHandler {
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);
-					sendReply(message.getSenderMsisdn(), String.format("Problem saving contact information"), true);
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveContact(message.getSenderMsisdn()), true);
 				}
 			}
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), String.format("To register, reply with one of keywords %s followed by your organization id", arrayToString(ResourceMapperProperties.getRegisterKeywords())), true);
+			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
 		}
 	}
 	

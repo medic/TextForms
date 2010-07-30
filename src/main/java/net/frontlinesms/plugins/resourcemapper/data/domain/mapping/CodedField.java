@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @DiscriminatorValue(value="coded")
@@ -29,10 +32,11 @@ public abstract class CodedField extends PlainTextField {
 		this.choices = choices;
 	}
 	
-	@CollectionOfElements(targetElement=String.class)
+	@CollectionOfElements(targetElement=String.class, fetch = FetchType.EAGER)
 	@JoinTable(name="field_choices", joinColumns = @JoinColumn(name="choice"))
 	@Column(name="choices")
 	@Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@Fetch (FetchMode.SELECT)
 	private List<String> choices;
 	
 	public List<String> getChoices() {

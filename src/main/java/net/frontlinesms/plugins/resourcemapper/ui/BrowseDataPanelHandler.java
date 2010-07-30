@@ -99,7 +99,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.tableController.putHeader(FieldResponse.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_DATE),
 													getI18NString(ResourceMapperConstants.TABLE_SUBMITTER),
-													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL),
+													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION),
 													getI18NString(ResourceMapperConstants.TABLE_TYPE),
 													getI18NString(ResourceMapperConstants.TABLE_FIELD),
 													getI18NString(ResourceMapperConstants.TABLE_KEYWORD),

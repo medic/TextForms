@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
@@ -16,6 +18,12 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFact
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
 
+/**
+ * FieldMessageHandler
+ * @author dalezak
+ *
+ * @param <M> Field
+ */
 public abstract class FieldMessageHandler<M extends Field> extends MessageHandler {
 
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(FieldMessageHandler.class);
@@ -50,6 +58,11 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
+	/**
+	 * Is this a valid response?
+	 * @param words array of words
+	 * @return true if valid
+	 */
 	protected abstract boolean isValidResponse(String[] words);
 	
 	@SuppressWarnings("unchecked")
@@ -62,7 +75,7 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), String.format("No Field Mapping Found For '%s'", words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
 			}	
 		}
 		else if (isValidResponse(words)) {
@@ -81,22 +94,24 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
-						this.publishResponse(response);
+						if (this.publishResponse(response) == false) {
+							sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorUploadResponse(), true);
+						}
 					}
 					else {
-						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+						sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveResponse(), true);
 					}
 				}
 				else {
-					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
 				}	
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
 			}
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), String.format("Invalid Response Received '%s'", message.getTextContent()), true);
+			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
 		}
 	}
 	
@@ -113,13 +128,14 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 		return false;
 	}
 	
-	protected void publishResponse(FieldResponse<M> response) {
+	protected boolean publishResponse(FieldResponse<M> response) {
 		if (response != null) {
 			//TODO call the selected UploadDocument handler
 			LOG.debug("publishResponse: %s", response);
 		}
 		else {
-			LOG.error("Response is NULL");
+			LOG.error("publishResponse: NULL");
 		}
+		return true;
 	}
 }

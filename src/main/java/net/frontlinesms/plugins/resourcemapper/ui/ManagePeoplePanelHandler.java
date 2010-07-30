@@ -80,7 +80,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.putHeader(HospitalContact.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_NAME), 
 													getI18NString(ResourceMapperConstants.TABLE_PHONE), 
-													getI18NString(ResourceMapperConstants.TABLE_HOSPITAL), 
+													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION), 
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
 									   new String[]{"getName", "getPhoneNumber", "getHospitalId", "getLastResponseText"},
 									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/port_open.png", "/icons/date.png"},

@@ -7,7 +7,9 @@ import java.util.List;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
@@ -38,7 +40,6 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String content = message.getTextContent().replaceFirst("[\\s]", " ");
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Field field = this.mappingDao.getFieldForKeyword(words[0]);
@@ -55,16 +56,16 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						index++;		
 					}
 					sendReply(message.getSenderMsisdn(), reply.toString(), false);
-					LOG.debug("Register Callback for '%s'", content);
+					LOG.debug("Register Callback for '%s'", message.getTextContent());
 					ResourceMapperPluginController.registerCallback(message.getSenderMsisdn(), this);
-					this.callbacks.put(message.getSenderMsisdn(), mappingDao.getFieldForKeyword(content));
+					this.callbacks.put(message.getSenderMsisdn(), this.mappingDao.getFieldForKeyword(message.getTextContent()));
 				}
 				else {
 					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 				}
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), String.format("No Field Mapping Found For '%s'", words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
 			}	
 		}
 		else if (isValidResponse(words)) {
@@ -83,22 +84,24 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
-						this.publishResponse(response);
+						if (this.publishResponse(response) == false) {
+							sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorUploadResponse(), true);
+						}
 					}
 					else {
-						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+						sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveResponse(), true);
 					}
 				}
 				else {
-					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
 				}	
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
 			}
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), String.format("Invalid Response Received '%s'", message.getTextContent()), true);
+			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
 		}
 	}
 	
@@ -125,19 +128,19 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 						}
 					}
 					else {
-						sendReply(message.getSenderMsisdn(), "Warning, unable to create response", true);
+						sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveResponse(), true);
 					}
 				}
 				else {
-					sendReply(message.getSenderMsisdn(), "Warning, hospital contact is required", true);
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
 				}		
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), "Warning, field mapping is required", true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidCallback(), true);
 			}
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), "Invalid Response", true);
+			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
 		}
 		ResourceMapperPluginController.unregisterCallback(message.getSenderMsisdn());
 	}

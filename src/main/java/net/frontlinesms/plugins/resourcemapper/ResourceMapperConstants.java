@@ -1,13 +1,9 @@
 package net.frontlinesms.plugins.resourcemapper;
 
-import net.frontlinesms.ui.i18n.InternationalisationUtils;
-
 /*
  * RemindersConstants
  * @author Dale Zak
  * 
- * see {@link "http://www.frontlinesms.net"} for more details. 
- * copyright owned by Kiwanja.net
  */
 public final class ResourceMapperConstants {
 	public static final String EDIT = "plugins.resourcemapper.edit";
@@ -21,7 +17,7 @@ public final class ResourceMapperConstants {
 	public static final String TABLE_DATE = "plugins.resourcemapper.table.date";
 	public static final String TABLE_SUBMITTER = "plugins.resourcemapper.table.submitter";
 	public static final String TABLE_KEYWORD = "plugins.resourcemapper.table.keyword";
-	public static final String TABLE_HOSPITAL = "plugins.resourcemapper.table.hospital";
+	public static final String TABLE_ORGANIZATION = "plugins.resourcemapper.table.organization";
 	public static final String TABLE_TYPE = "plugins.resourcemapper.table.type";
 	public static final String TABLE_SCHEMA = "plugins.resourcemapper.table.schema";
 	public static final String TABLE_PHONE = "plugins.resourcemapper.table.phone";

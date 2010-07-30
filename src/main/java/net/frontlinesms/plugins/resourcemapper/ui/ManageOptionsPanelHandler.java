@@ -50,6 +50,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		this.checkboxDebugYes = this.ui.find(this.mainPanel, "checkboxDebugYes");	
 		this.checkboxDebugNo = this.ui.find(this.mainPanel, "checkboxDebugNo");	
 		this.panelUploadOptions = this.ui.find(this.mainPanel, "panelUploadOptions");	
+		
 		loadDebugMode();
 		loadUploadURL();
 		loadUploadDocuments();

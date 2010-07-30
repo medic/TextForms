@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 
 public class ResourceMapperThinletTabController implements ThinletUiEventHandler, ResourceMapperCallback {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeoplePanelHandler.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperThinletTabController.class);
 	
 	private static final String XML_PATH = "/ui/plugins/resourcemapper/mainTab.xml";
 	
@@ -21,23 +21,28 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	
 	private Object mainTab;
 	private Object mainPanel;
+	private Object listTasks;
 	private ManagePeoplePanelHandler panelManagePeople;
 	private ManageFieldsPanelHandler panelManageFields;
 	private BrowseDataPanelHandler panelBrowseData;
 	private ManageOptionsPanelHandler panelManageOptions;
 	
-	public ResourceMapperThinletTabController(UiGeneratorController uiController, ApplicationContext appContext){
+	public ResourceMapperThinletTabController(UiGeneratorController uiController, ApplicationContext appContext) {
 		LOG.debug("ResourceMapperThinletTabController");
 		this.ui = uiController;
 		this.appContext = appContext;
 		this.mainTab = this.ui.loadComponentFromFile(XML_PATH, this);
 		this.mainPanel = this.ui.find(this.mainTab, "panelMainContent");
+		this.listTasks = this.ui.find(this.mainTab, "listTasks");
 		this.panelManagePeople = new ManagePeoplePanelHandler(this.ui, this.appContext, this);
 		this.panelManageFields = new ManageFieldsPanelHandler(this.ui, this.appContext, this);
 		this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
 		this.panelManageOptions = new ManageOptionsPanelHandler(this.ui, this.appContext, this);
-		taskChanged(this.ui.find(this.mainTab, "listTasks"));
+		
+		taskChanged(this.listTasks);
+		
 	}
+	
 
 	public Object getTab(){
 		return mainTab;
