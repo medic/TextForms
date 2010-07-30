@@ -44,7 +44,6 @@ public class ResourceMapperDebug {
 	public void createDebugContacts() {
 		LOG.debug("createDebugContacts");
 		createContact("Dale Zak", "306.341.3644", "dalezak@gmail.com", true, "Saskatoon RUH");
-		createContact("April Hiebert", "306.341.3645", "april.hiebert@gmail.com", true, "Saskatoon City Hospital");
 	}
 	
 	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
