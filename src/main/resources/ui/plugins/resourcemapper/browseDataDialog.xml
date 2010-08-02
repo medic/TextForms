@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="browseDataDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.browse.data" 
+<dialog name="browseDataDialog" icon="/icons/browse.png" text="i18n.plugins.resourcemapper.browse.data" 
 		modal="true" resizable="false" closable="true" close="removeDialog(this)" 
 		bottom="10" top="10" left="10" right="10" columns="2" gap="13">
 

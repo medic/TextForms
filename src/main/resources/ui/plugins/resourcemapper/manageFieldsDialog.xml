@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="manageFieldDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.fields" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13" weighty="1">
+<dialog name="manageFieldDialog" icon="/icons/field.png" text="i18n.plugins.resourcemapper.manage.field" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13" weighty="1">
 
 	<label name="labelName" icon="/icons/field.png" text="i18n.plugins.resourcemapper.fieldname" for="textName" valign="top"/>
 	<textarea name="textName" rows="1" columns="50" weightx="1"/>
