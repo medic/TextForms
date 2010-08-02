@@ -38,6 +38,9 @@ public final class ResourceMapperConstants {
 	public static final String BOOLEAN_TRUE = "plugins.resourcemapper.true";
 	public static final String BOOLEAN_FALSE = "plugins.resourcemapper.false";
 	
+	public static final String CONFIRM_DELETE_CONTACT = "plugins.resourcemapper.confirm.delete.contact";
+	public static final String CONFIRM_DELETE_FIELD = "plugins.resourcemapper.confirm.delete.field";
+	
 	public static final String ALERT_DUPLICATE_KEYWORD = "plugins.resourcemapper.alert.duplicate.keyword";
 	public static final String ALERT_ERROR_CREATE_RESPONSE = "plugins.resourcemapper.alert.create.response";
 	public static final String ALERT_ERROR_SAVE_RESPONSE = "plugins.resourcemapper.alert.save.response";

@@ -83,7 +83,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION), 
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
 									   new String[]{"getName", "getPhoneNumber", "getHospitalId", "getLastResponseText"},
-									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/port_open.png", "/icons/date.png"},
+									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/hospital.png", "/icons/date.png"},
 									   new String []{"name", "phoneNumber", "hospitalId", "lastResponse"});
 		this.queryGenerator = new HospitalContactQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
@@ -109,7 +109,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void showConfirmationDialog(String methodToBeCalled) {
-		this.ui.showConfirmationDialog(methodToBeCalled, this);
+		this.ui.showConfirmationDialog(methodToBeCalled, this, ResourceMapperConstants.CONFIRM_DELETE_CONTACT);
 	}
 	
 	public void deletePerson() {

@@ -63,6 +63,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	private Object labelInfoValue;
 	private Object listChoices;
 	private Object labelSchemaValue;
+	private Object labelChoices;
 	
 	private Object editButton;
 	private Object deleteButton;
@@ -89,6 +90,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.labelTypeValue = this.ui.find(this.mainPanel, "labelTypeValue");
 		this.labelInfoValue = this.ui.find(this.mainPanel, "labelInfoValue");
 		this.listChoices = this.ui.find(this.mainPanel, "listChoices");
+		this.labelChoices = this.ui.find(this.mainPanel, "labelChoices");
 		this.labelSchemaValue = this.ui.find(this.mainPanel, "labelSchemaValue");
 			
 		this.editDialog = new ManageFieldsDialogHandler(this.ui, this.appContext, callback);
@@ -105,7 +107,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 													getI18NString(ResourceMapperConstants.TABLE_TYPE),
 													getI18NString(ResourceMapperConstants.TABLE_SCHEMA)}, 
 									   new String[]{"getName", "getKeyword", "getTypeLabel", "getSchemaName"},
-									   new String[]{"/icons/keyword.png", "/icons/description.png", "/icons/tip.png", "/icons/httpRequest.png"},
+									   new String[]{"/icons/field.png", "/icons/description.png", "/icons/type.png", "/icons/httpRequest.png"},
 									   new String[]{"name", "keyword", "class", "schemaName"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
@@ -133,7 +135,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void showConfirmationDialog(String methodToBeCalled) {
-		this.ui.showConfirmationDialog(methodToBeCalled, this);
+		this.ui.showConfirmationDialog(methodToBeCalled, this, ResourceMapperConstants.CONFIRM_DELETE_FIELD);
 	}
 	
 	public void deleteField() {
@@ -216,12 +218,20 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			if ("boolean".equalsIgnoreCase(field.getType())) {
 				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
 				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_FALSE), 0));
+				this.ui.setVisible(this.labelChoices, true);
+				this.ui.setVisible(this.listChoices, true);
 			}
 			else if (field.getChoices() != null) {
 				for (String choiceText : field.getChoices()) {
 					LOG.debug("choiceText: %s", choiceText);
 					this.ui.add(this.listChoices, this.ui.createListItem(choiceText, choiceText));
 				}	
+				this.ui.setVisible(this.labelChoices, true);
+				this.ui.setVisible(this.listChoices, true);
+			}
+			else {
+				this.ui.setVisible(this.labelChoices, false);
+				this.ui.setVisible(this.listChoices, false);
 			}
 		}
 		else {
@@ -234,6 +244,8 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelInfoValue, "");
 			this.ui.setText(this.labelSchemaValue, "");
 			this.ui.removeAll(this.listChoices);
+			this.ui.setVisible(this.labelChoices, false);
+			this.ui.setVisible(this.listChoices, false);
 		}
 	}
 }

@@ -79,6 +79,13 @@ public abstract class FieldResponse<M extends Field> {
 		return null;
 	}
 	
+	public String getSubmitterDisplayName() {
+		if (this.submitter != null) {
+			return this.submitter.getDisplayName();
+		}
+		return null;
+	}
+	
 	public String getSubmitterPhone() {
 		if (this.submitter != null) {
 			return this.submitter.getPhoneNumber();

@@ -53,6 +53,10 @@ public final class ResourceMapperMessages {
 		return getI18NString("plugins.resourcemapper.handler.error.upload.response");
 	}
 	
+	public static String getMessageAllContacts() {
+		return getI18NString("plugins.resourcemapper.all.contacts");
+	}
+	
 	private static String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

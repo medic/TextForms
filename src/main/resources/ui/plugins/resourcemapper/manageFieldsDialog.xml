@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialog name="manageFieldDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.fields" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
+<dialog name="manageFieldDialog" icon="/icons/user.png" text="i18n.plugins.resourcemapper.manage.fields" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13" weighty="1">
 
-	<label name="labelName" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.fieldname" for="textName" valign="top"/>
+	<label name="labelName" icon="/icons/field.png" text="i18n.plugins.resourcemapper.fieldname" for="textName" valign="top"/>
 	<textarea name="textName" rows="1" columns="50" weightx="1"/>
 	
 	<label name="labelKeyword" text="i18n.plugins.resourcemapper.keyword" icon="/icons/description.png" for="textKeyword" valign="top" />
@@ -10,19 +10,29 @@
 	<label name="labelSchema" text="i18n.plugins.resourcemapper.schema" icon="/icons/httpRequest.png" for="textSchema" valign="top" />
 	<textarea name="textSchema" wrap="true" columns="50" rows="1" weightx="1"/>
 	
-	<label name="labelFieldTypes" text="i18n.plugins.resourcemapper.type" icon="/icons/tip.png" for="comboFieldTypes" valign="top" />
+	<label name="labelFieldTypes" text="i18n.plugins.resourcemapper.type" icon="/icons/type.png" for="comboFieldTypes" valign="top" />
 	<combobox name="comboFieldTypes" editable="false" action="fieldTypeChanged(this, panelFieldChoices, listFieldChoices)" weightx="1"/>
 	
-	<panel name="panelFieldChoices" colspan="2" weightx="1" columns="2" gap="8">
+	<panel name="panelFieldChoices" colspan="2" weightx="1" columns="3" gap="8">
+		<label name="labelChoices" text="i18n.plugins.resourcemapper.choices" icon="/icons/choices.png" valign="top" />
 		<textfield name="textFieldChoice" action="textFieldChoiceChanged(this, listFieldChoices, buttonFieldAdd)" perform="addFieldChoice(this, listFieldChoices, buttonFieldAdd)" weightx="1"/>
 		<button name="buttonFieldAdd" icon="/icons/tick.png" action="addFieldChoice(textFieldChoice, listFieldChoices, this)" enabled="false"/>
 		
-		<list name="listFieldChoices" selection="single" colspan="2" weightx="1" height="100" action="deleteFieldChoice(this)"/>
+		<list name="listFieldChoices" selection="single" colspan="3" weightx="1" height="100" action="deleteFieldChoice(this)" />
+	</panel>
+	<label name="labelInfoSnippet" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" for="textInfoSnippet" colspan="2" valign="top" />
+	<textarea name="textInfoSnippet" wrap="true" columns="50" rows="4" colspan="2" weightx="1" weighty="1"/>
+
+	<panel name="placeholderChoices" colspan="2" columns="1">
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
 	</panel>
 	
-	<label name="labelInfoSnippet" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" for="textInfoSnippet" colspan="2" valign="top" />
-	<textarea name="textInfoSnippet" wrap="true" columns="50" rows="4" colspan="2" weightx="1"/>
-
 	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(manageFieldDialog)" weightx="1" />	
 	<button name="buttonSave" text="i18n.action.save" icon="/icons/tick.png" action="saveField(manageFieldDialog)" weightx="1" />
 </dialog>

@@ -62,6 +62,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	private Object textFieldChoice;
 	private Object textSchema;
 	private Object buttonFieldAdd;
+	private Object placeholderChoices;
 	
 	private FieldMappingDao fieldMappingDao;
 	
@@ -81,6 +82,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.textFieldChoice = this.ui.find(this.mainDialog, "textFieldChoice");	
 		this.textSchema = this.ui.find(this.mainDialog, "textSchema");
 		this.buttonFieldAdd = this.ui.find(this.mainDialog, "buttonFieldAdd");
+		this.placeholderChoices = this.ui.find(this.mainDialog, "placeholderChoices");
 		this.fieldMappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
 		
 		loadFieldMappings();
@@ -118,10 +120,8 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	}
 	
 	private void loadFieldMappings() {
-		this.ui.add(this.comboFieldTypes, this.ui.createComboboxChoice("", null));
 		for (Field fieldClass : FieldMappingFactory.getFieldClasses()) {
 			Object comboBoxChoice = this.ui.createComboboxChoice(fieldClass.getTypeLabel(), fieldClass.getType());
-			this.ui.setIcon(comboBoxChoice, "/icons/tip.png");
 			this.ui.add(this.comboFieldTypes, comboBoxChoice);
 		}
 	}
@@ -193,10 +193,12 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.ui.removeAll(listChoices);
 		this.ui.setEnabled(this.buttonFieldAdd, false);
 		this.ui.setEditable(this.textFieldChoice, false);
-		this.ui.setEnabled(listChoices, false);
 		if ("boolean".equalsIgnoreCase(selectedType)) {
 			this.ui.add(listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
 			this.ui.add(listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_FALSE), 0));
+			this.ui.setEnabled(listChoices, false);
+			this.ui.setVisible(this.panelFieldChoices, true);
+			this.ui.setVisible(this.placeholderChoices, false);
 		}
 		else if ("checklist".equalsIgnoreCase(selectedType) || 
 				 "multichoice".equalsIgnoreCase(selectedType)) {
@@ -212,6 +214,13 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.setEnabled(this.buttonFieldAdd, false);
 			this.ui.setEditable(this.textFieldChoice, true);
 			this.ui.setEnabled(listChoices, true);
+			this.ui.setVisible(this.panelFieldChoices, true);
+			this.ui.setVisible(this.placeholderChoices, false);
+		}
+		else {
+			this.ui.setEnabled(listChoices, false);
+			this.ui.setVisible(this.panelFieldChoices, false);
+			this.ui.setVisible(this.placeholderChoices, true);
 		}
 	}
 	

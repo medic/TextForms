@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel i18n="true" name="panelBrowseData" columns="3" weightx="1" weighty="1" scrollable="false" gap="5">
 	<panel gap="5" weightx="1">
-		<label name="labelField" icon="/icons/search.png" />
+		<label name="labelField"  text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchField" />
 		<textfield name="searchField" weightx="1" action="searchByField(this, buttonFieldClear)"/>
 		<button name="buttonFieldClear" icon="/icons/cross.png" action="clearSearch(searchField, this)" enabled="false"/>
 	</panel>
 	
 	<panel gap="5" left="15" columns="3">
-		<textfield name="textDate" columns="15" action="dateChanged(this, buttonDateClear)" tooltip="DD/MM/YYYY"/>
+		<textfield name="textDate" columns="15" action="dateChanged(this)" tooltip="DD/MM/YYYY"/>
 		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
-		<button name="buttonDateClear" icon="/icons/cross.png" action="clearDate(textDate, this)" enabled="false"/>
-    </panel>
+	</panel>
     
     <panel gap="5" weightx="1" left="15">
     	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.submitter" />
@@ -19,11 +18,5 @@
 	
 	<panel name="panelFields" border="false" colspan="3" weightx="1" weighty="1" valign="fill" gap="10">
 		<table name="tableFields" selection="single" weightx="1" weighty="1"/>
-	</panel>
-		
-	<panel weightx="1" colspan="3" columns="3" gap="10">
-		<button name="buttonAddResponse" icon="/icons/keyword_add.png" text="i18n.plugins.resourcemapper.add.response" action="addResponse(tableFields)" weightx="1" />
-		<button name="buttonEditResponse" icon="/icons/keyword_edit.png" text="i18n.plugins.resourcemapper.edit.response" action="editResponse(tableFields)" weightx="1" enabled="false"/>
-		<button name="buttonDeleteResponse" icon="/icons/keyword_delete.png" text="i18n.plugins.resourcemapper.delete.response" action="showConfirmationDialog('deleteField')" weightx="1" enabled="false"/>
 	</panel>
 </panel>

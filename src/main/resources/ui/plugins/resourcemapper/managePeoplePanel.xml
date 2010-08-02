@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <splitpane i18n="true" name="panelManagePeople" orientation="horizontal" divider="450" weightx="1" weighty="1">
 	<panel columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
-		<button name="labelFindPerson" icon="/icons/search.png" for="searchPerson" weightx="0" action="focus(searchPerson)" type="link" />
+		<label name="labelField"  text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchPerson" />
 		<textfield name="searchPerson" action="searchByPerson(this, tablePeople, buttonClear)" weightx="1" columns="0" colspan="2"/>
 		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchPerson, tablePeople, this)" enabled="false"/>
 		
@@ -16,7 +16,7 @@
 		<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" valign="top" />
 		<label name="labelNameValue" height="40" weightx="1" font="bold 12"/>
 		
-		<label name="labelHospital" text="i18n.plugins.resourcemapper.hospital" icon="/icons/port_open.png" valign="top" />
+		<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/hospital.png" valign="top" />
 		<label name="labelHospitalValue" weightx="1" font="bold 12" />
 		
 		<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" valign="top" />

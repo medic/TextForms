@@ -4,7 +4,7 @@
 	<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" for="textName" valign="top" />
 	<textarea name="textName" height="50" rows="1" weightx="1"  />
 		
-	<label name="labelHospital" text="i18n.plugins.resourcemapper.hospital" icon="/icons/port_open.png" for="textHospital" valign="top" />
+	<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/hospital.png" for="textHospital" valign="top" />
 	<textarea name="textHospital" rows="3" columns="50" weightx="1"/>
 		
 	<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" for="textPhone" valign="top" />

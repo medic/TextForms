@@ -8,8 +8,8 @@
 			 	<list name="listTasks" selection="single" weightx="1" weighty="1" action="taskChanged(listTasks)" >
 					<item text="i18n.plugins.resourcemapper.manage.people" icon="/icons/user.png" property="value=people" selected="true" />
 					<item text="i18n.plugins.resourcemapper.manage.fields" icon="/icons/keyword.png" property="value=fields"/>
-					<item text="i18n.plugins.resourcemapper.manage.options" icon="/icons/httpRequest.png" property="value=options"/>
 					<item text="i18n.plugins.resourcemapper.browse.data" icon="/icons/browse.png" property="value=data"/>
+					<item text="i18n.plugins.resourcemapper.manage.options" icon="/icons/httpRequest.png" property="value=options"/>
 				</list>
 			</panel>
 			<panel name="panelMainContent" weightx="1" weighty="1" top="6" left="6" right="6" bottom="6"/>

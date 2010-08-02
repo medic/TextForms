@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -66,9 +67,6 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	private Object panelFields;
 	private Object tableFields;
 	
-	private Object editButton;
-	private Object deleteButton;
-	
 	private String sortColumn;
 	private boolean sortAscending;
 	
@@ -92,37 +90,26 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
 		this.textDate = this.ui.find(this.mainPanel, "textDate");
 		
-		this.editButton = this.ui.find(this.mainPanel, "buttonEditResponse");
-		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteResponse");
-		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableFields, this.panelFields);
 		this.tableController.putHeader(FieldResponse.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_DATE),
 													getI18NString(ResourceMapperConstants.TABLE_SUBMITTER),
 													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION),
-													getI18NString(ResourceMapperConstants.TABLE_TYPE),
 													getI18NString(ResourceMapperConstants.TABLE_FIELD),
-													getI18NString(ResourceMapperConstants.TABLE_KEYWORD),
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
 									   new String[]{"getDateSubmittedText", 
 													"getSubmitterName", 
 													"getHospitalId", 
-													"getMappingTypeLabel", 
 													"getMappingName", 
-													"getMappingKeyword", 
 													"getMessageText"},
 									   new String[]{"/icons/date.png", 
 													"/icons/user_sender.png", 
-													"/icons/port_open.png", 
-													"/icons/tip.png", 
-													"/icons/keyword.png", 
-													"/icons/description.png", 
+													"/icons/hospital.png", 
+													"/icons/field.png",
 													"/icons/sms_receive.png"},
 									   new String []{"dateSubmitted", 
 													 "submitter.name",
 													 "hospitalId",
-													 "mapping.class",
-													 "mapping.keyword",
 													 "mapping.name",
 													 "message.textMessageContent"});
 		this.queryGenerator = new FieldResponseQueryGenerator(this.appContext, this.tableController);
@@ -139,11 +126,19 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		return this.mainPanel;
 	}
 
+	public void focus(Object component) {
+		if (component != null) {
+			this.ui.requestFocus(component);
+		}
+	}
+	
 	public void loadHospitalContacts() {
 		this.ui.removeAll(this.comboSubmitter);
-		this.ui.add(this.comboSubmitter, this.ui.createComboboxChoice("", null));
+		Object allContacts = this.ui.createComboboxChoice(ResourceMapperMessages.getMessageAllContacts(), null);
+		this.ui.setIcon(allContacts, "/icons/users.png");
+		this.ui.add(this.comboSubmitter, allContacts);
 		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
-			Object comboboxChoice = this.ui.createComboboxChoice(contact.getName(), contact);
+			Object comboboxChoice = this.ui.createComboboxChoice(contact.getDisplayName(), contact);
 			this.ui.setIcon(comboboxChoice, "/icons/user.png");
 			this.ui.add(this.comboSubmitter, comboboxChoice);
 		}
@@ -159,17 +154,9 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.ui.showDateSelecter(textField);
 	}
 	
-	public void dateChanged(Object textDate, Object buttonClear) {
+	public void dateChanged(Object textDate) {
 		LOG.debug("dateChanged");
 		String dateText = this.ui.getText(textDate);
-		this.ui.setEnabled(buttonClear, dateText != null && dateText.length() > 0);
-		startSearch();
-	}
-	
-	public void clearDate(Object textDate, Object buttonClear) {
-		LOG.debug("clearDate");
-		this.ui.setText(textDate, "");
-		this.ui.setEnabled(buttonClear, false);
 		startSearch();
 	}
 	
@@ -247,34 +234,8 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		startSearch();
 	}
 	
-	public void addResponse(Object tableField) {
-		LOG.debug("addResponse");
-		this.editDialog.loadHospitalContacts();
-		this.editDialog.loadFieldMappings();
-		this.editDialog.show(null);
-	}
-	
-	public void editResponse(Object tableField) {
-		LOG.debug("editResponse");
-		this.editDialog.loadHospitalContacts();
-		this.editDialog.loadFieldMappings();
-		this.editDialog.show(this.getSelectedFieldResponse());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void deleteField() {
-		LOG.debug("deleteField");
-		FieldResponse fieldResponse = this.getSelectedFieldResponse();
-		if (fieldResponse != null) {
-			this.fieldResponseDao.deleteFieldResponse(fieldResponse);
-		}
-	}
-	
 	public void doubleClickAction(Object selectedObject) {
 		LOG.debug("doubleClickAction");
-		this.editDialog.loadHospitalContacts();
-		this.editDialog.loadFieldMappings();
-		this.editDialog.show(this.getSelectedFieldResponse());
 	}
 
 	public void resultsChanged() {
@@ -288,18 +249,8 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		startSearch();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void selectionChanged(Object selectedObject) {
 		LOG.debug("selectionChanged");
-		FieldResponse fieldResponse = this.getSelectedFieldResponse();
-		if (fieldResponse != null) {
-			this.ui.setEnabled(this.editButton, true);
-			this.ui.setEnabled(this.deleteButton, true);
-		}
-		else {
-			this.ui.setEnabled(this.editButton, false);
-			this.ui.setEnabled(this.deleteButton, false);
-		}
 	}
 	
 	@SuppressWarnings("unchecked")

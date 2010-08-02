@@ -59,4 +59,18 @@ public class HospitalContact extends Contact {
 		return "";
 	}
 
+	/**
+	 * Returns this contact's name, or if none is set, his phone number.
+	 * @return a string representing this contact.
+	 */
+	@Override
+	public String getDisplayName() {
+		if (this.getName() != null && this.getName().length() > 0) {
+			return this.getName();
+		}
+		if (this.getPhoneNumber() != null && this.getPhoneNumber().length() > 0) {
+			return this.getPhoneNumber();
+		}
+		return null;
+	}
 }

@@ -92,17 +92,11 @@ public class ManagePeopleDialogHandler implements ThinletUiEventHandler {
 		String contactHospital = this.ui.getText(this.textHospital);
 		String contactPhone = this.ui.getText(this.textPhone);
 		String contactEmail = this.ui.getText(this.textEmail);
-		if (contactName == null || contactName.length() == 0) {
-			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_NAME));
-		}
-		else if (contactHospital == null || contactHospital.length() == 0) {
+		if (contactHospital == null || contactHospital.length() == 0) {
 			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_HOSPITAL));
 		}
 		else if (contactPhone == null || contactPhone.length() == 0) {
 			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_PHONE));
-		}
-		else if (contactEmail == null || contactEmail.length() == 0) {
-			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_CONTACT_EMAIL));
 		}
 		else if (this.contact != null) {
 			this.contact.setName(contactName);
