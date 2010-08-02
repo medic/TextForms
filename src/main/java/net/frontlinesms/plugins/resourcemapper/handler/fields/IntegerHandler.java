@@ -25,9 +25,12 @@ public class IntegerHandler extends FieldMessageHandler<IntegerField> {
 	 */
 	public IntegerHandler() {}
 
+	/**
+	 * Get IntegerField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(integerField);
+		return this.fieldMappingDao.getKeywordsForField(integerField);
 	}
 	
 	@Override

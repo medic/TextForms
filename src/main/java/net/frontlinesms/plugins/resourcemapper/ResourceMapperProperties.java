@@ -1,7 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper;
 
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocumentFactory;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploaderFactory;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class ResourceMapperProperties extends UserHomeFilePropertySet {
@@ -116,26 +116,25 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 		return propertyValue.split(SEPARATOR);
 	}
 	
-	public static UploadDocument getUploadDocumentHandler() {
-		String uploadDocumentTitle = getInstance().getProperty(UPLOAD_DOCUMENT);
-		if (uploadDocumentTitle != null && uploadDocumentTitle.length() > 0) {
-			//TODO store this value in variable
-			for (UploadDocument uploadDocument : UploadDocumentFactory.getHandlerClasses()) {
-				if (uploadDocumentTitle.equalsIgnoreCase(uploadDocument.getTitle())) {
-					return uploadDocument;
+	public static DocumentUploader getDocumentUploader() {
+		String documentUploaderTitle = getInstance().getProperty(UPLOAD_DOCUMENT);
+		if (documentUploaderTitle != null && documentUploaderTitle.length() > 0) {
+			for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
+				if (documentUploaderTitle.equalsIgnoreCase(documentUploader.getTitle())) {
+					return documentUploader;
 				}
 			}
 		}
 		return null;
 	}
 	
-	public static void setUploadDocumentHandler(UploadDocument uploadDocument) {
-		if (uploadDocument != null) {
-			LOG.debug("setUploadDocumentHandler: %s", uploadDocument.getTitle());
-			getInstance().setProperty(UPLOAD_DOCUMENT, uploadDocument.getTitle());	
+	public static void setDocumentUploader(DocumentUploader documentUploader) {
+		if (documentUploader != null) {
+			LOG.debug("setDocumentUploader: %s", documentUploader.getTitle());
+			getInstance().setProperty(UPLOAD_DOCUMENT, documentUploader.getTitle());	
 		}
 		else {
-			LOG.debug("setUploadDocumentHandler: NULL");
+			LOG.debug("setDocumentUploader: NULL");
 			getInstance().setProperty(UPLOAD_DOCUMENT, null);	
 		}
 		getInstance().saveToDisk();

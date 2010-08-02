@@ -6,9 +6,9 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperListener;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperPluginController;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
@@ -42,7 +42,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
-			Field field = this.mappingDao.getFieldForKeyword(words[0]);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				if (field.getChoices() != null) {
 					StringBuilder reply = new StringBuilder();
@@ -57,25 +57,25 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 					}
 					sendReply(message.getSenderMsisdn(), reply.toString(), false);
 					LOG.debug("Register Callback for '%s'", message.getTextContent());
-					ResourceMapperPluginController.registerCallback(message.getSenderMsisdn(), this);
-					this.callbacks.put(message.getSenderMsisdn(), this.mappingDao.getFieldForKeyword(message.getTextContent()));
+					ResourceMapperListener.registerCallback(message.getSenderMsisdn(), this);
+					this.callbacks.put(message.getSenderMsisdn(), this.fieldMappingDao.getFieldForKeyword(message.getTextContent()));
 				}
 				else {
 					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 				}
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
 			}	
 		}
 		else if (isValidResponse(words)) {
-			Field field = this.mappingDao.getFieldForKeyword(words[0]);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						this.responseDao.saveFieldResponse(response);
+						this.fieldResponseDao.saveFieldResponse(response);
 						LOG.debug("Response Created: %s", response);
 						try {
 							contact.setLastResponse(new Date());
@@ -97,7 +97,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 				}	
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
 			}
 		}
 		else {
@@ -116,7 +116,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						this.responseDao.saveFieldResponse(response);
+						this.fieldResponseDao.saveFieldResponse(response);
 						this.publishResponse(response);
 						LOG.debug("FieldResponse Created: %s", response.getClass());
 						try {
@@ -142,7 +142,7 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		else {
 			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
 		}
-		ResourceMapperPluginController.unregisterCallback(message.getSenderMsisdn());
+		ResourceMapperListener.unregisterCallback(message.getSenderMsisdn());
 	}
 	
 	@Override

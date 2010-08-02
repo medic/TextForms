@@ -16,17 +16,17 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  * @author dalezak
  *
  */
-public class JSONDocument extends UploadDocument {
+public class JSONUploader extends DocumentUploader {
 
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(JSONDocument.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(JSONUploader.class);
 	
 	//Collection of additional items
 	private Map<String, Object> items = new HashMap<String, Object>();
 	
 	/**
-	 * JSONDocument
+	 * JSONUploader
 	 */
-	public JSONDocument() {
+	public JSONUploader() {
 	}
 
 	public void addItem(String key, Object value) {
@@ -99,7 +99,7 @@ public class JSONDocument extends UploadDocument {
 	
 	@Override
 	public String getPanelXML() {
-		return "/ui/plugins/resourcemapper/upload/uploadJSONDocument.xml";
+		return "/ui/plugins/resourcemapper/upload/JSONUploader.xml";
 	}
 	
 }

@@ -1,5 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.ui;
 
+import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
@@ -27,7 +28,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	private BrowseDataPanelHandler panelBrowseData;
 	private ManageOptionsPanelHandler panelManageOptions;
 	
-	public ResourceMapperThinletTabController(UiGeneratorController uiController, ApplicationContext appContext) {
+	public ResourceMapperThinletTabController(FrontlineSMS frontlineController, UiGeneratorController uiController, ApplicationContext appContext) {
 		LOG.debug("ResourceMapperThinletTabController");
 		this.ui = uiController;
 		this.appContext = appContext;
@@ -43,7 +44,7 @@ public class ResourceMapperThinletTabController implements ThinletUiEventHandler
 	}
 
 	public Object getTab(){
-		return mainTab;
+		return this.mainTab;
 	}
 	
 	public void taskChanged(Object listTasks) {

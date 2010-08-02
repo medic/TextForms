@@ -25,9 +25,12 @@ public class PlainTextHandler extends FieldMessageHandler<PlainTextField> {
 	 */
 	public PlainTextHandler() {}
 	
+	/**
+	 * Get PlainTextField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(plainTextField);
+		return this.fieldMappingDao.getKeywordsForField(plainTextField);
 	}
 	
 	@Override

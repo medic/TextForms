@@ -13,9 +13,9 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  * @author dalezak
  *
  */
-public class CSVDocument extends UploadDocument {
+public class CSVUploader extends DocumentUploader {
 
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(JSONDocument.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CSVUploader.class);
 	
 	/**
 	 * Collection of additional items
@@ -23,9 +23,9 @@ public class CSVDocument extends UploadDocument {
 	private Map<String, Object> items = new HashMap<String, Object>();
 	
 	/**
-	 * CSVDocument
+	 * CSVUploader
 	 */
-	public CSVDocument() {
+	public CSVUploader() {
 	}
 
 	public void addItem(String key, Object value) {
@@ -96,7 +96,7 @@ public class CSVDocument extends UploadDocument {
 	
 	@Override
 	public String getPanelXML() {
-		return "/ui/plugins/resourcemapper/upload/uploadCSVDocument.xml";
+		return "/ui/plugins/resourcemapper/upload/CSVUploader.xml";
 	}
 
 }

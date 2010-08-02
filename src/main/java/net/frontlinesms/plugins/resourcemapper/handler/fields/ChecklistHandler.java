@@ -27,9 +27,12 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	 */
 	public ChecklistHandler() {}
 	
+	/**
+	 * Get ChecklistField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(checklistField);
+		return this.fieldMappingDao.getKeywordsForField(checklistField);
 	}
 	
 	@Override
@@ -48,7 +51,7 @@ public class ChecklistHandler extends CodedHandler<ChecklistField> {
 	}
 	
 	private boolean areValidChoices(String keyword, String words) {
-		Field field = this.mappingDao.getFieldForKeyword(keyword);
+		Field field = this.fieldMappingDao.getFieldForKeyword(keyword);
 		if (field != null) {
 			List<String> choices = field.getChoices();
 			//TODO improve this if-else logic

@@ -1,6 +1,7 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
@@ -17,8 +18,8 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFactory;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.handler.MessageHandler;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocumentFactory;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploaderFactory;
 
 /**
  * FieldMessageHandler
@@ -33,12 +34,12 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 	/**
 	 * FieldMappingDao
 	 */
-	protected FieldMappingDao mappingDao;
+	protected FieldMappingDao fieldMappingDao;
 	
 	/**
 	 * FieldResponseDao
 	 */
-	protected FieldResponseDao responseDao;
+	protected FieldResponseDao fieldResponseDao;
 	
 	/**
 	 * HospitalContactDao
@@ -55,8 +56,8 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 	 * @param appContext appContext
 	 */
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.mappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
-		this.responseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
+		this.fieldMappingDao = (FieldMappingDao) appContext.getBean("fieldMappingDao");
+		this.fieldResponseDao = (FieldResponseDao) appContext.getBean("fieldResponseDao");
 		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
@@ -72,22 +73,22 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
-			Field field = this.mappingDao.getFieldForKeyword(words[0]);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
 			}	
 		}
 		else if (isValidResponse(words)) {
-			Field field = this.mappingDao.getFieldForKeyword(words[0]);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
 					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
 					if (response != null) {
-						this.responseDao.saveFieldResponse(response);
+						this.fieldResponseDao.saveFieldResponse(response);
 						LOG.debug("FieldResponse Created: %s", response.getClass());
 						try {
 							contact.setLastResponse(new Date());
@@ -109,7 +110,7 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 				}	
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(words[0]), true);
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
 			}
 		}
 		else {
@@ -138,17 +139,26 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 	protected boolean publishResponse(FieldResponse<M> fieldResponse) {
 		if (fieldResponse != null) {
 			LOG.debug("publishResponse: %s", fieldResponse);
-			UploadDocument uploadDocument = UploadDocumentFactory.createUploadDocument();
-			if (uploadDocument != null) {
-				uploadDocument.setPhoneNumber(fieldResponse.getSubmitterPhone());
-				uploadDocument.setHospitalId(fieldResponse.getSubmitterHospitalId());
-				uploadDocument.addFieldResponse(fieldResponse);
-				return uploadDocument.upload();
+			DocumentUploader documentUploader = DocumentUploaderFactory.createDocumentUploader();
+			if (documentUploader != null) {
+				documentUploader.setPhoneNumber(fieldResponse.getSubmitterPhone());
+				documentUploader.setHospitalId(fieldResponse.getSubmitterHospitalId());
+				documentUploader.addFieldResponse(fieldResponse);
+				return documentUploader.upload();
 			}
 		}
 		else {
 			LOG.error("publishResponse: NULL");
 		}
 		return true;
+	}
+	
+	/**
+	 * Get all field mapping keywords
+	 * @return
+	 */
+	protected String [] getAllKeywords() {
+		List<String> keywords = this.fieldMappingDao.getKeywords();
+		return keywords.toArray(new String[keywords.size()]);
 	}
 }

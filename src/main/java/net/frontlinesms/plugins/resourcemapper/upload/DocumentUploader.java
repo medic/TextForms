@@ -16,14 +16,14 @@ import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
 /**
- * Upload Document
+ * DocumentUploader
  * @author dalezak
  *
  */
 @SuppressWarnings("unchecked")
-public abstract class UploadDocument implements ThinletUiEventHandler {
+public abstract class DocumentUploader implements ThinletUiEventHandler {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(UploadDocument.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(DocumentUploader.class);
 	
 	/**
 	 * Implementing class needs to define toString() method

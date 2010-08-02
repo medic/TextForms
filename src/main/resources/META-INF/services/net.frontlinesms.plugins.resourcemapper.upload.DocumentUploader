@@ -1,0 +1,4 @@
+net.frontlinesms.plugins.resourcemapper.upload.XMLUploader
+net.frontlinesms.plugins.resourcemapper.upload.JSONUploader
+net.frontlinesms.plugins.resourcemapper.upload.CSVUploader
+net.frontlinesms.plugins.resourcemapper.upload.GoogleUploader

@@ -9,16 +9,20 @@ import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
  */
 public final class ResourceMapperMessages {
 	
-	public static String getHandlerWelcome() {
-		return getI18NString("plugins.resourcemapper.handler.welcome");
+	public static String getHandlerHelp(String[] keywords) {
+		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.help"), arrayToString(keywords));
 	}
 	
 	public static String getHandlerRegister(String[] keywords) {
 		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.register"), arrayToString(keywords));
 	}
 	
-	public static String getHandlerInvalidKeyword(String keyword) {
-		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.invalid.keyword"), keyword);
+	public static String getHandlerRegisterSuccessful(String phoneNumber) {
+		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.register.successful"), phoneNumber);
+	}
+	
+	public static String getHandlerInvalidKeyword(String[] keywords) {
+		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.invalid.keyword"), arrayToString(keywords));
 	}
 	
 	public static String getHandlerInvalidCallback() {
@@ -59,4 +63,5 @@ public final class ResourceMapperMessages {
 		}
 		return sb.toString();
 	}
+
 }

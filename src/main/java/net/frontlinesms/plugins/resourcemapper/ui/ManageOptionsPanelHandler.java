@@ -8,8 +8,8 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocumentFactory;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploaderFactory;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -80,13 +80,13 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	
 	private void loadUploadDocuments() {
 		this.ui.add(this.comboUploadDocuments, this.ui.createComboboxChoice("", null));
-		UploadDocument selectedUploadDocument = ResourceMapperProperties.getUploadDocumentHandler();
+		DocumentUploader selectedDocumentUploader = ResourceMapperProperties.getDocumentUploader();
 		int index = 1;
-		for (UploadDocument uploadDocument : UploadDocumentFactory.getHandlerClasses()) {
-			uploadDocument.setUiGeneratorController(this.ui);
-			Object comboBoxChoice = this.ui.createComboboxChoice(uploadDocument.getTitle(), uploadDocument);
+		for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
+			documentUploader.setUiGeneratorController(this.ui);
+			Object comboBoxChoice = this.ui.createComboboxChoice(documentUploader.getTitle(), documentUploader);
 			this.ui.add(this.comboUploadDocuments, comboBoxChoice);
-			if (uploadDocument == selectedUploadDocument) {
+			if (documentUploader == selectedDocumentUploader) {
 				this.ui.setSelectedIndex(this.comboUploadDocuments, index);
 			}
 			index++;
@@ -109,12 +109,12 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	
 	public void uploadDocumentChanged(Object comboUploadDocuments) {
 		Object selectedItem = this.ui.getSelectedItem(comboUploadDocuments);
-		UploadDocument uploadDocument = selectedItem != null ? (UploadDocument)this.ui.getAttachedObject(selectedItem) : null; 
+		DocumentUploader documentUploader = selectedItem != null ? (DocumentUploader)this.ui.getAttachedObject(selectedItem) : null; 
 		this.ui.removeAll(this.panelUploadOptions);
-		if (uploadDocument != null) {
-			LOG.debug("uploadDocumentChanged: %s", uploadDocument.getTitle());
+		if (documentUploader != null) {
+			LOG.debug("uploadDocumentChanged: %s", documentUploader.getTitle());
 			try {
-				Object panel = this.ui.loadComponentFromFile(uploadDocument.getPanelXML(), uploadDocument);
+				Object panel = this.ui.loadComponentFromFile(documentUploader.getPanelXML(), documentUploader);
 				this.ui.add(this.panelUploadOptions, panel);
 			}
 			catch (RuntimeException ex) {
@@ -124,7 +124,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		else {
 			LOG.debug("uploadDocumentChanged: NULL");
 		}
-		ResourceMapperProperties.setUploadDocumentHandler(uploadDocument);
+		ResourceMapperProperties.setDocumentUploader(documentUploader);
 	}
 	
 	public void uploadUrlChanged(Object textUploadURL) {

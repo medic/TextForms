@@ -26,9 +26,12 @@ public class BooleanHandler extends CodedHandler<BooleanField> {
 	 */
 	public BooleanHandler() {}
 	
+	/**
+	 * Get BooleanField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(booleanField);
+		return this.fieldMappingDao.getKeywordsForField(booleanField);
 	}
 	
 	@Override

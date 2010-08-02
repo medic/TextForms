@@ -41,6 +41,9 @@ public class RegisterHandler extends MessageHandler {
 		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
 	}
 	
+	/**
+	 * Get Register keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
 		return Arrays.asList(ResourceMapperProperties.getRegisterKeywords());
@@ -57,6 +60,7 @@ public class RegisterHandler extends MessageHandler {
 				try {
 					this.hospitalContactDao.updateHospitalContact(contact);
 					LOG.debug("HospitalContact '%s' Updated: %s", contact.getName(), contact.getHospitalId());
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);
@@ -68,6 +72,7 @@ public class RegisterHandler extends MessageHandler {
 				try {
 					this.hospitalContactDao.saveHospitalContact(newContact);
 					LOG.debug("HospitalContact '%s' Saved: %s", newContact.getName(), newContact.getHospitalId());
+					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);

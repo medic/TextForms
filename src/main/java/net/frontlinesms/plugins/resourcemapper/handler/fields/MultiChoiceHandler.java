@@ -28,15 +28,18 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceField> {
 	 */
 	public MultiChoiceHandler() {}
 	
+	/**
+	 * Get MultiChoiceField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(multiChoiceField);
+		return this.fieldMappingDao.getKeywordsForField(multiChoiceField);
 	}
 	
 	@Override
 	protected boolean isValidResponse(String[] words) {
 		if (words != null && words.length > 1) {
-			Field field = this.mappingDao.getFieldForKeyword(words[0]);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
 				List<String> choices = field.getChoices();
 				return isValidInteger(choices, words[1]) || isValidString(choices, words[1]);

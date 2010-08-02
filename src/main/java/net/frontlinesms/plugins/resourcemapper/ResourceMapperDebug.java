@@ -16,25 +16,47 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingFacto
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
-import net.frontlinesms.plugins.resourcemapper.upload.CSVDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.GoogleDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.JSONDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
-import net.frontlinesms.plugins.resourcemapper.upload.XMLDocument;
+import net.frontlinesms.plugins.resourcemapper.upload.CSVUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.GoogleUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.JSONUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.XMLUploader;
 
+/**
+ * ResourceMapperDebug
+ * @author dalezak
+ *
+ */
 @SuppressWarnings("unchecked")
 public class ResourceMapperDebug {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperDebug.class);
 	
-	private ResourceMapperPluginController pluginController;
+	/**
+	 * MessageDao
+	 */
 	private MessageDao messageDao;
+	
+	/**
+	 * HospitalContactDao
+	 */
 	private HospitalContactDao hospitalContactDao;
+	
+	/**
+	 * FieldMappingDao
+	 */
 	private FieldMappingDao fieldMappingDao;
+	
+	/**
+	 * FieldResponseDao
+	 */
 	private FieldResponseDao fieldResponseDao;
 	
-	public ResourceMapperDebug(ResourceMapperPluginController pluginController, ApplicationContext appContext) {
-		this.pluginController = pluginController;
+	/**
+	 * ResourceMapperDebug
+	 * @param appContext ApplicationContext
+	 */
+	public ResourceMapperDebug(ApplicationContext appContext) {
 		this.messageDao = (MessageDao)appContext.getBean("messageDao");
 		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
 		this.fieldMappingDao = (FieldMappingDao)appContext.getBean("fieldMappingDao");
@@ -43,7 +65,7 @@ public class ResourceMapperDebug {
 	
 	public void createDebugContacts() {
 		LOG.debug("createDebugContacts");
-		createContact("Dale Zak", "306.341.3644", "dalezak@gmail.com", true, "Saskatoon RUH");
+		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "Saskatoon RUH");
 	}
 	
 	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
@@ -121,9 +143,6 @@ public class ResourceMapperDebug {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
 			this.messageDao.saveMessage(frontlineMessage);
 			LOG.debug("Response Created [%s, %s, %s]", dateReceived, senderMsisdn, message);
-			if (pluginController != null) {
-				pluginController.incomingMessageEvent(frontlineMessage);
-			}
 		}
 		catch (Exception ex) {
 			LOG.error("Exception: %s", ex);
@@ -132,7 +151,7 @@ public class ResourceMapperDebug {
 	
 	public void createUploadXMLDocument() {
 		LOG.debug("createUploadXMLDocument");
-		UploadDocument document = new XMLDocument();
+		DocumentUploader document = new XMLUploader();
 		document.setPhoneNumber(this.getAuthor());
 		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
@@ -144,7 +163,7 @@ public class ResourceMapperDebug {
 	
 	public void createUploadJSONDocument() {
 		LOG.debug("createUploadJSONDocument");
-		UploadDocument document = new JSONDocument();
+		DocumentUploader document = new JSONUploader();
 		document.setPhoneNumber(this.getAuthor());
 		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
@@ -155,7 +174,7 @@ public class ResourceMapperDebug {
 	
 	public void createUploadCSVDocument() {
 		LOG.debug("createUploadCSVDocument");
-		UploadDocument document = new CSVDocument();
+		DocumentUploader document = new CSVUploader();
 		document.setPhoneNumber(this.getAuthor());
 		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {
@@ -166,7 +185,7 @@ public class ResourceMapperDebug {
 	
 	public void createUploadGoogleDocument() {
 		LOG.debug("createUploadGoogleDocument");
-		UploadDocument document = new GoogleDocument();
+		DocumentUploader document = new GoogleUploader();
 		document.setPhoneNumber(this.getAuthor());
 		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {

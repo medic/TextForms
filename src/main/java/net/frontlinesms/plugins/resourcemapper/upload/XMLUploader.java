@@ -12,7 +12,6 @@ import org.dom4j.QName;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
@@ -21,9 +20,9 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @SuppressWarnings("unchecked")
-public class XMLDocument extends UploadDocument {
+public class XMLUploader extends DocumentUploader {
 	
-	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLDocument.class);
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLUploader.class);
 	
 	/**
 	 * Map of Namespaces
@@ -36,17 +35,17 @@ public class XMLDocument extends UploadDocument {
 	private Document document;
 	
 	/**
-	 * XMLDocument
+	 * XMLUploader
 	 */
-	public XMLDocument() {
+	public XMLUploader() {
 		this(null);
 	}
 	
 	/**
-	 * XMLDocument
+	 * XMLUploader
 	 * @param rootElementName root element name
 	 */
-	public XMLDocument(String rootElementName) {
+	public XMLUploader(String rootElementName) {
 		DocumentFactory factory = DocumentFactory.getInstance();
 		this.document = factory.createDocument();
 		if (rootElementName != null) {
@@ -170,21 +169,7 @@ public class XMLDocument extends UploadDocument {
 	
 	@Override
 	public String getPanelXML() {
-		return "/ui/plugins/resourcemapper/upload/uploadXMLDocument.xml";
+		return "/ui/plugins/resourcemapper/upload/XMLUploader.xml";
 	}
-	
-	/**
-	 * Handle changing of root element name from UI
-	 * @param textRootElement component
-	 */
-	public void rootElementChanged(Object textRootElement) {
-		String rootElementName = this.ui.getText(textRootElement);
-		LOG.debug("rootElementChanged: %s", rootElementName);
-		if (rootElementName != null) {
-			if (this.document.getRootElement() != null) {
-				this.document.remove(this.document.getRootElement());
-			}
-			this.document.addElement(rootElementName);
-		}
-	}
+
 }

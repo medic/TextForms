@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 
@@ -12,6 +13,8 @@ import org.hibernate.criterion.Restrictions;
 
 public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContact> implements HospitalContactDao {
 
+	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(HibernateHospitalContactDao.class);
+	
 	private static final String HOSPITAL_ID_QUERY = "select hosp.hospitalId from HospitalContact hosp";
 	
 	public List<HospitalContact> getAlHospitalContacts(){
@@ -49,6 +52,9 @@ public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContac
 	 * @see net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao#saveHospitalContact(net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact)
 	 */
 	public void saveHospitalContact(HospitalContact contact) throws DuplicateKeyException {
+		if (contact != null) {
+			LOG.debug("saveHospitalContact [%s, %s, %s, %s]", contact.getName(), contact.getPhoneNumber(), contact.getEmailAddress(), contact.getHospitalId());
+		}
 		super.save(contact);
 	}
 
@@ -56,6 +62,9 @@ public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContac
 	 * @see net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao#updateHospitalContact(net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact)
 	 */
 	public void updateHospitalContact(HospitalContact contact) throws DuplicateKeyException {
+		if (contact != null) {
+			LOG.debug("updateHospitalContact [%s, %s, %s, %s]", contact.getName(), contact.getPhoneNumber(), contact.getEmailAddress(), contact.getHospitalId());
+		}
 		super.update(contact);
 	}
 

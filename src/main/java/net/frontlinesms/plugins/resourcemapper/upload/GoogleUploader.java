@@ -14,7 +14,6 @@ import org.dom4j.QName;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
-import net.frontlinesms.plugins.resourcemapper.upload.UploadDocument;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
@@ -23,9 +22,9 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @SuppressWarnings("unchecked")
-public class GoogleDocument extends UploadDocument {
+public class GoogleUploader extends DocumentUploader {
 	
-	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(XMLDocument.class);
+	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(GoogleUploader.class);
 	
 	/**
 	 * Atom Namespace
@@ -43,9 +42,9 @@ public class GoogleDocument extends UploadDocument {
 	private static final Namespace NAMESPACE_GS = new Namespace("gs", "http://schemas.google.com/spreadsheets/2006");
 	
 	/**
-	 * GoogleDocument
+	 * GoogleUploader
 	 */
-	public GoogleDocument() { }
+	public GoogleUploader() { }
 	
 	/**
 	 * Generate Google XML document for uploading
@@ -108,6 +107,6 @@ public class GoogleDocument extends UploadDocument {
 	
 	@Override
 	public String getPanelXML() {
-		return "/ui/plugins/resourcemapper/upload/uploadGoogleDocument.xml";
+		return "/ui/plugins/resourcemapper/upload/GoogleUploader.xml";
 	}
 }

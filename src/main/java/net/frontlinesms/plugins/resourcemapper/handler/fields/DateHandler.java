@@ -28,9 +28,12 @@ public class DateHandler extends FieldMessageHandler<DateField> {
 	 */
 	public DateHandler() {}
 	
+	/**
+	 * Get DateField keywords
+	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.mappingDao.getKeywordsForField(dateField);
+		return this.fieldMappingDao.getKeywordsForField(dateField);
 	}
 	
 	@Override
