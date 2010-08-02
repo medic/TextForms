@@ -3,6 +3,7 @@ package net.frontlinesms.plugins.resourcemapper;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.context.ApplicationContext;
 
@@ -105,14 +106,6 @@ public class ResourceMapperDebug {
 	
 	public void createDebugResponses() {
 		LOG.debug("createDebugResponses");
-		long dateReceived = Calendar.getInstance().getTimeInMillis();
-		
-		String senderMsisdn = null;	
-		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
-			senderMsisdn = contact.getPhoneNumber();
-			break;
-		}
-		
 		for (String message : new String[] {"info addr", "help power", "? type", 
 											"register", 
 											"register Saskatoon RUH 2",
@@ -134,7 +127,7 @@ public class ResourceMapperDebug {
 											"date abd123", //invalid date
 											"invalid", "1", "" //invalid responses
 											}) {
-			createResponse(dateReceived, senderMsisdn, message);
+			createResponse(this.getDateReceived(), this.getAuthor(), message);
 		}
 	}
 	
@@ -202,6 +195,41 @@ public class ResourceMapperDebug {
 		}
 	}
 	
+	public void startDebugTerminal() {
+		Thread thread = new DebugTerminal(this.getAuthor());
+		thread.start();
+    }
+
+	/**
+	 * Inner threaded class for listening to System.in
+	 * @author dalezak
+	 *
+	 */
+	private class DebugTerminal extends Thread {
+		private String phoneNumber;
+		
+		public DebugTerminal(String phoneNumber) {
+			this.phoneNumber = phoneNumber;
+		}
+		
+		public void run() {
+			LOG.debug("startDebugTerminal...");
+	        System.out.println("Enter a message for the system");
+	        List<String> exitKeywords = Arrays.asList("exit", "x", "quit", "q");
+	        Scanner scanner = new Scanner(System.in);
+	        while(true) { 
+	            String message = scanner.nextLine();
+	            if (exitKeywords.contains(message.trim().toLowerCase())) {
+	            	break;
+	            }
+	            else {
+	            	createResponse(Calendar.getInstance().getTimeInMillis(), this.phoneNumber, message);
+	            }
+	        }
+	        LOG.debug("...startDebugTerminal");
+		 }
+	}
+	
 	private String getAuthor() {
 		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
 			return contact.getPhoneNumber();
@@ -214,5 +242,9 @@ public class ResourceMapperDebug {
 			return contact.getHospitalId();
 		}
 		return null;
+	}
+	
+	private long getDateReceived() {
+		return Calendar.getInstance().getTimeInMillis();
 	}
 }

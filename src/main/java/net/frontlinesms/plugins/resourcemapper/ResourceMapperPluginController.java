@@ -11,6 +11,11 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
+/**
+ * ResourceMapperPluginController
+ * @author dalezak
+ *
+ */
 @PluginControllerProperties(name="Resource Mapper", iconPath="/icons/small_rmapper.png",
 		springConfigLocation="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper-spring-hibernate.xml",
 		hibernateConfigPath="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper.hibernate.cfg.xml")
@@ -62,6 +67,9 @@ public class ResourceMapperPluginController extends BasePluginController {
 	 */
 	public void deinit() {
 		LOG.debug("deinit");
+		if (this.listener != null) {
+			this.listener.setListening(false);
+		}
 	}
 	
 	/**
@@ -73,14 +81,14 @@ public class ResourceMapperPluginController extends BasePluginController {
 		this.frontlineController = frontlineController;
 		this.appContext = appContext;
 		this.listener = new ResourceMapperListener(frontlineController, appContext);
-		
 		if (ResourceMapperProperties.isDebugMode()) {
 			LOG.debug("Running ResourceMapperDebug...");
 			ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this.appContext);
 			resourceMapperDebug.createDebugContacts();
 			resourceMapperDebug.createDebugFields();
-			resourceMapperDebug.createDebugResponses();
-			resourceMapperDebug.createResponseOutputs();
+			resourceMapperDebug.startDebugTerminal();
+//			resourceMapperDebug.createDebugResponses();
+//			resourceMapperDebug.createResponseOutputs();
 //			resourceMapperDebug.createUploadXMLDocument();
 //			resourceMapperDebug.createUploadJSONDocument();
 //			resourceMapperDebug.createUploadCSVDocument();

@@ -11,6 +11,11 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldRespons
 
 import org.springframework.context.ApplicationContext;
 
+/**
+ * ResourceMapperThinletTabController
+ * @author dalezak
+ *
+ */
 public class ResourceMapperThinletTabController implements ThinletUiEventHandler, ResourceMapperCallback {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperThinletTabController.class);
