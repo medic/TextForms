@@ -214,8 +214,8 @@ public class ResourceMapperDebug {
 		
 		public void run() {
 			LOG.debug("startDebugTerminal...");
-	        System.out.println("Enter a message for the system");
-	        List<String> exitKeywords = Arrays.asList("exit", "x", "quit", "q");
+			List<String> exitKeywords = Arrays.asList("exit", "x", "quit", "q");
+			LOG.error("Enter a message for the system");
 	        Scanner scanner = new Scanner(System.in);
 	        while(true) { 
 	            String message = scanner.nextLine();

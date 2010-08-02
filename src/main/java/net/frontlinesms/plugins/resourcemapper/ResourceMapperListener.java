@@ -203,7 +203,7 @@ public class ResourceMapperListener implements EventObserver {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void registerCallback(String msisdn, CallbackHandler handler){
-		LOG.debug("registerCallback(%s, %s)", msisdn, handler);
+		LOG.debug("registerCallback(%s, %s)", msisdn, handler.getClass().getSimpleName());
 		//if there is already a callback out on that phone number, do nothing
 		for (CallbackInfo info : callbacks) {
 			if (info.getPhoneNumber().equalsIgnoreCase(msisdn)) {
