@@ -57,6 +57,34 @@ public final class ResourceMapperMessages {
 		return getI18NString("plugins.resourcemapper.all.contacts");
 	}
 	
+	public static String getMessageTrue() {
+		return getI18NString("plugins.resourcemapper.true");
+	}
+	
+	public static String getMessageFalse() {
+		return getI18NString("plugins.resourcemapper.false");
+	}
+	
+	public static String getMessageMissingField() {
+		return getI18NString("plugins.resourcemapper.alert.missing.field.name");
+	}
+	
+	public static String getMessageMissingKeyword() {
+		return getI18NString("plugins.resourcemapper.alert.missing.field.keyword");
+	}
+	
+	public static String getMessageMissingType() {
+		return getI18NString("plugins.resourcemapper.alert.missing.field.type");
+	}
+	
+	public static String getMessageDuplicateKeyword() {
+		return getI18NString("plugins.resourcemapper.alert.duplicate.keyword");
+	}
+	
+	public static String getMessageDuplicateChoice() {
+		return getI18NString("plugins.resourcemapper.alert.duplicate.choice");
+	}
+	
 	private static String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.search.FieldMappingQueryGenerator;
@@ -216,8 +217,8 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelSchemaValue, field.getSchemaName());
 			this.ui.removeAll(this.listChoices);
 			if ("boolean".equalsIgnoreCase(field.getType())) {
-				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
-				this.ui.add(this.listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_FALSE), 0));
+				this.ui.add(this.listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageTrue(), 1));
+				this.ui.add(this.listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageFalse(), 0));
 				this.ui.setVisible(this.labelChoices, true);
 				this.ui.setVisible(this.listChoices, true);
 			}

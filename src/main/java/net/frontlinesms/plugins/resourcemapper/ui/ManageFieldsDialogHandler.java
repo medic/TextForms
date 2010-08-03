@@ -19,10 +19,10 @@
  */
 package net.frontlinesms.plugins.resourcemapper.ui;
 
-import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
-
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.springframework.context.ApplicationContext;
 
@@ -30,6 +30,7 @@ import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingFactory;
@@ -136,19 +137,22 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		String type = (String)this.ui.getAttachedObject(fieldType);
 		List<String> choices = new ArrayList<String>();
 		for (Object comboItem : this.ui.getItems(this.listFieldChoices)) {
-			String comboItemText = this.ui.getAttachedObject(comboItem).toString();
+			String comboItemText = this.ui.getAttachedObject(comboItem).toString().trim();
 			LOG.debug("comboItemText: %s", comboItemText);
 			choices.add(comboItemText);	
 		}
 		try {
 			if (name == null || name.length() == 0) {
-				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_NAME));
+				this.ui.alert(ResourceMapperMessages.getMessageMissingField());
 			}
 			else if (keyword == null || keyword.length() == 0) {
-				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_KEYWORD));
+				this.ui.alert(ResourceMapperMessages.getMessageMissingKeyword());
 			}
 			else if (type == null || type.length() == 0) {
-				this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_MISSING_FIELD_TYPE));
+				this.ui.alert(ResourceMapperMessages.getMessageMissingType());
+			}
+			else if (hasDuplicateChoices(choices)) {
+				this.ui.alert(ResourceMapperMessages.getMessageDuplicateChoice());
 			}
 			else if (this.field != null && this.field.getType().equalsIgnoreCase(type)) {
 				this.field.setName(name);
@@ -176,8 +180,13 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		}
 		catch (DuplicateKeyException ex) {
 			LOG.error(ex);
-			this.ui.alert(getI18NString(ResourceMapperConstants.ALERT_DUPLICATE_KEYWORD));
+			this.ui.alert(ResourceMapperMessages.getMessageDuplicateKeyword());
 		}
+	}
+	
+	private boolean hasDuplicateChoices(List<String> choices) {
+		Set<String> set = new HashSet<String>(choices);
+		return set.size() < choices.size();
 	}
 	
 	public void removeDialog(Object dialog) {
@@ -194,8 +203,8 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.ui.setEnabled(this.buttonFieldAdd, false);
 		this.ui.setEditable(this.textFieldChoice, false);
 		if ("boolean".equalsIgnoreCase(selectedType)) {
-			this.ui.add(listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_TRUE), 1));
-			this.ui.add(listChoices, this.ui.createListItem(getI18NString(ResourceMapperConstants.BOOLEAN_FALSE), 0));
+			this.ui.add(listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageTrue(), 1));
+			this.ui.add(listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageFalse(), 0));
 			this.ui.setEnabled(listChoices, false);
 			this.ui.setVisible(this.panelFieldChoices, true);
 			this.ui.setVisible(this.placeholderChoices, false);
