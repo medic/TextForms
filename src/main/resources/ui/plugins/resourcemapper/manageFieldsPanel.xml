@@ -9,8 +9,8 @@
 			<table name="tableFields" selection="single" weightx="1" weighty="1"/>
 		</panel>
 		
-		<button name="buttonAddField" icon="/icons/field_add.png" text="i18n.plugins.resourcemapper.add.person" action="addField(panelFields)" weightx="1" colspan="2"/>
-		<button name="buttonDeleteField" icon="/icons/field_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="showConfirmationDialog('deleteField')" weightx="1" colspan="2" enabled="false"/>
+		<button name="buttonAddField" icon="/icons/field_add.png" text="i18n.plugins.resourcemapper.add" action="addField(panelFields)" weightx="1" colspan="2"/>
+		<button name="buttonDeleteField" icon="/icons/field_delete.png" text="i18n.plugins.resourcemapper.delete" action="showConfirmationDialog('deleteField')" weightx="1" colspan="2" enabled="false"/>
 	</panel>
 	<panel columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
 		<label name="labelName" icon="/icons/field.png" text="i18n.plugins.resourcemapper.fieldname" valign="top"/>
@@ -33,7 +33,7 @@
 	
 		<panel weightx="1" weighty="1" colspan="2" valign="fill" gap="10">
 			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(panelFields)" weightx="1" enabled="false"/>
-			<button name="buttonEditField" icon="/icons/field_edit.png" text="i18n.plugins.resourcemapper.edit.field" action="editField(panelFields)" weightx="1" enabled="false"/>
+			<button name="buttonEditField" icon="/icons/field_edit.png" text="i18n.plugins.resourcemapper.edit" action="editField(panelFields)" weightx="1" enabled="false"/>
 		</panel>
 	</panel>
 </splitpane>

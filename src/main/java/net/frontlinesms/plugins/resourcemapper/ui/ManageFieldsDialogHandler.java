@@ -59,6 +59,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	private Object textInfoSnippet;
 	private Object comboFieldTypes;
 	private Object listFieldChoices; 
+	private Object labelFieldChoices;
 	private Object panelFieldChoices;
 	private Object textFieldChoice;
 	private Object textSchema;
@@ -79,6 +80,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		this.textInfoSnippet = this.ui.find(this.mainDialog, "textInfoSnippet");
 		this.comboFieldTypes = this.ui.find(this.mainDialog, "comboFieldTypes"); 
 		this.listFieldChoices = this.ui.find(this.mainDialog, "listFieldChoices");
+		this.labelFieldChoices = this.ui.find(this.mainDialog, "labelFieldChoices");
 		this.panelFieldChoices = this.ui.find(this.mainDialog, "panelFieldChoices");
 		this.textFieldChoice = this.ui.find(this.mainDialog, "textFieldChoice");	
 		this.textSchema = this.ui.find(this.mainDialog, "textSchema");
@@ -189,6 +191,15 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 		return set.size() < choices.size();
 	}
 	
+	private boolean isDuplicateChoice(Object list, String value) {
+		for (Object item : this.ui.getItems(list)) {
+			if (value.equalsIgnoreCase(this.ui.getText(item))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void removeDialog(Object dialog) {
 		LOG.debug("removeDialog");
 		this.ui.remove(dialog);
@@ -206,31 +217,32 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.add(listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageTrue(), 1));
 			this.ui.add(listChoices, this.ui.createListItem(ResourceMapperMessages.getMessageFalse(), 0));
 			this.ui.setEnabled(listChoices, false);
-			this.ui.setVisible(this.panelFieldChoices, true);
-			this.ui.setVisible(this.placeholderChoices, false);
+			setChoicesVisible(true);
 		}
 		else if ("checklist".equalsIgnoreCase(selectedType) || 
 				 "multichoice".equalsIgnoreCase(selectedType)) {
-			this.ui.setEnabled(listChoices, true);
 			if (this.field != null) {
 				for (String choiceText : this.field.getChoices()) {
 					this.ui.setEnabled(listChoices, true);
-					Object listItem = this.ui.createListItem(choiceText, choiceText);
-					this.ui.setIcon(listItem, "/icons/task_delete.png");
-					this.ui.add(listChoices, listItem);
+					this.ui.add(listChoices, this.ui.createListItem(choiceText, choiceText));
 				}	
 			}
+			this.ui.setEnabled(listChoices, true);
 			this.ui.setEnabled(this.buttonFieldAdd, false);
 			this.ui.setEditable(this.textFieldChoice, true);
 			this.ui.setEnabled(listChoices, true);
-			this.ui.setVisible(this.panelFieldChoices, true);
-			this.ui.setVisible(this.placeholderChoices, false);
+			setChoicesVisible(true);
 		}
 		else {
 			this.ui.setEnabled(listChoices, false);
-			this.ui.setVisible(this.panelFieldChoices, false);
-			this.ui.setVisible(this.placeholderChoices, true);
+			setChoicesVisible(false);
 		}
+	}
+	
+	private void setChoicesVisible(boolean visible) {
+		this.ui.setVisible(this.labelFieldChoices, visible);
+		this.ui.setVisible(this.panelFieldChoices, visible);
+		this.ui.setVisible(this.placeholderChoices, !visible);
 	}
 	
 	public void textFieldChoiceChanged(Object textFieldChoice, Object listFieldChoices, Object buttonFieldAdd) {
@@ -245,18 +257,27 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 	public void addFieldChoice(Object textFieldChoice, Object listChoices, Object buttonFieldAdd) {
 		String choiceText = this.ui.getText(textFieldChoice);
 		if (choiceText != null && choiceText.length() > 0) {
-			Object listItem = this.ui.createListItem(choiceText, choiceText);
-			this.ui.setIcon(listItem, "/icons/task_delete.png");
-			this.ui.add(listChoices, listItem);
-			this.ui.setText(textFieldChoice, "");
-			this.ui.setEnabled(buttonFieldAdd, false);
+			if (isDuplicateChoice(listChoices, choiceText)) {
+				this.ui.alert(ResourceMapperMessages.getMessageDuplicateChoice());
+			}
+			else {
+				this.ui.add(listChoices, this.ui.createListItem(choiceText, choiceText));
+				this.ui.setText(textFieldChoice, "");
+				this.ui.setEnabled(buttonFieldAdd, false);
+			}
 		}
 	}
 	
-	public void deleteFieldChoice(Object listFieldChoices) {
+	public void fieldChoiceChanged(Object listFieldChoices, Object buttonFieldDelete) {
+		Object selectedItem = this.ui.getSelectedItem(listFieldChoices);
+		this.ui.setEnabled(buttonFieldDelete, selectedItem != null);
+	}
+	
+	public void deleteChoice(Object listFieldChoices, Object buttonFieldDelete) {
 		Object choiceToDelete = this.ui.getSelectedItem(listFieldChoices);
 		String choiceText = this.ui.getText(choiceToDelete);
 		LOG.debug("choice to delete: %s", choiceText);
 		this.ui.remove(choiceToDelete);
+		this.ui.setEnabled(buttonFieldDelete, false);
 	}
 }

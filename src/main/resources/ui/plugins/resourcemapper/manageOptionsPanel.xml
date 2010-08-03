@@ -1,47 +1,55 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel weightx="1" weighty="1" border="false" columns="1" gap="15">
-	<panel gap="10" weightx="1" text="Debug Mode" border="true" columns="2" bottom="10" top="10" left="10" right="10">
-		<checkbox name="checkboxDebugYes" text="Enabled" group="debug" action="debugChanged(this)"/>
-		<checkbox name="checkboxDebugNo" text="Disabled" group="debug" action="debugChanged(this)" selected="true" />
+	<panel gap="10" weightx="1" text="i18n.plugins.resourcemapper.debug.mode" border="true" columns="2" bottom="10" top="10" left="10" right="10">
+		<checkbox name="checkboxDebugYes" text="i18n.plugins.resourcemapper.enabled" group="debug" action="debugChanged(this)"/>
+		<checkbox name="checkboxDebugNo" text="i18n.plugins.resourcemapper.disabled" group="debug" action="debugChanged(this)" selected="true" />
 	</panel>
 	
-	<panel gap="10" weightx="1" text="Register / Help Keywords" border="true" columns="4" bottom="10" top="10" left="10" right="10">
-		<label name="labelRegister" text="Register" valign="top" />
-		<panel name="panelRegister" weightx="1" columns="2" gap="8">
-			<textfield name="textRegister" weightx="1" action="textOptionChanged(this, listRegister, buttonRegister)" perform="addOption(this, listRegister, buttonRegister)"/>
-			<button name="buttonRegister" icon="/icons/tick.png" enabled="false" action="addOption(textRegister, listRegister, this)"/>
-			<list name="listRegister" selection="single" colspan="2" weightx="1" height="75" action="deleteOption(this)"/>
+	<panel gap="10" weightx="1" text="i18n.plugins.resourcemapper.register.info.keywords" border="true" columns="4" bottom="10" top="10" left="10" right="10">
+		<label name="labelRegister" text="i18n.plugins.resourcemapper.register" icon="/icons/register.png" valign="top" />
+		<panel name="panelRegister" weightx="1" columns="3" gap="8">
+			<list name="listRegister" selection="single" colspan="3" weightx="1" height="100" action="optionChanged(this, buttonRegisterDelete" />
+			
+			<textfield name="textRegister" action="textOptionChanged(this, listRegister, buttonRegisterAdd)" perform="addOption(this, listRegister, buttonRegisterAdd)" weightx="1"/>
+			<button name="buttonRegisterAdd" text="i18n.plugins.resourcemapper.add" icon="/icons/add.png" action="addOption(textRegister, listRegister, this)" enabled="false"/>
+			<button name="buttonRegisterDelete" text="i18n.plugins.resourcemapper.delete" icon="/icons/delete.png" action="deleteOption(textRegister, listRegister, this)" enabled="false"/>
+		</panel>
+	
+		<label name="labelInfo" text="i18n.plugins.resourcemapper.help" icon="/icons/help.png" valign="top" />
+		<panel name="panelInfo" weightx="1" columns="3" gap="8">
+			<list name="listInfo" selection="single" colspan="3" weightx="1" height="75"  action="optionChanged(this, buttonInfoDelete)" />
+			
+			<textfield name="textInfo" weightx="1" action="textOptionChanged(this, listInfo, buttonInfoAdd)" perform="addOption(this, listInfo, buttonInfoAdd)"/>
+			<button name="buttonInfoAdd" text="i18n.plugins.resourcemapper.add" icon="/icons/add.png" enabled="false" action="addOption(textInfo, listInfo, this)"/>
+			<button name="buttonInfoDelete" text="i18n.plugins.resourcemapper.delete" icon="/icons/delete.png" action="deleteOption(textInfo, listInfo, this)" enabled="false"/>
+		</panel>
+	</panel>
+	
+	<panel gap="10" weightx="1" text="i18n.plugins.resourcemapper.boolean.values" border="true" columns="4" bottom="10" top="10" left="10" right="10">
+		<label name="labelBooleanTrue" text="i18n.plugins.resourcemapper.true" icon="/icons/tick.png" valign="top" />
+		<panel name="panelBooleanTrue" weightx="1" columns="3" gap="8">
+			<list name="listBooleanTrue" selection="single" colspan="3" weightx="1" height="75"  action="optionChanged(this, buttonBooleanTrueDelete)" />
+			
+			<textfield name="textBooleanTrue" weightx="1" action="textOptionChanged(this, listBooleanTrue, buttonBooleanTrueAdd)" perform="addOption(this, listBooleanTrue, buttonBooleanTrueAdd)"/>
+			<button name="buttonBooleanTrueAdd" text="i18n.plugins.resourcemapper.add" icon="/icons/add.png" enabled="false" action="addOption(textBooleanTrue, listBooleanTrue, this)"/>
+			<button name="buttonBooleanTrueDelete" text="i18n.plugins.resourcemapper.delete" icon="/icons/delete.png" action="deleteOption(textBooleanTrue, listBooleanTrue, this)" enabled="false"/>
 		</panel>
 		
-		<label name="labelInfo" text="Help" valign="top" />
-		<panel name="panelInfo" weightx="1" columns="2" gap="8">
-			<textfield name="textInfo" weightx="1" action="textOptionChanged(this, listInfo, buttonInfo)" perform="addOption(this, listInfo, buttonInfo)"/>
-			<button name="buttonInfo" icon="/icons/tick.png" enabled="false" action="addOption(textInfo, listInfo, this)"/>
-			<list name="listInfo" selection="single" colspan="2" weightx="1" height="75" action="deleteOption(this)"/>
+		<label name="labelBooleanFalse" text="i18n.plugins.resourcemapper.false" icon="/icons/cross.png" valign="top" />
+		<panel name="panelBooleanFalse" weightx="1" columns="3" gap="8">
+			<list name="listBooleanFalse" selection="single" colspan="3" weightx="1" height="75"  action="optionChanged(this, buttonBooleanFalseDelete)" />
+			
+			<textfield name="textBooleanFalse" weightx="1" action="textOptionChanged(this, listBooleanFalse, buttonBooleanFalseAdd)" perform="addOption(this, listBooleanFalse, buttonBooleanFalseAdd)"/>
+			<button name="buttonBooleanFalseAdd" text="i18n.plugins.resourcemapper.add" icon="/icons/add.png" enabled="false" action="addOption(textBooleanFalse, listBooleanFalse, this)"/>
+			<button name="buttonBooleanFalseDelete" text="i18n.plugins.resourcemapper.delete" icon="/icons/delete.png" action="deleteOption(textBooleanFalse, listBooleanFalse, this)" enabled="false"/>
 		</panel>
 	</panel>
 	
-	<panel gap="10" weightx="1" text="Boolean Values" border="true" columns="4" bottom="10" top="10" left="10" right="10">
-		<label name="labelBooleanTrue" text="True" valign="top" />
-		<panel name="panelBooleanTrue" weightx="1" columns="2" gap="8">
-			<textfield name="textBooleanTrue" weightx="1" action="textOptionChanged(this, listBooleanTrue, buttonBooleanTrue)" perform="addOption(this, listBooleanTrue, buttonBooleanTrue)"/>
-			<button name="buttonBooleanTrue" icon="/icons/tick.png" enabled="false" action="addOption(textBooleanFalse, listBooleanTrue, this)"/>
-			<list name="listBooleanTrue" selection="single" colspan="2" weightx="1" height="75" action="deleteOption(this)"/>
-		</panel>
-		
-		<label name="labelBooleanFalse" text="False" valign="top" />
-		<panel name="panelBooleanFalse" weightx="1" columns="2" gap="8">
-			<textfield name="textBooleanFalse" weightx="1" action="textOptionChanged(this, listBooleanFalse, buttonBooleanFalse)" perform="addOption(this, listBooleanFalse, buttonBooleanFalse)"/>
-			<button name="buttonBooleanFalse" icon="/icons/tick.png" enabled="false" action="addOption(textBooleanFalse, listBooleanFalse, this)"/>
-			<list name="listBooleanFalse" selection="single" colspan="2" weightx="1" height="75" action="deleteOption(this)" />
-		</panel>
-	</panel>
-	
-	<panel gap="10" weightx="1" weighty="1" text="Upload Options" border="true" columns="2" bottom="10" top="10" left="10" right="10">
-		<label name="labelUploadURL" text="URL" icon="/icons/httpRequest.png" valign="top" />
+	<panel gap="10" weightx="1" weighty="1" text="i18n.plugins.resourcemapper.upload.options" border="true" columns="2" bottom="10" top="10" left="10" right="10">
+		<label name="labelUploadURL" text="i18n.plugins.resourcemapper.upload.url" icon="/icons/httpRequest.png" valign="top" />
 		<textfield name="textUploadURL" weightx="1" action="uploadUrlChanged(this)"/>
 		
-		<label name="labelUploadDocuments" text="Handler" icon="/icons/sms_http.png" valign="top" />
+		<label name="labelUploadDocuments" text="i18n.plugins.resourcemapper.upload.handler" icon="/icons/sms_http.png" valign="top" />
 		<combobox name="comboUploadDocuments" editable="false" action="uploadDocumentChanged(this)" weightx="1"/>
 		
 		<panel name="panelUploadOptions" colspan="2" />

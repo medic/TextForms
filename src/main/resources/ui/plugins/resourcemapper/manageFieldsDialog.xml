@@ -13,15 +13,16 @@
 	<label name="labelFieldTypes" text="i18n.plugins.resourcemapper.type" icon="/icons/type.png" for="comboFieldTypes" valign="top" />
 	<combobox name="comboFieldTypes" editable="false" action="fieldTypeChanged(this, panelFieldChoices, listFieldChoices)" weightx="1"/>
 	
-	<panel name="panelFieldChoices" colspan="2" weightx="1" columns="3" gap="8">
-		<label name="labelChoices" text="i18n.plugins.resourcemapper.choices" icon="/icons/choices.png" valign="top" />
+	<label name="labelFieldChoices" text="i18n.plugins.resourcemapper.choices" icon="/icons/choices.png" valign="top" />
+	<panel name="panelFieldChoices" weightx="1" columns="3" gap="8">
+		<list name="listFieldChoices" selection="single" colspan="3" weightx="1" height="100" action="fieldChoiceChanged(this, buttonFieldDelete)" />
 		<textfield name="textFieldChoice" action="textFieldChoiceChanged(this, listFieldChoices, buttonFieldAdd)" perform="addFieldChoice(this, listFieldChoices, buttonFieldAdd)" weightx="1"/>
-		<button name="buttonFieldAdd" icon="/icons/tick.png" action="addFieldChoice(textFieldChoice, listFieldChoices, this)" enabled="false"/>
-		
-		<list name="listFieldChoices" selection="single" colspan="3" weightx="1" height="100" action="deleteFieldChoice(this)" />
+		<button name="buttonFieldAdd" text="i18n.plugins.resourcemapper.add" icon="/icons/add.png" action="addFieldChoice(textFieldChoice, listFieldChoices, this)" enabled="false"/>
+		<button name="buttonFieldDelete" text="i18n.plugins.resourcemapper.delete" icon="/icons/delete.png" action="deleteChoice(listFieldChoices, this)" enabled="false"/>
 	</panel>
-	<label name="labelInfoSnippet" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" for="textInfoSnippet" colspan="2" valign="top" />
-	<textarea name="textInfoSnippet" wrap="true" columns="50" rows="4" colspan="2" weightx="1" weighty="1"/>
+	
+	<label name="labelInfoSnippet" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" for="textInfoSnippet" valign="top" />
+	<textarea name="textInfoSnippet" wrap="true" columns="50" rows="4" weightx="1" weighty="1"/>
 
 	<panel name="placeholderChoices" colspan="2" columns="1">
 		<label text=""/>

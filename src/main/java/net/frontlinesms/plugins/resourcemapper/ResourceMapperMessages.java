@@ -97,6 +97,10 @@ public final class ResourceMapperMessages {
 		return getI18NString("plugins.resourcemapper.search.fields");
 	}
 	
+	public static String getMessageChoiceRequired() {
+		return getI18NString("plugins.resourcemapper.alert.choice.required");
+	} 
+	
 	private static String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

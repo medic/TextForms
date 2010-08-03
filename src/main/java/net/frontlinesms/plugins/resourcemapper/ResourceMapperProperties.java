@@ -9,10 +9,10 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ResourceMapperProperties.class);
 	
 	private static final String DEBUG_MODE = "debug.mode";
-	private static final String PUBLISH_URL = "publish.url";
 	private static final String BOOLEAN_VALUES_TRUE = "boolean.values.true";
 	private static final String BOOLEAN_VALUES_FALSE = "boolean.values.false";
-	private static final String UPLOAD_DOCUMENT = "upload.document";
+	private static final String DOCUMENT_UPLOADER = "document.uploader";
+	private static final String DOCUMENT_UPLOADER_URL = "document.uploader.url";
 	private static final String INFO_KEYWORDS = "info.keywords";
 	private static final String REGISTER_KEYWORDS = "register.keywords";
 	private static final String TRUE = "true";
@@ -48,12 +48,12 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	}
 	
 	public static String getPublishURL() {
-		return getInstance().getProperty(PUBLISH_URL);
+		return getInstance().getProperty(DOCUMENT_UPLOADER_URL);
 	}
 	
 	public static void setPublishURL(String url) {
 		LOG.debug("setPublishURL: %s", url);
-		getInstance().setProperty(PUBLISH_URL, url);
+		getInstance().setProperty(DOCUMENT_UPLOADER_URL, url);
 		getInstance().saveToDisk();
 	}
 	
@@ -117,7 +117,7 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	}
 	
 	public static DocumentUploader getDocumentUploader() {
-		String documentUploaderTitle = getInstance().getProperty(UPLOAD_DOCUMENT);
+		String documentUploaderTitle = getInstance().getProperty(DOCUMENT_UPLOADER);
 		if (documentUploaderTitle != null && documentUploaderTitle.length() > 0) {
 			for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
 				if (documentUploaderTitle.equalsIgnoreCase(documentUploader.getTitle())) {
@@ -131,11 +131,11 @@ public class ResourceMapperProperties extends UserHomeFilePropertySet {
 	public static void setDocumentUploader(DocumentUploader documentUploader) {
 		if (documentUploader != null) {
 			LOG.debug("setDocumentUploader: %s", documentUploader.getTitle());
-			getInstance().setProperty(UPLOAD_DOCUMENT, documentUploader.getTitle());	
+			getInstance().setProperty(DOCUMENT_UPLOADER, documentUploader.getTitle());	
 		}
 		else {
 			LOG.debug("setDocumentUploader: NULL");
-			getInstance().setProperty(UPLOAD_DOCUMENT, null);	
+			getInstance().setProperty(DOCUMENT_UPLOADER, null);	
 		}
 		getInstance().saveToDisk();
 	}

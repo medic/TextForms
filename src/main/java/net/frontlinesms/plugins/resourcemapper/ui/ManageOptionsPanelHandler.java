@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
 import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploaderFactory;
@@ -155,24 +156,36 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		}
 	}
 	
+	public void optionChanged(Object list, Object button) {
+		if (this.ui.getSelectedItem(list) != null) {
+			this.ui.setEnabled(button, true);
+		}
+		else {
+			this.ui.setEnabled(button, false);
+		}
+	}
+	
 	public void addOption(Object textField, Object list, Object button) {
 		String text = this.ui.getText(textField);
 		if (text != null && text.length() > 0) {
-			Object listItem = this.ui.createListItem(text, text);
-			this.ui.setIcon(listItem, "/icons/task_delete.png");
-			this.ui.add(list, listItem);
+			this.ui.add(list, this.ui.createListItem(text, text));
 			this.ui.setText(textField, "");
 			this.ui.setEnabled(button, false);
 		}
 		saveOptions(list);
 	}
 	
-	public void deleteOption(Object list) {
+	public void deleteOption(Object textField, Object list, Object button) {
 		Object valueToDelete = this.ui.getSelectedItem(list);
 		String valueText = this.ui.getText(valueToDelete);
 		LOG.debug("Deleted: %s", valueText);
 		this.ui.remove(valueToDelete);
 		saveOptions(list);
+		this.ui.setEnabled(button, false);
+		if (this.ui.getItems(list).length == 0) {
+			this.ui.alert(ResourceMapperMessages.getMessageChoiceRequired());
+			this.ui.setFocus(textField);
+		}
 	}
 	
 	private void saveOptions(Object list) {
@@ -197,9 +210,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	
 	private void loadListOptions(Object list, String [] options) {
 		for (String option : options) {
-			Object listItem = this.ui.createListItem(option, option);
-			this.ui.setIcon(listItem, "/icons/task_delete.png");
-			this.ui.add(list, listItem);
+			this.ui.add(list, this.ui.createListItem(option, option));
 		}
 	}
 }
