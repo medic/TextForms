@@ -25,6 +25,10 @@ public final class ResourceMapperMessages {
 		return String.format("%s : %s", getI18NString("plugins.resourcemapper.handler.invalid.keyword"), arrayToString(keywords));
 	}
 	
+	public static String getHandlerInvalidResponse(String fieldTypeLabel, String response) {
+		return String.format("%s (%s) : %s", getI18NString("plugins.resourcemapper.handler.invalid.response"), fieldTypeLabel, response);
+	}
+	
 	public static String getHandlerInvalidCallback() {
 		return getI18NString("plugins.resourcemapper.handler.invalid.callback");
 	}

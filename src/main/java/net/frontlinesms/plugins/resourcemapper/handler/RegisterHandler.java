@@ -49,6 +49,9 @@ public class RegisterHandler extends MessageHandler {
 		return Arrays.asList(ResourceMapperProperties.getRegisterKeywords());
 	}
 	
+	/**
+	 * Handle Register message
+	 */
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());

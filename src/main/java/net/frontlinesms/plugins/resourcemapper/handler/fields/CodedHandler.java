@@ -1,20 +1,9 @@
 package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import net.frontlinesms.data.DuplicateKeyException;
-import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperListener;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
-import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
-import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.CodedField;
-import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.Field;
-import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
-import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFactory;
 
 /**
  * CodedHandler
@@ -24,132 +13,20 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseFact
  */
 public abstract class CodedHandler<M extends CodedField> extends CallbackHandler<M> {
 
+	@SuppressWarnings("unused")
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(CodedHandler.class);
-	
-	/**
-	 * Map of callbacks
-	 */
-	protected final HashMap<String, Field> callbacks = new HashMap<String, Field>();
 	
 	/**
 	 * CodedHandler
 	 */
 	public CodedHandler() {}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void handleMessage(FrontlineMessage message) {
-		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = this.toWords(message.getTextContent(), 2);
-		if (words.length == 1) {
-			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
-			if (field != null) {
-				if (field.getChoices() != null) {
-					StringBuilder reply = new StringBuilder();
-					reply.append(field.getInfoSnippet());
-					int index = 1;
-					for (String choice : field.getChoices()) {
-						reply.append("\n");
-						reply.append(index);
-						reply.append(" ");
-						reply.append(choice);
-						index++;		
-					}
-					sendReply(message.getSenderMsisdn(), reply.toString(), false);
-					LOG.debug("Register Callback for '%s'", message.getTextContent());
-					ResourceMapperListener.registerCallback(message.getSenderMsisdn(), this);
-					this.callbacks.put(message.getSenderMsisdn(), this.fieldMappingDao.getFieldForKeyword(message.getTextContent()));
-				}
-				else {
-					sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
-				}
-			}
-			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
-			}	
-		}
-		else if (isValidResponse(words)) {
-			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
-			if (field != null) {
-				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
-				if (contact != null) {
-					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
-					if (response != null) {
-						this.fieldResponseDao.saveFieldResponse(response);
-						LOG.debug("Response Created: %s", response);
-						try {
-							contact.setLastResponse(new Date());
-							this.hospitalContactDao.updateHospitalContact(contact);
-						} 
-						catch (DuplicateKeyException ex) {
-							LOG.error("DuplicateKeyException: %s", ex);
-						}
-						if (this.publishResponse(response) == false) {
-							sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorUploadResponse(), true);
-						}
-					}
-					else {
-						sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveResponse(), true);
-					}
-				}
-				else {
-					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
-				}	
-			}
-			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
-			}
-		}
-		else {
-			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void handleCallback(FrontlineMessage message) {
-		LOG.debug("handleCallback: %s", message.getTextContent());
-		if (shouldHandleCallbackMessage(message)) {
-			Field field = this.callbacks.get(message.getSenderMsisdn());
-			if (field != null) {
-				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
-				if (contact != null) {
-					FieldResponse response = FieldResponseFactory.createFieldResponse(message, contact, new Date(), contact.getHospitalId(), field);
-					if (response != null) {
-						this.fieldResponseDao.saveFieldResponse(response);
-						this.publishResponse(response);
-						LOG.debug("FieldResponse Created: %s", response.getClass());
-						try {
-							contact.setLastResponse(new Date());
-							this.hospitalContactDao.updateHospitalContact(contact);
-						} 
-						catch (DuplicateKeyException ex) {
-							LOG.error("DuplicateKeyException: %s", ex);
-						}
-					}
-					else {
-						sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorSaveResponse(), true);
-					}
-				}
-				else {
-					sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerRegister(ResourceMapperProperties.getRegisterKeywords()), true);
-				}		
-			}
-			else {
-				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidCallback(), true);
-			}
-		}
-		else {
-			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
-		}
-		ResourceMapperListener.unregisterCallback(message.getSenderMsisdn());
-	}
-	
-	@Override
-	public void callBackTimedOut(String msisdn) {
-		this.callbacks.remove(msisdn);
-	}
-
+	/**
+	 * Is this a valid integer range?
+	 * @param choices possible choices
+	 * @param answer answer
+	 * @return true if valid
+	 */
 	protected boolean isValidInteger(List<String> choices, String answer) {
 		if (answer != null && isValidInteger(answer.trim())) {
 			int value = Integer.parseInt(answer.trim());
@@ -160,6 +37,12 @@ public abstract class CodedHandler<M extends CodedField> extends CallbackHandler
 		return false;
 	}
 	
+	/**
+	 * Is this a valid string?
+	 * @param choices possible choices
+	 * @param answer answer
+	 * @return true if valid
+	 */
 	protected boolean isValidString(List<String> choices, String answer) {
 		if (choices != null && choices.size() > 0 && answer != null && answer.length() > 0) {
 			String answerTrimmed = answer.trim();

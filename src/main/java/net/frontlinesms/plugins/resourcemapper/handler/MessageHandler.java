@@ -17,20 +17,48 @@ public abstract class MessageHandler {
 	
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(MessageHandler.class);
 	
+	/**
+	 * FrontlineSMS
+	 */
 	private FrontlineSMS frontline;
 	
+	/**
+	 * MessageHandler
+	 */
 	public MessageHandler() {}
 	
+	/**
+	 * Set FrontlineSMS
+	 * @param frontline FrontlineSMS
+	 */
 	public void setFrontline(FrontlineSMS frontline) {
 		this.frontline = frontline;
 	}
 	
+	/**
+	 * Set ApplicationContext
+	 * @param appContext ApplicationContext
+	 */
 	public abstract void setApplicationContext(ApplicationContext appContext);
 	
+	/**
+	 * Handle incoming message
+	 * @param message FrontlineMessage
+	 */
 	public abstract void handleMessage(FrontlineMessage message);
 	
+	/**
+	 * Get the list of keywords for this field
+	 * @return
+	 */
 	public abstract Collection<String> getKeywords();
 	
+	/**
+	 * Send reply to user
+	 * @param msisdn phone number
+	 * @param text reply text
+	 * @param error is this an error message?
+	 */
 	protected void sendReply(String msisdn, String text, boolean error) {
 		if (error) {
 			LOG.error("(%s) %s", msisdn, text);
@@ -43,6 +71,12 @@ public abstract class MessageHandler {
 		}
 	}
 	
+	/**
+	 * Convert message into tokenized string array
+	 * @param message string message
+	 * @param limit number of times to split the string
+	 * @return array of strings
+	 */
 	protected String[] toWords(String message, int limit) {
 		if (message != null) {
 			return message.replaceFirst("[\\s]", " ").split(" ", limit);
@@ -50,6 +84,11 @@ public abstract class MessageHandler {
 		return new String[0];
 	}
 	
+	/**
+	 * Convert string array into a string, joining with commas
+	 * @param args array
+	 * @return joined string
+	 */
 	protected String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

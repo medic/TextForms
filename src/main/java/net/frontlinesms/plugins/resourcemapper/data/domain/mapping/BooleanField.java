@@ -1,8 +1,5 @@
 package net.frontlinesms.plugins.resourcemapper.data.domain.mapping;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -19,11 +16,6 @@ public class BooleanField extends CodedField {
 	
 	public BooleanField(String fullName, String keyword) {
 		super(fullName, keyword, null);
-		List<String> yesAndNo = new ArrayList<String>();
-		//the only possibilities are 0 and 1, since this is a boolean field
-		yesAndNo.add("0");
-		yesAndNo.add("1");
-		super.setChoices(yesAndNo);
 	}
 
 	@Override

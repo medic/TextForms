@@ -82,13 +82,13 @@ public class ResourceMapperDebug {
 	
 	public void createDebugFields() {
 		LOG.debug("createDebugFields");
-		createField("Hospital Address", "addr", "Reply with 'addr' keyword followed by hospital address.", "plaintext", "hospital_address", null);
-		createField("Hospital Power", "power", "Reply with 'power' keyword followed by your boolean answer.", "boolean", "hospital_power", null);
-		createField("Hospital Beds", "beds", "Reply with 'beds' keyword followed by number of beds.", "integer", "hospital_beds", null);
-		createField("Hospital Available", "date", "Reply with 'date' keyword followed by date hospital opened.", "date", "hospital_date", null);
-		createField("Hospital Type", "type", "Reply with 'type' keyword followed by your checklist answers.", "checklist", "hospital_type", 
+		createField("Hospital Address", "addr", "What is the hospital's address?", "plaintext", "hospital_address", null);
+		createField("Hospital Power", "power", "Does the hospital have power?", "boolean", "hospital_power", null);
+		createField("Hospital Beds", "beds", "How many beds does the hospital have?", "integer", "hospital_beds", null);
+		createField("Hospital Available", "date", "What date will the hospital be opened?", "date", "hospital_date", null);
+		createField("Hospital Type", "type", "What kind of hospital is it?", "checklist", "hospital_type", 
 						new String [] {"Military", "University", "Clinic", "Private", "Public"});
-		createField("Hospital Services", "serv", "Reply with 'serv' keyword followed by your multiple choice answer.", "multichoice", "hospital_services",
+		createField("Hospital Services", "serv", "What services does the hospital provide?", "multichoice", "hospital_services",
 						new String [] {"Emergency", "Ambulance", "Dental", "MRI", "CT Scan"});
 	}
 	

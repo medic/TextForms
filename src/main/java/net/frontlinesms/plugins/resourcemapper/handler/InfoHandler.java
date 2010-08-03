@@ -49,6 +49,9 @@ public class InfoHandler extends MessageHandler {
 		return Arrays.asList(ResourceMapperProperties.getInfoKeywords());
 	}
 	
+	/**
+	 * Handle Info message
+	 */
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
@@ -56,7 +59,15 @@ public class InfoHandler extends MessageHandler {
 		if (words.length == 2) {
 			Field field = this.fieldMappingDao.getFieldForKeyword(words[1]);
 			if (field != null) {
-				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
+				StringBuilder reply = new StringBuilder(field.getName());
+				reply.append(" (");
+				reply.append(field.getTypeLabel());
+				reply.append(")");
+				if (field.getInfoSnippet() != null && field.getInfoSnippet().length() > 0) {
+					reply.append(" ");
+					reply.append(field.getInfoSnippet());	
+				}
+				sendReply(message.getSenderMsisdn(), reply.toString(), false);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(getAllKeywords()), true);
@@ -67,6 +78,10 @@ public class InfoHandler extends MessageHandler {
 		}
 	}
 	
+	/**
+	 * Get all keywords for all Fields
+	 * @return
+	 */
 	private String [] getAllKeywords() {
 		List<String> keywords = this.fieldMappingDao.getKeywords();
 		return keywords.toArray(new String[keywords.size()]);

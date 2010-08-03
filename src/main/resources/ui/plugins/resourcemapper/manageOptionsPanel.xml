@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel weightx="1" weighty="1" border="false" columns="1" gap="15">
-	<panel gap="10" weightx="1" text="i18n.plugins.resourcemapper.debug.mode" border="true" columns="2" bottom="10" top="10" left="10" right="10">
+	<panel gap="10" weightx="1" text="i18n.plugins.resourcemapper.debug.mode" border="true" columns="2" bottom="10" top="10" left="10" right="10" visible="false">
 		<checkbox name="checkboxDebugYes" text="i18n.plugins.resourcemapper.enabled" group="debug" action="debugChanged(this)"/>
 		<checkbox name="checkboxDebugNo" text="i18n.plugins.resourcemapper.disabled" group="debug" action="debugChanged(this)" selected="true" />
 	</panel>

@@ -2,6 +2,7 @@ package net.frontlinesms.plugins.resourcemapper.handler.fields;
 
 import java.util.Collection;
 
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.IntegerField;
 
@@ -10,7 +11,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.IntegerField;
  * @author dalezak
  *
  */
-public class IntegerHandler extends FieldMessageHandler<IntegerField> {
+public class IntegerHandler extends CallbackHandler<IntegerField> {
 	
 	@SuppressWarnings("unused")
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(IntegerHandler.class);
@@ -36,6 +37,12 @@ public class IntegerHandler extends FieldMessageHandler<IntegerField> {
 	@Override
 	protected boolean isValidResponse(String[] words) {
 		return words != null && words.length == 2 && isValidInteger(words[1]);
+	}
+
+	@Override
+	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
+		String[] words = this.toWords(message.getTextContent(), 2);
+		return words != null && words.length == 1 && isValidInteger(words[0]);
 	}
 
 }

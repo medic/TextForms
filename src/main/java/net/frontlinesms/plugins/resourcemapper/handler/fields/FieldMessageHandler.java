@@ -75,7 +75,15 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 		if (words.length == 1) {
 			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
 			if (field != null) {
-				sendReply(message.getSenderMsisdn(), field.getInfoSnippet(), false);
+				StringBuilder reply = new StringBuilder(field.getName());
+				reply.append(" (");
+				reply.append(field.getTypeLabel());
+				reply.append(")");
+				if (field.getInfoSnippet() != null && field.getInfoSnippet().length() > 0) {
+					reply.append(" ");
+					reply.append(field.getInfoSnippet());	
+				}
+				sendReply(message.getSenderMsisdn(), reply.toString(), false);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
@@ -114,10 +122,21 @@ public abstract class FieldMessageHandler<M extends Field> extends MessageHandle
 			}
 		}
 		else {
-			sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
+			Field field = this.fieldMappingDao.getFieldForKeyword(words[0]);
+			if (field != null) {
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerInvalidResponse(field.getTypeLabel(), message.getTextContent()), true);
+			}
+			else {
+				sendReply(message.getSenderMsisdn(), ResourceMapperMessages.getHandlerErrorResponse(message.getTextContent()), true);
+			}
 		}
 	}
 	
+	/**
+	 * Is valid integer?
+	 * @param word 
+	 * @return true if valid integer
+	 */
 	protected boolean isValidInteger(String word) {
 		try {
 			if (word != null) {
