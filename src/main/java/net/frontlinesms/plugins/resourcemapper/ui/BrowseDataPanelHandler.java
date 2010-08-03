@@ -178,7 +178,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchResponses())) {
 			searchText = "";
 		}
-		String date = this.ui.getText(this.textDate);
+		String dateReceived = this.ui.getText(this.textDate);
 		String phoneNumber = null;
 		Object selectedSubmitter = this.ui.getSelectedItem(this.comboSubmitter);
 		if (selectedSubmitter != null) {
@@ -188,7 +188,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 				phoneNumber = submitter.getPhoneNumber();
 			}
 		}
-		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, date, phoneNumber);
+		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, dateReceived, phoneNumber);
 	}
 	
 	public void submitterChanged(Object comboSubmitter) {
@@ -259,7 +259,6 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 
 	public void textfieldFocusGained(Object textfield) {
 		String searchText = this.ui.getText(textfield);
-		LOG.debug("textfieldFocusGained: %s", searchText);
 		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchResponses())) {
 			this.ui.setText(textfield, "");
 		}
@@ -268,7 +267,6 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	
 	public void textfieldFocusLost(Object textfield) {
 		String searchText = this.ui.getText(textfield);
-		LOG.debug("textfieldFocusLost: %s", searchText);
 		if (searchText == null || searchText.length() == 0) {
 			this.ui.setText(textfield, ResourceMapperMessages.getMessageSearchResponses());
 			this.ui.setForeground(Color.LIGHT_GRAY);
