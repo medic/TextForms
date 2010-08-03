@@ -170,8 +170,6 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	public void searchByField(Object searchField) {
-		String searchText = this.ui.getText(searchField);
-		LOG.debug("searchByField: %s", searchText);
 		startSearch();
 	}
 	
@@ -181,16 +179,16 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 			searchText = "";
 		}
 		String date = this.ui.getText(this.textDate);
-		String contact = null;
+		String phoneNumber = null;
 		Object selectedSubmitter = this.ui.getSelectedItem(this.comboSubmitter);
 		if (selectedSubmitter != null) {
-			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(selectedSubmitter, HospitalContact.class);
+			HospitalContact submitter = this.ui.getAttachedObject(selectedSubmitter, HospitalContact.class);
 			if (submitter != null) {
-				LOG.debug("submitterChanged: %s", submitter.getName());
-				contact = submitter.getName();
+				LOG.debug("submitterChanged: %s", submitter.getPhoneNumber());
+				phoneNumber = submitter.getPhoneNumber();
 			}
 		}
-		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, date, contact);
+		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, date, phoneNumber);
 	}
 	
 	public void submitterChanged(Object comboSubmitter) {
@@ -216,14 +214,11 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		if (contact != null) {
 			int index = 0;
 			for (Object comboboxChoice : this.ui.getItems(this.comboSubmitter)) {
-				Object attachedObject = this.ui.getAttachedObject(comboboxChoice);
-				if (attachedObject != null) {
-					HospitalContact contactItem = (HospitalContact)attachedObject;
-					if (contact.equals(contactItem)) {
-						this.ui.setSelectedIndex(this.comboSubmitter, index);
-						LOG.debug("Selecting Contact: %s", contact.getName());
-						break;
-					}
+				HospitalContact contactItem = this.ui.getAttachedObject(comboboxChoice, HospitalContact.class);
+				if (contact.equals(contactItem)) {
+					this.ui.setSelectedIndex(this.comboSubmitter, index);
+					LOG.debug("Selecting Contact: %s", contact.getDisplayName());
+					break;
 				}
 				index++;
 			}

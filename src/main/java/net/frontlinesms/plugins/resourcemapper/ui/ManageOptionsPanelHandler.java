@@ -14,6 +14,12 @@ import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploaderFactory;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
+/**
+ * ManageOptionsPanelHandler
+ * @author dalezak
+ *
+ */
+@SuppressWarnings("unused")
 public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(ManagePeoplePanelHandler.class);

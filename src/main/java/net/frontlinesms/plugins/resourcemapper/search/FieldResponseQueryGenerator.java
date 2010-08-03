@@ -30,18 +30,18 @@ public class FieldResponseQueryGenerator extends QueryGenerator {
 		super.runQuery(getSearchQuery(text, sortColumn, sortAscending, null, null));
 	}
 
-	public void startSearch(String text, String sortColumn, boolean sortAscending, String date, String contact) {
-		super.runQuery(getSearchQuery(text, sortColumn, sortAscending,  date, contact));
+	public void startSearch(String text, String sortColumn, boolean sortAscending, String date, String phoneNumber) {
+		super.runQuery(getSearchQuery(text, sortColumn, sortAscending,  date, phoneNumber));
 	}
 	
-	private String getSearchQuery(String text, String sortColumn, boolean sortAscending, String dateString, String contact) {
-		LOG.debug("text=%s date=%S contact=%s", text, dateString, contact);
+	private String getSearchQuery(String text, String sortColumn, boolean sortAscending, String dateString, String phoneNumber) {
+		LOG.debug("text=%s date=%S contact=%s", text, dateString, phoneNumber);
 		String query = "SELECT fr FROM FieldResponse fr";
 		query += " WHERE (lower(fr.hospitalId) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.mapping.name) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.mapping.keyword) LIKE lower('%"+text+"%'))";
-		if (contact != null && contact.length() > 0) {
-			query += " AND lower(fr.submitter.name) LIKE lower('%"+contact+"%')";
+		if (phoneNumber != null && phoneNumber.length() > 0) {
+			query += " AND lower(fr.submitter.phoneNumber) LIKE lower('%"+phoneNumber+"%')";
 		}
 		if (dateString != null && dateString.length() > 0) {
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

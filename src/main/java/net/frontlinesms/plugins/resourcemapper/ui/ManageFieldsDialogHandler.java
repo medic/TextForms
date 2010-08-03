@@ -181,7 +181,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			}
 		}
 		catch (DuplicateKeyException ex) {
-			LOG.error(ex);
+			LOG.error("DuplicateKeyException: %s", ex);
 			this.ui.alert(ResourceMapperMessages.getMessageDuplicateKeyword());
 		}
 	}

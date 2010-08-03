@@ -53,5 +53,6 @@ public final class ResourceMapperConstants {
 	public static final String DOCUMENT_UPLOAD_JSON = "plugins.resourcemapper.document.uploader.json";
 	public static final String DOCUMENT_UPLOAD_CSV = "plugins.resourcemapper.document.uploader.csv";
 	public static final String DOCUMENT_UPLOAD_GOOGLE = "plugins.resourcemapper.document.uploader.google";
+	public static final String DOCUMENT_UPLOAD_SPREADSHEET = "plugins.resourcemapper.document.uploader.spreadsheet";
 	
 }

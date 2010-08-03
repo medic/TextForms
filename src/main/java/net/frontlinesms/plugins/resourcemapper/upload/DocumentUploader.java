@@ -53,10 +53,18 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	protected UiGeneratorController ui;
 	
+	/**
+	 * Set UiGeneratorController
+	 * @param ui UiGeneratorController
+	 */
 	public void setUiGeneratorController(UiGeneratorController ui) {
 		this.ui = ui;
 	}
 	
+	/**
+	 * Get UiGeneratorController
+	 * @return UiGeneratorController
+	 */
 	public UiGeneratorController getUiGeneratorController() {
 		return this.ui;
 	}
@@ -66,10 +74,18 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	protected String phoneNumber;
 	
+	/**
+	 * Set Phone Number
+	 * @param phoneNumber Phone Number
+	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 	
+	/**
+	 * Get Phone Number
+	 * @returnPhone Number
+	 */
 	public String getPhoneNumber() {
 		return this.phoneNumber;
 	}
@@ -79,10 +95,18 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	protected String hospitalId; 
 
+	/**
+	 * Set Hospital ID
+	 * @param hospitalId Hospital ID
+	 */
 	public void setHospitalId(String hospitalId) {
 		this.hospitalId = hospitalId;
 	}
 	
+	/**
+	 * Get Hospital ID
+	 * @return Hospital ID
+	 */
 	public String getHospitalId() {
 		return this.hospitalId;
 	}
@@ -103,11 +127,14 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 		return this.fieldResponses;
 	}
 	
+	/**
+	 * Upload document
+	 * @return
+	 */
 	public boolean upload() {
-		LOG.debug("upload");
 		String document = toString();
 		if (ResourceMapperProperties.isDebugMode()) {
-			LOG.debug("Document: %s", document);
+			LOG.debug("upload: %s", document);
 			return true;
 		}
 		else if (ResourceMapperProperties.getPublishURL() != null) {
