@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <panel i18n="true" name="panelBrowseData" columns="3" weightx="1" weighty="1" scrollable="false" gap="5">
 	<panel gap="5" weightx="1">
-		<label name="labelField"  text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchField" />
-		<textfield name="searchField" weightx="1" action="searchByField(this, buttonFieldClear)"/>
-		<button name="buttonFieldClear" icon="/icons/cross.png" action="clearSearch(searchField, this)" enabled="false"/>
+		<label name="labelField" text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchField" />
+		<textfield name="searchField" weightx="1" action="searchByField(this)" weighty="1"/>
 	</panel>
 	
 	<panel gap="5" left="15" columns="3">
-		<textfield name="textDate" columns="15" action="dateChanged(this)" tooltip="DD/MM/YYYY"/>
+		<label text="i18n.plugins.resourcemapper.date" icon="/icons/date.png" for="textDate" />
+		<textfield name="textDate" columns="15" action="dateChanged(this)" weighty="1" tooltip="DD/MM/YYYY"/>
 		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
 	</panel>
     
     <panel gap="5" weightx="1" left="15">
-    	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.submitter" />
+    	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.submitter" icon="/icons/user_sender.png" />
 		<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this)"/>
 	</panel>
 	

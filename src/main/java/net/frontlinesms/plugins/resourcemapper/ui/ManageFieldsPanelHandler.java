@@ -108,7 +108,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 													getI18NString(ResourceMapperConstants.TABLE_TYPE),
 													getI18NString(ResourceMapperConstants.TABLE_SCHEMA)}, 
 									   new String[]{"getName", "getKeyword", "getTypeLabel", "getSchemaName"},
-									   new String[]{"/icons/field.png", "/icons/description.png", "/icons/type.png", "/icons/httpRequest.png"},
+									   new String[]{"/icons/field.png", "/icons/description.png", "/icons/type.png", "/icons/schema.png"},
 									   new String[]{"name", "keyword", "class", "schemaName"});
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
@@ -158,18 +158,10 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.editDialog.show(this.getSelectedField());
 	}
 	
-	public void searchByField(Object searchField, Object tableField, Object buttonClear) {
+	public void searchByField(Object searchField, Object tableField) {
 		String searchText = this.ui.getText(searchField);
 		LOG.debug("searchByField: %s", searchText);
 		this.queryGenerator.startSearch(searchText);
-		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
-	}
-	
-	public void searchClear(Object searchField, Object tableField, Object buttonClear) {
-		LOG.debug("searchClear");
-		this.ui.setText(searchField, "");
-		this.searchByField(searchField, tableField, buttonClear);
-		this.ui.requestFocus(searchField);
 	}
 	
 	public void viewResponses(Object panelField) {

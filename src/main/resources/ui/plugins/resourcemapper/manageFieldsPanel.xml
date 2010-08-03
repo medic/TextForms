@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <splitpane i18n="true" name="panelManageFields" orientation="horizontal" divider="450" weightx="1" weighty="1">
 	<panel columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
-		<label name="labelField"  text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchField" />
-		<textfield name="searchField" action="searchByField(this, tableFields, buttonClear)" weightx="1" columns="0" colspan="2"/>
-		<button name="buttonClear" icon="/icons/cross.png" action="searchClear(searchField, tableFields, this)" enabled="false"/>
+		<label name="labelField" text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchField" />
+		<textfield name="searchField" action="searchByField(this, tableFields)" weightx="1" columns="0" colspan="3" />
 		
 		<panel name="panelFields" border="false" colspan="2" weightx="1" weighty="1" colspan="4" gap="10">
 			<table name="tableFields" selection="single" weightx="1" weighty="1"/>
 		</panel>
 		
-		<button name="buttonAddField" icon="/icons/keyword_add.png" text="i18n.plugins.resourcemapper.add.person" action="addField(panelFields)" weightx="1" colspan="2"/>
-		<button name="buttonDeleteField" icon="/icons/keyword_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="showConfirmationDialog('deleteField')" weightx="1" colspan="2" enabled="false"/>
+		<button name="buttonAddField" icon="/icons/field_add.png" text="i18n.plugins.resourcemapper.add.person" action="addField(panelFields)" weightx="1" colspan="2"/>
+		<button name="buttonDeleteField" icon="/icons/field_delete.png" text="i18n.plugins.resourcemapper.delete.person" action="showConfirmationDialog('deleteField')" weightx="1" colspan="2" enabled="false"/>
 	</panel>
 	<panel columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
 		<label name="labelName" icon="/icons/field.png" text="i18n.plugins.resourcemapper.fieldname" valign="top"/>
@@ -19,21 +18,21 @@
 		<label name="labelKeyword" text="i18n.plugins.resourcemapper.keyword" icon="/icons/description.png" valign="top" />
 		<label name="labelKeywordValue" weightx="1"  font="bold 12"/>
 		
-		<label name="labelSchema" text="i18n.plugins.resourcemapper.schema" icon="/icons/httpRequest.png" for="labelSchemaValue" valign="top" />
-		<label name="labelSchemaValue" weightx="1" font="bold 12"/>
-		
 		<label name="labelType" text="i18n.plugins.resourcemapper.type" icon="/icons/type.png" valign="top" />
 		<label name="labelTypeValue" weightx="1" font="bold 12"/>
 		
 		<label name="labelChoices" text="i18n.plugins.resourcemapper.choices" icon="/icons/choices.png" valign="top" />
 		<list name="listChoices" selection="single" height="100" weightx="1" />
 		
+		<label name="labelSchema" text="i18n.plugins.resourcemapper.schema" icon="/icons/schema.png" for="labelSchemaValue" valign="top" />
+		<label name="labelSchemaValue" weightx="1" font="bold 12"/>
+		
 		<label name="labelInfo" text="i18n.plugins.resourcemapper.info" icon="/icons/note.png" colspan="2" />
 		<textarea name="labelInfoValue" wrap="true" editable="false" rows="10" colspan="2" weightx="1"/>
 	
 		<panel weightx="1" weighty="1" colspan="2" valign="fill" gap="10">
 			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(panelFields)" weightx="1" enabled="false"/>
-			<button name="buttonEditField" icon="/icons/keyword_edit.png" text="i18n.plugins.resourcemapper.edit.field" action="editField(panelFields)" weightx="1" enabled="false"/>
+			<button name="buttonEditField" icon="/icons/field_edit.png" text="i18n.plugins.resourcemapper.edit.field" action="editField(panelFields)" weightx="1" enabled="false"/>
 		</panel>
 	</panel>
 </splitpane>

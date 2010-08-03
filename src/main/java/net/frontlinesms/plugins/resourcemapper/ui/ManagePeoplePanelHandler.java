@@ -79,12 +79,12 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tablePeople, this.panelPeople);
 		this.tableController.putHeader(HospitalContact.class, 
 									   new String[]{getI18NString(ResourceMapperConstants.TABLE_NAME), 
+													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION), 										
 													getI18NString(ResourceMapperConstants.TABLE_PHONE), 
-													getI18NString(ResourceMapperConstants.TABLE_ORGANIZATION), 
 													getI18NString(ResourceMapperConstants.TABLE_RESPONSE)}, 
-									   new String[]{"getName", "getPhoneNumber", "getHospitalId", "getLastResponseText"},
-									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/hospital.png", "/icons/date.png"},
-									   new String []{"name", "phoneNumber", "hospitalId", "lastResponse"});
+									   new String[]{"getName", "getHospitalId", "getPhoneNumber", "getLastResponseText"},
+									   new String[]{"/icons/user.png", "/icons/hospital.png", "/icons/phone_number.png", "/icons/date.png"},
+									   new String []{"name", "hospitalId", "phoneNumber", "lastResponse"});
 		this.queryGenerator = new HospitalContactQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -127,18 +127,10 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		this.queryGenerator.startSearch(searchText);
 	}
 	
-	public void searchByPerson(Object searchPerson, Object tablePeople, Object buttonClear) {
+	public void searchByPerson(Object searchPerson, Object tablePeople) {
 		String searchText = this.ui.getText(searchPerson);
 		LOG.debug("searchByPerson: %s", searchText);
 		this.queryGenerator.startSearch(searchText);
-		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
-	}
-	
-	public void searchClear(Object searchPerson, Object tablePeople, Object buttonClear) {
-		LOG.debug("searchClear");
-		this.ui.setText(searchPerson, "");
-		this.searchByPerson(searchPerson, tablePeople, buttonClear);
-		this.ui.requestFocus(searchPerson);
 	}
 	
 	public void focus(Object component) {

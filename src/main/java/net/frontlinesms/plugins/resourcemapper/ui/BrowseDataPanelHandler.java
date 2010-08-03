@@ -164,18 +164,10 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		this.ui.showConfirmationDialog(methodToBeCalled, this);
 	}
 	
-	public void searchByField(Object searchField, Object buttonClear) {
+	public void searchByField(Object searchField) {
 		String searchText = this.ui.getText(searchField);
 		LOG.debug("searchByField: %s", searchText);
-		this.ui.setEnabled(buttonClear, searchText != null && searchText.length() > 0);
 		startSearch();
-	}
-	
-	public void clearSearch(Object searchField, Object buttonClear) {
-		LOG.debug("clearSearch");
-		this.ui.setText(searchField, "");
-		this.searchByField(searchField, buttonClear);
-		this.ui.requestFocus(searchField);
 	}
 	
 	private void startSearch() {
