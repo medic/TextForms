@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <splitpane i18n="true" name="panelManagePeople" orientation="horizontal" divider="450" weightx="1" weighty="1">
 	<panel columns="4" weightx="1" weighty="1" scrollable="false" gap="5">
-		<label name="labelField"  text="i18n.plugins.resourcemapper.search" icon="/icons/search.png" for="searchPerson" />
-		<textfield name="searchPerson" action="searchByPerson(this, tablePeople)" weightx="1" columns="0" colspan="3" />
+		<label name="labelField" icon="/icons/search.png" for="searchPerson" />
+		<textfield name="searchPerson" weightx="1" columns="0" colspan="3"
+			action="searchByPerson(this, tablePeople)" focusgained="textfieldFocusGained(this)" focuslost="textfieldFocusLost(this)"/>
 		
-		<panel name="panelPeople" border="false" colspan="2" weightx="1" weighty="1" colspan="4" gap="10" columns="1">
+		<panel name="panelPeople" border="false" weightx="1" weighty="1" colspan="4" gap="10" columns="1">
 			<table name="tablePeople" selection="single" weightx="1" weighty="1"/>
 		</panel>
 		

@@ -21,6 +21,8 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
+import java.awt.Color;
+
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
@@ -110,6 +112,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 									   new String[]{"getName", "getKeyword", "getTypeLabel", "getSchemaName"},
 									   new String[]{"/icons/field.png", "/icons/description.png", "/icons/type.png", "/icons/schema.png"},
 									   new String[]{"name", "keyword", "class", "schemaName"});
+		
 		this.queryGenerator = new FieldMappingQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -118,6 +121,8 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
 											  getI18NString(ResourceMapperConstants.TABLE_OF));
 		this.queryGenerator.startSearch("");
+		
+		textfieldFocusLost(this.searchField);
 	}
 	
 	public Object getMainPanel() {
@@ -150,8 +155,7 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	}
 	
 	public void refreshFields(Field field) {
-		String searchText = this.ui.getText(this.searchField);
-		this.queryGenerator.startSearch(searchText);
+		searchByField(this.searchField, this.tableFields);
 	}
 	
 	public void editField(Object panelField) {
@@ -160,8 +164,13 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 	
 	public void searchByField(Object searchField, Object tableField) {
 		String searchText = this.ui.getText(searchField);
-		LOG.debug("searchByField: %s", searchText);
-		this.queryGenerator.startSearch(searchText);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchFields())) {
+			this.queryGenerator.startSearch("");
+		}
+		else {
+			LOG.debug("searchByPerson: %s", searchText);
+			this.queryGenerator.startSearch(searchText);	
+		}
 	}
 	
 	public void viewResponses(Object panelField) {
@@ -239,6 +248,25 @@ public class ManageFieldsPanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.removeAll(this.listChoices);
 			this.ui.setVisible(this.labelChoices, false);
 			this.ui.setVisible(this.listChoices, false);
+		}
+	}
+	
+	public void textfieldFocusGained(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchFields())) {
+			this.ui.setText(textfield, "");
+		}
+		this.ui.setForeground(Color.BLACK);
+	}
+	
+	public void textfieldFocusLost(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		if (searchText == null || searchText.length() == 0) {
+			this.ui.setText(textfield, ResourceMapperMessages.getMessageSearchFields());
+			this.ui.setForeground(Color.LIGHT_GRAY);
+		}
+		else {
+			this.ui.setForeground(Color.BLACK);
 		}
 	}
 }

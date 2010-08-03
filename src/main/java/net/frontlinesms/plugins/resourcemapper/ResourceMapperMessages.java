@@ -85,6 +85,18 @@ public final class ResourceMapperMessages {
 		return getI18NString("plugins.resourcemapper.alert.duplicate.choice");
 	}
 	
+	public static String getMessageSearchResponses() {
+		return getI18NString("plugins.resourcemapper.search.responses");
+	}
+	
+	public static String getMessageSearchPeople() {
+		return getI18NString("plugins.resourcemapper.search.people");
+	}
+	
+	public static String getMessageSearchFields() {
+		return getI18NString("plugins.resourcemapper.search.fields");
+	}
+	
 	private static String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

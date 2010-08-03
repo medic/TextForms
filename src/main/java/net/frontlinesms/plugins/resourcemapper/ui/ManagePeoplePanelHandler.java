@@ -2,11 +2,14 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
+import java.awt.Color;
+
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
+import net.frontlinesms.plugins.resourcemapper.ResourceMapperMessages;
 import net.frontlinesms.plugins.resourcemapper.data.domain.HospitalContact;
 import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.resourcemapper.search.HospitalContactQueryGenerator;
@@ -52,7 +55,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	private PagedAdvancedTableController tableController;
 	
 	private HospitalContactDao contactDao;
-	
+
 	public ManagePeoplePanelHandler(UiGeneratorController ui, ApplicationContext appContext, ResourceMapperCallback callback) {
 		LOG.debug("ManagePeoplePanelHandler");
 		this.ui = ui;
@@ -93,6 +96,7 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
 											  getI18NString(ResourceMapperConstants.TABLE_OF));
 		this.queryGenerator.startSearch("");
+		textfieldFocusLost(this.searchPerson);
 	}
 	
 	public Object getMainPanel() {
@@ -124,13 +128,23 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 	
 	public void refreshContacts(HospitalContact contact) {
 		String searchText = this.ui.getText(this.searchPerson);
-		this.queryGenerator.startSearch(searchText);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchPeople())) {
+			this.queryGenerator.startSearch("");
+		}
+		else {
+			this.queryGenerator.startSearch(searchText);	
+		}
 	}
 	
 	public void searchByPerson(Object searchPerson, Object tablePeople) {
 		String searchText = this.ui.getText(searchPerson);
-		LOG.debug("searchByPerson: %s", searchText);
-		this.queryGenerator.startSearch(searchText);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchPeople())) {
+			this.queryGenerator.startSearch("");
+		}
+		else {
+			LOG.debug("searchByPerson: %s", searchText);
+			this.queryGenerator.startSearch(searchText);	
+		}
 	}
 	
 	public void focus(Object component) {
@@ -199,6 +213,25 @@ public class ManagePeoplePanelHandler implements ThinletUiEventHandler, Advanced
 			this.ui.setText(this.labelPhoneValue, "");
 			this.ui.setText(this.labelEmailValue, "");
 			this.ui.setText(this.labelResponseValue, "");
+		}
+	}
+	
+	public void textfieldFocusGained(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchPeople())) {
+			this.ui.setText(textfield, "");
+		}
+		this.ui.setForeground(Color.BLACK);
+	}
+	
+	public void textfieldFocusLost(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		if (searchText == null || searchText.length() == 0) {
+			this.ui.setText(textfield, ResourceMapperMessages.getMessageSearchPeople());
+			this.ui.setForeground(Color.LIGHT_GRAY);
+		}
+		else {
+			this.ui.setForeground(Color.BLACK);
 		}
 	}
 }

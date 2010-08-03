@@ -21,6 +21,8 @@ package net.frontlinesms.plugins.resourcemapper.ui;
 
 import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 
+import java.awt.Color;
+
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperCallback;
@@ -112,6 +114,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 													 "hospitalId",
 													 "mapping.name",
 													 "message.textMessageContent"});
+		
 		this.queryGenerator = new FieldResponseQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(ResourceMapperConstants.TABLE_RESULTS), 
@@ -119,7 +122,9 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 											   getI18NString(ResourceMapperConstants.TABLE_NO_SEARCH_RESULTS));
 		this.tableController.setPagingPhrases(getI18NString(ResourceMapperConstants.TABLE_TO), 
 											  getI18NString(ResourceMapperConstants.TABLE_OF));
+		
 		startSearch();
+		textfieldFocusLost(this.searchField);
 	}
 	
 	public Object getMainPanel() {
@@ -171,7 +176,10 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	}
 	
 	private void startSearch() {
-		String text = this.ui.getText(this.searchField);
+		String searchText = this.ui.getText(this.searchField);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchResponses())) {
+			searchText = "";
+		}
 		String date = this.ui.getText(this.textDate);
 		String contact = null;
 		Object selectedSubmitter = this.ui.getSelectedItem(this.comboSubmitter);
@@ -182,7 +190,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 				contact = submitter.getName();
 			}
 		}
-		this.queryGenerator.startSearch(text, this.sortColumn, this.sortAscending,  date, contact);
+		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, date, contact);
 	}
 	
 	public void submitterChanged(Object comboSubmitter) {
@@ -192,14 +200,14 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	public void setSelectedField(Field field) {
 		LOG.debug("setSelectedField: %s", field);
 		this.selectedField = field;
-		Object searchField = this.ui.find(this.mainPanel, "searchField");
 		if (field != null) {
-			this.ui.setText(searchField, field.getName());
+			this.ui.setText(this.searchField, field.getName());
 		}
 		else {
-			this.ui.setText(searchField, "");
+			this.ui.setText(this.searchField, ResourceMapperMessages.getMessageSearchResponses());
 		}
 		startSearch();
+		textfieldFocusLost(this.searchField);
 	}
 	
 	public void setSelectedContact(HospitalContact contact) {
@@ -254,4 +262,24 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		return null;
 	}
 
+	public void textfieldFocusGained(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		LOG.debug("textfieldFocusGained: %s", searchText);
+		if (searchText.equalsIgnoreCase(ResourceMapperMessages.getMessageSearchResponses())) {
+			this.ui.setText(textfield, "");
+		}
+		this.ui.setForeground(Color.BLACK);
+	}
+	
+	public void textfieldFocusLost(Object textfield) {
+		String searchText = this.ui.getText(textfield);
+		LOG.debug("textfieldFocusLost: %s", searchText);
+		if (searchText == null || searchText.length() == 0) {
+			this.ui.setText(textfield, ResourceMapperMessages.getMessageSearchResponses());
+			this.ui.setForeground(Color.LIGHT_GRAY);
+		}
+		else {
+			this.ui.setForeground(Color.BLACK);
+		}
+	}
 }
