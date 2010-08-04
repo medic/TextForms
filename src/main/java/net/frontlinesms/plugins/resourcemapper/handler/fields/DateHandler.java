@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 
+import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField;
 
@@ -13,7 +14,7 @@ import net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField;
  * @author dalezak
  *
  */
-public class DateHandler extends FieldMessageHandler<DateField> {
+public class DateHandler extends CallbackHandler<DateField> {
 	
 	@SuppressWarnings("unused")
 	private static final ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(DateHandler.class);	
@@ -54,6 +55,12 @@ public class DateHandler extends FieldMessageHandler<DateField> {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
+		String[] words = this.toWords(message.getTextContent(), 2);
+		return words != null && words.length == 1 && isValidDate(words[0]);
 	}
 
 }
