@@ -98,6 +98,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textKeyword, field.getKeyword());
 			this.ui.setText(this.textInfoSnippet, field.getInfoSnippet());
 			this.ui.setText(this.textSchema, field.getSchemaName());
+			this.ui.setEnabled(this.comboFieldTypes, false);
 			this.ui.setSelectedIndex(this.comboFieldTypes, -1);
 			for (int index = 0; index < this.ui.getCount(this.comboFieldTypes); index++) {
 				Object comboTypeItem = this.ui.getItem(this.comboFieldTypes, index);
@@ -115,6 +116,7 @@ public class ManageFieldsDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textKeyword, "");
 			this.ui.setText(this.textInfoSnippet, "");
 			this.ui.setText(this.textSchema, "");
+			this.ui.setEnabled(this.comboFieldTypes, true);
 			this.ui.setSelectedIndex(this.comboFieldTypes, 0);
 			this.ui.removeAll(this.listFieldChoices);
 		}
