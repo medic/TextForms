@@ -34,7 +34,7 @@ public class GoogleUploader extends DocumentUploader {
 	/**
 	 * Status Namespace
 	 */
-	private static final Namespace NAMESPACE_STATUS = new Namespace("status", "http://schemas.google.com/status/2010");
+	private static final Namespace NAMESPACE_REPORT = new Namespace("report", "http://schemas.google.com/report/2010");
 	
 	/**
 	 * GS Namespace
@@ -57,38 +57,42 @@ public class GoogleUploader extends DocumentUploader {
 		//root
 		Element rootElement = document.addElement("entry");
 		rootElement.addNamespace("", NAMESPACE_ATOM.getURI());
-		rootElement.addNamespace(NAMESPACE_STATUS.getPrefix(), NAMESPACE_STATUS.getURI());
+		rootElement.addNamespace(NAMESPACE_REPORT.getPrefix(), NAMESPACE_REPORT.getURI());
 		rootElement.addNamespace(NAMESPACE_GS.getPrefix(), NAMESPACE_GS.getURI());
 		
 		//author
 		Element authorElement = rootElement.addElement("author");
 		Element uriElement = authorElement.addElement("uri");
 		if (this.phoneNumber != null) {
-			uriElement.setText(String.format("tel:+%s", this.phoneNumber));
+			if (this.phoneNumber.startsWith("+")) {
+				uriElement.setText(String.format("tel:%s", this.phoneNumber));
+			}
+			else {
+				uriElement.setText(String.format("tel:+%s", this.phoneNumber));
+			}
 		}
 		
 		//subject
-		Element subjectElement = rootElement.addElement(new QName("subject", NAMESPACE_STATUS));
+		Element subjectElement = rootElement.addElement(new QName("subject", NAMESPACE_REPORT));
 		if (this.hospitalId != null) {
 			subjectElement.setText(this.hospitalId);
 		}
 		
 		//observed
-		Element observedElement = rootElement.addElement(new QName("observed", NAMESPACE_STATUS));
+		Element observedElement = rootElement.addElement(new QName("observed", NAMESPACE_REPORT));
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT-2"));
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		observedElement.setText(dateFormat.format(now.getTime()));
 		
 		//add responses
-		Element reportElement = rootElement.addElement(new QName("report", NAMESPACE_STATUS));
-		reportElement.addAttribute("type", "{http://schemas.google.com/status/2010}record");
-		Element recordElement = reportElement.addElement(new QName("record", NAMESPACE_STATUS));
+		Element contentElement = rootElement.addElement(new QName("content", NAMESPACE_REPORT));
+		Element rowElement = contentElement.addElement(new QName("row", NAMESPACE_REPORT));
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();
 			if (schema != null && schema.length() > 0) {
 				String responseValue = fieldResponse.getResponseValue();
 				if (responseValue != null) {
-					Element entry = recordElement.addElement(new QName("field", NAMESPACE_GS));
+					Element entry = rowElement.addElement(new QName("field", NAMESPACE_GS));
 					entry.addAttribute("name", schema);
 					entry.setText(responseValue);
 				}
@@ -108,5 +112,13 @@ public class GoogleUploader extends DocumentUploader {
 	@Override
 	public String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/GoogleUploader.xml";
+	}
+
+	/**
+	 * Get ContentType
+	 */
+	@Override
+	public String getContentType() {
+		return "text/xml";
 	}
 }

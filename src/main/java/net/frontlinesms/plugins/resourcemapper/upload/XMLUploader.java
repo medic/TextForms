@@ -172,4 +172,11 @@ public class XMLUploader extends DocumentUploader {
 		return "/ui/plugins/resourcemapper/upload/XMLUploader.xml";
 	}
 
+	/**
+	 * Get ContentType
+	 */
+	@Override
+	public String getContentType() {
+		return "text/xml";
+	}
 }

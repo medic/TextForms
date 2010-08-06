@@ -1,5 +1,6 @@
 package net.frontlinesms.plugins.resourcemapper.upload;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -36,6 +37,12 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 * @return
 	 */
 	public abstract String getTitle();
+	
+	/**
+	 * Get ContentType
+	 * @return content type
+	 */
+	public abstract String getContentType();
 	
 	/**
 	 * The XML file for component options
@@ -133,19 +140,19 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	public boolean upload() {
 		String document = toString();
-		if (ResourceMapperProperties.isDebugMode()) {
-			LOG.debug("upload: %s", document);
-			return true;
-		}
-		else if (ResourceMapperProperties.getPublishURL() != null) {
+		LOG.debug("document: %s", document);
+		if (ResourceMapperProperties.getPublishURL() != null) {
 			try {
+				LOG.debug("url: %s", ResourceMapperProperties.getPublishURL());
 			    URL url = new URL(ResourceMapperProperties.getPublishURL());
 			    URLConnection connection = url.openConnection();
+			    LOG.debug("Connection opened...");
 			    connection.setDoInput(true);
 			    connection.setDoOutput(true);
 			    connection.setUseCaches(false);
 			    connection.setDefaultUseCaches(false);
-			    connection.setRequestProperty ("Content-Type", "text/xml");
+			    connection.setRequestProperty ("Content-Type", this.getContentType());
+			    LOG.debug("Writer opened...");
 			    Writer writer = new OutputStreamWriter(connection.getOutputStream());
 			    try {
 			    	 writer.write(document);
@@ -153,28 +160,33 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 			    }
 			    finally {
 			    	writer.close();	
-			    }		   
-			    Reader reader = new InputStreamReader(connection.getInputStream());
+			    	LOG.debug("...Writer closed.");
+			    }		 
+			    LOG.debug("Reader opened...");
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			    try {
+			    	String inputLine = null;
 			    	StringBuilder response = new StringBuilder();
-				    char[] buffer = new char[2048];
-				    int num;
-				    while (-1 != (num=reader.read(buffer))) {
-				    	response.append(buffer, 0, num);
-				    }
+			        while ((inputLine = reader.readLine()) != null) {
+			        	LOG.debug(inputLine);
+			        	response.append(inputLine);
+			        }
 				    LOG.debug("Response: %s", response.toString());
 			    }
 			    finally {
 			    	reader.close();
+			    	LOG.debug("...Reader closed.");
 			    }
+			    return true;
 			}
-			catch (Throwable t) {
-				LOG.error("Error: %s", t);
+			catch (Exception ex) {
+				LOG.error("UploadException");
+				ex.printStackTrace();
 				return false;
 			}
 		}
 		else {
-			LOG.error("No Publish URL Specified");
+			LOG.debug("No Publish URL Specified");
 		}
 		return true;
 	}

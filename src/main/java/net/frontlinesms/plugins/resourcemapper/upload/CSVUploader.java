@@ -98,5 +98,13 @@ public class CSVUploader extends DocumentUploader {
 	public String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/CSVUploader.xml";
 	}
+	
+	/**
+	 * Get ContentType
+	 */
+	@Override
+	public String getContentType() {
+		return "text/csv";
+	}
 
 }

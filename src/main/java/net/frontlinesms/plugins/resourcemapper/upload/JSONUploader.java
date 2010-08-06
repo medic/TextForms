@@ -102,4 +102,11 @@ public class JSONUploader extends DocumentUploader {
 		return "/ui/plugins/resourcemapper/upload/JSONUploader.xml";
 	}
 	
+	/**
+	 * Get ContentType
+	 */
+	@Override
+	public String getContentType() {
+		return "text/json";
+	}
 }
