@@ -42,12 +42,12 @@ public class BooleanResponse extends FieldResponse<BooleanField> {
 	private String toBooleanString(String word) {
 		for (String trueValue : ResourceMapperProperties.getBooleanTrueValues()) {
 			if (word.equalsIgnoreCase(trueValue)) {
-				return "true";
+				return "TRUE";
 			}
 		}
 		for (String falseValue : ResourceMapperProperties.getBooleanFalseValues()) {
 			if (word.equalsIgnoreCase(falseValue)) {
-				return "false";
+				return "FALSE";
 			}
 		}
 		return null;

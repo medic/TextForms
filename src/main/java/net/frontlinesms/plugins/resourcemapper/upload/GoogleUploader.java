@@ -89,6 +89,7 @@ public class GoogleUploader extends DocumentUploader {
 		
 		//add responses
 		Element contentElement = entryElement.addElement(new QName("content", NAMESPACE_REPORT));
+		contentElement.addAttribute("type", "{http://schemas.google.com/report/2010}row");
 		Element rowElement = contentElement.addElement(new QName("row", NAMESPACE_REPORT));
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();

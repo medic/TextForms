@@ -66,7 +66,7 @@ public class ResourceMapperDebug {
 	
 	public void createDebugContacts() {
 		LOG.debug("createDebugContacts");
-		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "paho.org/HealthC_ID/1234567");
+		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "paho.org/HealthC_ID/1");
 	}
 	
 	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
@@ -82,14 +82,42 @@ public class ResourceMapperDebug {
 	
 	public void createDebugFields() {
 		LOG.debug("createDebugFields");
-		createField("Hospital Address", "addr", "What is the hospital's address?", "plaintext", "hospital_address", null);
-		createField("Hospital Power", "power", "Does the hospital have power?", "boolean", "hospital_power", null);
-		createField("Hospital Beds", "beds", "How many beds does the hospital have?", "integer", "available_beds", null);
-		createField("Hospital Available", "date", "What date will the hospital be opened?", "date", "hospital_date", null);
-		createField("Hospital Type", "type", "What kind of hospital is it?", "checklist", "organization_type", 
-						new String [] {"Military", "University", "Clinic", "Private", "Public"});
-		createField("Hospital Services", "serv", "What services does the hospital provide?", "multichoice", "hospital_services",
-						new String [] {"Emergency", "Ambulance", "Dental", "MRI", "CT Scan"});
+		//PLAIN TEXT
+		createField("Hospital Title", "title", "What is the hospital's title?", "plaintext", "title", null);
+		createField("Hospital Alternative Title", "alt", "What is the hospital's alternative title?", "plaintext", "alt_title", null);
+		createField("Hospital Contact Name", "contact", "What is hospital contact name?", "plaintext", "contact_name", null);
+		createField("Hospital Phone", "phone", "What is hospital phone number?", "plaintext", "phone", null);
+		createField("Hospital Email", "email", "What is hospital email address?", "plaintext", "email", null);
+		createField("Hospital Department", "department", "What is the hospital department?", "plaintext", "department", null);
+		createField("Hospital District", "district", "What is the hospital district?", "plaintext", "district", null);
+		createField("Hospital Commune", "commune", "What is the hospital commune?", "plaintext", "commune", null);
+		createField("Hospital Address", "address", "What is hospital address?", "plaintext", "address", null);
+		createField("Hospital Location", "location", "What is hospital location (latitude,longitude)?", "plaintext", "location", null);
+		createField("Hospital Location Accuracy", "accuracy", "What is hospital location accuracy?", "plaintext", "accuracy", null);
+		createField("Hospital Damage", "damage", "What is the hospital damage?", "plaintext", "damage", null);
+		createField("Additional Comments", "comments", "Additional comments?", "plaintext", "comments", null);
+		//INTEGER
+		createField("Available Beds", "available", "How many beds does the hospital have available?", "integer", "available_beds", null);
+		createField("Total Beds", "beds", "The total number of hospital beds?", "integer", "total_beds", null);
+		//BOOLEAN
+		createField("Hospital Reachable By Road", "reachable", "Is the hospital reachable by road?", "boolean", "reachable_by_road", null);
+		createField("Hospital Can Pick Up Patients", "pickup", "Can the hospital pick up patients?", "boolean", "can_pick_up_patients", null);
+		//MULTICHOICE
+		createField("Hospital Type", "type", "What is the hospital type?", "multichoice", "organization_type",
+				new String [] {"PUBLIC", "FOR_PROFIT", "UNIVERSITY", "COMMUNITY", "NGO", "FAITH_BASED", "MILITARY", "MIXED"});
+		createField("Hospital Category", "category", "What is the hospital category?", "multichoice", "category",
+				new String [] {"HOSPITAL", "CLINIC", "MOBILE_CLINIC", "DISPENSARY"});
+		createField("Hospital Construction", "construction", "What is the hospital construction?", "multichoice", "construction",
+				new String [] {"REINFORCED_CONCRETE", "UNREINFORCED_MASONRY", "WOOD_FRAME", "ADOBE"});
+		createField("Hospital Operational Status", "status", "What is the hospital operational status?", "multichoice", "operational_status",
+				new String [] {"OPERATIONAL", "NO_SURGICAL_CAPACITY", "FIELD_HOSPITAL", "FIELD_WITH_HOSPITAL", "CLOSED_OR_CLOSING"});
+		//CHECKLIST
+		createField("Hospital Services", "services", "What services does the hospital offer?", "checklist", "services", 
+						new String [] {"GENERAL_SURGERY", "ORTHOPEDICS", "NEUROSURGERY", "VASCULAR_SURGERY", 
+									   "INTERNAL_MEDICINE", "CARDIOLOGY", "INFECTIOUS_DISEASE", "PEDIATRICS", 
+									   "POSTOPERATIVE_CARE", "REHABILITATION", "OBSTETRICS_GYNECOLOGY", "MENTAL_HEALTH",
+									   "DIALYSIS", "LAB", "X_RAY", "CT_SCAN", "BLOOD_BANK", "MORTUARY_SERVICES"});
+		
 	}
 	
 	public void createField(String name, String keyword, String infoSnippet, String type, String schema, String [] choices) {
@@ -106,26 +134,30 @@ public class ResourceMapperDebug {
 	
 	public void createDebugResponses() {
 		LOG.debug("createDebugResponses");
-		for (String message : new String[] {"info addr", "help power", "? type", 
-											"register", 
-											"register paho.org/HealthC_ID/1234567",
-											"addr 123 University Dr, Saskatoon", //ignore previous callback, handled by plaintext handler
-											"power", "yes", //callback
-											"power yes", "power true", "power 1",
-											"power no", "power false", "power 0",
-											"power yyy", //invalid response
-											"type", "military", "type university, Public", "type 1, 3", "type 1-3", "type 1,3-5",
-											"type 3-6", //invalid type range
-											"type 6", //invalid type
-											"type invalid", //invalid type
-											"serv", "1", "serv dental", "serv 2",
-											"serv 0", //invalid service index
-											"serv invalid", //invalid service
-											"beds 143", 
-											"beds abc123", //invalid integer
-											"date 11/04/2010", "date 4-7-2009",
-											"date abd123", //invalid date
-											"invalid", "1", "" //invalid responses
+		for (String message : new String[] {"title Title", 
+											"alt Alternative Title",
+											"available 55",
+											"beds 66",
+											"services 2,6,15",
+											"contact Name",
+											"phone +12 345-678-90",
+											"email user@example.com",
+											"department Ouest",
+											"district Leeogane",
+											"commune Petit-Goave",
+											"address 123 Example Street",
+											"location 18.3037,-72.8636",
+											"accuracy Description of location accuracy.",
+											"organization Example Organization",
+											"category hospital",
+											"construction 1",
+											"damage Text describing building damage.",
+											"status 1",
+											"comments Arbitrary comment text goes here.",
+											"reachable true",
+											"pickup no",
+											"invalid abc123", //invalid response
+											"invalid" //invalid keyword
 											}) {
 			createResponse(this.getDateReceived(), this.getAuthor(), message);
 		}
