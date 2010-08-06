@@ -66,7 +66,7 @@ public class ResourceMapperDebug {
 	
 	public void createDebugContacts() {
 		LOG.debug("createDebugContacts");
-		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "Saskatoon RUH");
+		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "paho.org/HealthC_ID/1234567");
 	}
 	
 	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
@@ -84,9 +84,9 @@ public class ResourceMapperDebug {
 		LOG.debug("createDebugFields");
 		createField("Hospital Address", "addr", "What is the hospital's address?", "plaintext", "hospital_address", null);
 		createField("Hospital Power", "power", "Does the hospital have power?", "boolean", "hospital_power", null);
-		createField("Hospital Beds", "beds", "How many beds does the hospital have?", "integer", "hospital_beds", null);
+		createField("Hospital Beds", "beds", "How many beds does the hospital have?", "integer", "available_beds", null);
 		createField("Hospital Available", "date", "What date will the hospital be opened?", "date", "hospital_date", null);
-		createField("Hospital Type", "type", "What kind of hospital is it?", "checklist", "hospital_type", 
+		createField("Hospital Type", "type", "What kind of hospital is it?", "checklist", "organization_type", 
 						new String [] {"Military", "University", "Clinic", "Private", "Public"});
 		createField("Hospital Services", "serv", "What services does the hospital provide?", "multichoice", "hospital_services",
 						new String [] {"Emergency", "Ambulance", "Dental", "MRI", "CT Scan"});
@@ -108,7 +108,7 @@ public class ResourceMapperDebug {
 		LOG.debug("createDebugResponses");
 		for (String message : new String[] {"info addr", "help power", "? type", 
 											"register", 
-											"register Saskatoon RUH 2",
+											"register paho.org/HealthC_ID/1234567",
 											"addr 123 University Dr, Saskatoon", //ignore previous callback, handled by plaintext handler
 											"power", "yes", //callback
 											"power yes", "power true", "power 1",

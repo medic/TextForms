@@ -29,7 +29,7 @@ public class GoogleUploader extends DocumentUploader {
 	/**
 	 * Atom Namespace
 	 */
-	private static final Namespace NAMESPACE_ATOM = new Namespace("atom", "http://www.w3.org/2005/Atom");
+	private static final Namespace NAMESPACE_ATOM = new Namespace("", "http://www.w3.org/2005/Atom");
 	
 	/**
 	 * Status Namespace
@@ -54,15 +54,18 @@ public class GoogleUploader extends DocumentUploader {
 		DocumentFactory factory = DocumentFactory.getInstance();
 		Document document = factory.createDocument();
 		
-		//root
-		Element rootElement = document.addElement("entry");
-		rootElement.addNamespace("", NAMESPACE_ATOM.getURI());
-		rootElement.addNamespace(NAMESPACE_REPORT.getPrefix(), NAMESPACE_REPORT.getURI());
-		rootElement.addNamespace(NAMESPACE_GS.getPrefix(), NAMESPACE_GS.getURI());
+		//feed
+		Element feedElement = document.addElement(new QName("feed", NAMESPACE_ATOM));
+		feedElement.addNamespace("", NAMESPACE_ATOM.getURI());
+		feedElement.addNamespace(NAMESPACE_REPORT.getPrefix(), NAMESPACE_REPORT.getURI());
+		feedElement.addNamespace(NAMESPACE_GS.getPrefix(), NAMESPACE_GS.getURI());
+		
+		//entry
+		Element entryElement = feedElement.addElement(new QName("entry", NAMESPACE_ATOM));
 		
 		//author
-		Element authorElement = rootElement.addElement("author");
-		Element uriElement = authorElement.addElement("uri");
+		Element authorElement = entryElement.addElement(new QName("author", NAMESPACE_ATOM));
+		Element uriElement = authorElement.addElement(new QName("uri", NAMESPACE_ATOM));
 		if (this.phoneNumber != null) {
 			if (this.phoneNumber.startsWith("+")) {
 				uriElement.setText(String.format("tel:%s", this.phoneNumber));
@@ -73,19 +76,19 @@ public class GoogleUploader extends DocumentUploader {
 		}
 		
 		//subject
-		Element subjectElement = rootElement.addElement(new QName("subject", NAMESPACE_REPORT));
+		Element subjectElement = entryElement.addElement(new QName("subject", NAMESPACE_REPORT));
 		if (this.hospitalId != null) {
 			subjectElement.setText(this.hospitalId);
 		}
 		
 		//observed
-		Element observedElement = rootElement.addElement(new QName("observed", NAMESPACE_REPORT));
+		Element observedElement = entryElement.addElement(new QName("observed", NAMESPACE_REPORT));
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("GMT-2"));
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		observedElement.setText(dateFormat.format(now.getTime()));
 		
 		//add responses
-		Element contentElement = rootElement.addElement(new QName("content", NAMESPACE_REPORT));
+		Element contentElement = entryElement.addElement(new QName("content", NAMESPACE_REPORT));
 		Element rowElement = contentElement.addElement(new QName("row", NAMESPACE_REPORT));
 		for (FieldResponse fieldResponse : this.getFieldResponses()) {
 			String schema = fieldResponse.getMappingSchema();

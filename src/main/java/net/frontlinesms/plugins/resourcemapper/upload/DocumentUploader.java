@@ -140,19 +140,16 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	public boolean upload() {
 		String document = toString();
-		LOG.debug("document: %s", document);
+		LOG.debug("url: %s document: %s", ResourceMapperProperties.getPublishURL(), document);
 		if (ResourceMapperProperties.getPublishURL() != null) {
 			try {
-				LOG.debug("url: %s", ResourceMapperProperties.getPublishURL());
-			    URL url = new URL(ResourceMapperProperties.getPublishURL());
+				URL url = new URL(ResourceMapperProperties.getPublishURL());
 			    URLConnection connection = url.openConnection();
-			    LOG.debug("Connection opened...");
 			    connection.setDoInput(true);
 			    connection.setDoOutput(true);
 			    connection.setUseCaches(false);
 			    connection.setDefaultUseCaches(false);
 			    connection.setRequestProperty ("Content-Type", this.getContentType());
-			    LOG.debug("Writer opened...");
 			    Writer writer = new OutputStreamWriter(connection.getOutputStream());
 			    try {
 			    	 writer.write(document);
@@ -160,9 +157,7 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 			    }
 			    finally {
 			    	writer.close();	
-			    	LOG.debug("...Writer closed.");
 			    }		 
-			    LOG.debug("Reader opened...");
 			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			    try {
 			    	String inputLine = null;
@@ -175,7 +170,6 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 			    }
 			    finally {
 			    	reader.close();
-			    	LOG.debug("...Reader closed.");
 			    }
 			    return true;
 			}
@@ -186,7 +180,7 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 			}
 		}
 		else {
-			LOG.debug("No Publish URL Specified");
+			LOG.debug("No Document Uploader URL Specified");
 		}
 		return true;
 	}
