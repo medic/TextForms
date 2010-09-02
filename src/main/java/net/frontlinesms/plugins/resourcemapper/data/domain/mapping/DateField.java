@@ -14,7 +14,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @Entity
-@DiscriminatorValue(value="date")
+@DiscriminatorValue(value=FieldType.DATE)
 public class DateField extends Field {
 
 	public DateField() {
@@ -38,7 +38,7 @@ public class DateField extends Field {
 	
 	@Override
 	public String getType() {
-		return "date";
+		return FieldType.DATE;
 	}
 	
 	@Override

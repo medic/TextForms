@@ -8,6 +8,8 @@ import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.plugins.BasePluginController;
 import net.frontlinesms.plugins.PluginControllerProperties;
 import net.frontlinesms.plugins.PluginInitialisationException;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
+import net.frontlinesms.plugins.resourcemapper.data.repository.FieldResponseDao;
 import net.frontlinesms.plugins.resourcemapper.ui.ResourceMapperThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -16,7 +18,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  * @author dalezak
  *
  */
-@PluginControllerProperties(name="Resource Mapper", iconPath="/icons/small_rmapper.png",
+@PluginControllerProperties(name="Operator (Beta)", i18nKey = "plugins.resourcemapper", iconPath="/icons/operator.png",
 		springConfigLocation="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper-spring-hibernate.xml",
 		hibernateConfigPath="classpath:net/frontlinesms/plugins/resourcemapper/resourcemapper.hibernate.cfg.xml")
 public class ResourceMapperPluginController extends BasePluginController {
@@ -42,6 +44,16 @@ public class ResourceMapperPluginController extends BasePluginController {
 	 * ResourceMapperThinletTabController
 	 */
 	private ResourceMapperThinletTabController tabController;
+	
+	/**
+	 * FieldMappingDao
+	 */
+	private FieldMappingDao fieldMappingDao;
+	
+	/**
+	 * FieldResponseDao
+	 */
+	private FieldResponseDao fieldResponseDao;
 	
 	/**
 	 * The main tab panel
@@ -81,19 +93,24 @@ public class ResourceMapperPluginController extends BasePluginController {
 		this.frontlineController = frontlineController;
 		this.appContext = appContext;
 		this.listener = new ResourceMapperListener(frontlineController, appContext);
-		if (ResourceMapperProperties.isDebugMode()) {
-			LOG.debug("Running ResourceMapperDebug...");
-			ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this.appContext);
-			resourceMapperDebug.createDebugContacts();
-			resourceMapperDebug.createDebugFields();
-			resourceMapperDebug.startDebugTerminal();
-//			resourceMapperDebug.createDebugResponses();
-//			resourceMapperDebug.createResponseOutputs();
-//			resourceMapperDebug.createUploadXMLDocument();
-//			resourceMapperDebug.createUploadJSONDocument();
-//			resourceMapperDebug.createUploadCSVDocument();
-//			resourceMapperDebug.createUploadGoogleDocument();
-		}
+		
+		this.fieldMappingDao = (FieldMappingDao)appContext.getBean("fieldMappingDao");
+		this.fieldResponseDao = (FieldResponseDao)appContext.getBean("fieldResponseDao");
+		
+	    if (ResourceMapperProperties.isDebugMode()) {
+            LOG.debug("Running ResourceMapperDebug...");
+            ResourceMapperDebug resourceMapperDebug = new ResourceMapperDebug(this.appContext);
+            resourceMapperDebug.startDebugTerminal();
+//            resourceMapperDebug.createDebugFields();
+//          resourceMapperDebug.createDebugContacts();
+//          resourceMapperDebug.createDebugResponses();
+//          resourceMapperDebug.createResponseOutputs();
+//          resourceMapperDebug.createUploadXMLDocument();
+//          resourceMapperDebug.createUploadJSONDocument();
+//          resourceMapperDebug.createUploadCSVDocument();
+//          resourceMapperDebug.createUploadGoogleDocument();
+        }
+
 	}
 	
 	/** @return {@link #frontlineController} */
@@ -106,4 +123,11 @@ public class ResourceMapperPluginController extends BasePluginController {
 		return this.appContext;
 	}
 
+	public FieldMappingDao getFieldMappingDao() {
+		return this.fieldMappingDao;
+	}
+	
+	public FieldResponseDao getFieldResponseDao() {
+		return this.fieldResponseDao;
+	}
 }

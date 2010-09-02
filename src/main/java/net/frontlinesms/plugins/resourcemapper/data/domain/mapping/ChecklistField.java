@@ -9,7 +9,7 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@DiscriminatorValue(value="checklist")
+@DiscriminatorValue(value=FieldType.CHECKLIST)
 public class ChecklistField extends CodedField {
 	
 	public ChecklistField() {
@@ -22,7 +22,7 @@ public class ChecklistField extends CodedField {
 
 	@Override
 	public String getType() {
-		return "checklist";
+		return FieldType.CHECKLIST;
 	}
 	
 	@Override

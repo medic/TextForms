@@ -9,8 +9,8 @@
 			<table name="tablePeople" selection="single" weightx="1" weighty="1"/>
 		</panel>
 		
-		<button name="buttonAddPerson" icon="/icons/user_add.png" text="i18n.plugins.resourcemapper.add" action="addPerson(tablePeople)" weightx="1" colspan="2"/>
-		<button name="buttonDeletePerson" icon="/icons/user_delete.png" text="i18n.plugins.resourcemapper.delete" action="showConfirmationDialog('deletePerson')" weightx="1" colspan="2" enabled="false"/>
+		<button name="buttonAddPerson" icon="/icons/big_user_add.png" text="i18n.plugins.resourcemapper.contact.add" action="addPerson(tablePeople)" weightx="1" colspan="2"/>
+		<button name="buttonDeletePerson" icon="/icons/big_user_delete.png" text="i18n.plugins.resourcemapper.contact.delete" action="showConfirmationDialog('deletePerson')" weightx="1" colspan="2" enabled="false"/>
 	</panel>
 	<panel columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
 		<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" valign="top" />
@@ -29,8 +29,8 @@
 		<label name="labelResponseValue" weightx="1" font="bold 12" />
 		
 		<panel weightx="1" weighty="1" colspan="2" valign="fill" gap="10">
-			<button name="buttonViewResponses" icon="/icons/email_subject.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(tablePeople)" weightx="1" enabled="false"/>
-			<button name="buttonEditPerson" icon="/icons/user_edit.png" text="i18n.plugins.resourcemapper.edit" action="editPerson(tablePeople)" weightx="1" enabled="false"/>
+			<button name="buttonViewResponses" icon="/icons/big_responses.png" text="i18n.plugins.resourcemapper.view.responses" action="viewResponses(tablePeople)" weightx="1" enabled="false"/>
+			<button name="buttonEditPerson" icon="/icons/big_user_edit.png" text="i18n.plugins.resourcemapper.contact.edit" action="editPerson(tablePeople)" weightx="1" enabled="false"/>
 		</panel>
 	</panel>
 </splitpane>

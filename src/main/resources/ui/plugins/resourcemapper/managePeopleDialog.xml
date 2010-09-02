@@ -14,5 +14,5 @@
 	<textarea name="textEmail" rows="1" columns="50" />
 		
 	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(managePeopleDialog)" weightx="1" />
-	<button name="buttonSave" text="i18n.action.save" icon="/icons/tick.png" action="savePerson(managePeopleDialog)" weightx="1" />
+	<button name="buttonSave" text="i18n.plugins.resourcemapper.contact.save" icon="/icons/tick.png" action="savePerson(managePeopleDialog)" weightx="1" />
 </dialog>

@@ -10,7 +10,7 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@DiscriminatorValue(value="multichoice")
+@DiscriminatorValue(value=FieldType.MULTICHOICE)
 public class MultiChoiceField extends CodedField {
 	
 	public MultiChoiceField() {
@@ -28,7 +28,7 @@ public class MultiChoiceField extends CodedField {
 		
 	@Override
 	public String getType() {
-		return "multichoice";
+		return FieldType.MULTICHOICE;
 	}
 	
 	@Override

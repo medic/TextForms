@@ -14,7 +14,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @Entity
-@DiscriminatorValue(value="plaintext")
+@DiscriminatorValue(value=FieldType.PLAINTEXT)
 public class PlainTextField extends Field {
 
 	public PlainTextField() {
@@ -38,7 +38,7 @@ public class PlainTextField extends Field {
 	
 	@Override
 	public String getType() {
-		return "plaintext";
+		return FieldType.PLAINTEXT;
 	}
 	
 	@Override

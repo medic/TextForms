@@ -35,5 +35,5 @@
 	</panel>
 	
 	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(manageFieldDialog)" weightx="1" />	
-	<button name="buttonSave" text="i18n.action.save" icon="/icons/tick.png" action="saveField(manageFieldDialog)" weightx="1" />
+	<button name="buttonSave" text="i18n.plugins.resourcemapper.field.save" icon="/icons/tick.png" action="saveField(manageFieldDialog)" weightx="1" />
 </dialog>

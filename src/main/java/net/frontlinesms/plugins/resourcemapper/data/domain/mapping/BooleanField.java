@@ -7,7 +7,7 @@ import net.frontlinesms.plugins.resourcemapper.ResourceMapperConstants;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 @Entity
-@DiscriminatorValue(value="boolean")
+@DiscriminatorValue(value=FieldType.BOOLEAN)
 public class BooleanField extends CodedField {
 	
 	public BooleanField() {
@@ -31,7 +31,7 @@ public class BooleanField extends CodedField {
 	
 	@Override
 	public String getType() {
-		return "boolean";
+		return FieldType.BOOLEAN;
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  *
  */
 @Entity
-@DiscriminatorValue(value="integer")
+@DiscriminatorValue(value=FieldType.INTEGER)
 public class IntegerField extends Field {
 
 	public IntegerField() {
@@ -38,7 +38,7 @@ public class IntegerField extends Field {
 	
 	@Override
 	public String getType() {
-		return "integer";
+		return FieldType.INTEGER;
 	}
 	
 	@Override
