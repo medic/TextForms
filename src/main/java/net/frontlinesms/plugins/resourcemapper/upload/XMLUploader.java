@@ -168,7 +168,7 @@ public class XMLUploader extends DocumentUploader {
 	}
 	
 	@Override
-	public String getPanelXML() {
+	protected String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/XMLUploader.xml";
 	}
 

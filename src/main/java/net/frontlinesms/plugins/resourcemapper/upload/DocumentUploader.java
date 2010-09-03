@@ -9,6 +9,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.ApplicationContext;
+
+import thinlet.Thinlet;
+import thinlet.ThinletText;
+
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperLogger;
 import net.frontlinesms.plugins.resourcemapper.ResourceMapperProperties;
 import net.frontlinesms.plugins.resourcemapper.data.domain.response.FieldResponse;
@@ -22,7 +27,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 @SuppressWarnings("unchecked")
 public abstract class DocumentUploader implements ThinletUiEventHandler {
-	
+
 	private static ResourceMapperLogger LOG = ResourceMapperLogger.getLogger(DocumentUploader.class);
 	
 	/**
@@ -47,7 +52,7 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 * The XML file for component options
 	 * @return
 	 */
-	public abstract String getPanelXML();
+	protected abstract String getPanelXML();
 	
 	/**
 	 * Collection of field responses
@@ -59,6 +64,26 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	 */
 	protected UiGeneratorController ui;
 	
+	/**
+	 * ApplicationContext
+	 */
+	protected ApplicationContext appContext;
+	
+	/**
+	 * Set ApplicationContext
+	 * @param appContext ApplicationContext
+	 */
+	public void setApplicationContext(ApplicationContext appContext) {
+		this.appContext = appContext;
+	}
+	
+	/**
+	 * Get ApplicationContext
+	 * @return ApplicationContext
+	 */
+	public ApplicationContext getApplicationContext() {
+		return this.appContext;
+	}
 	/**
 	 * Set UiGeneratorController
 	 * @param ui UiGeneratorController
@@ -184,4 +209,17 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 		return true;
 	}
 	
+	public Object getMainPanel() {
+		if (this.mainPanel == null) {
+			this.mainPanel = this.ui.loadComponentFromFile(this.getPanelXML(), this);
+		}
+		return this.mainPanel;
+	}private Object mainPanel;
+	
+	protected final Object createTableCell(Object row, String text) {
+		Object cell = Thinlet.create(ThinletText.CELL);
+		this.ui.setString(cell, ThinletText.TEXT, text);
+		this.ui.add(row, cell);
+		return cell;
+	}
 }

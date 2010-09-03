@@ -98,7 +98,7 @@ public class JSONUploader extends DocumentUploader {
 	}
 	
 	@Override
-	public String getPanelXML() {
+	protected String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/JSONUploader.xml";
 	}
 	

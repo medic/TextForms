@@ -19,8 +19,8 @@ import net.frontlinesms.plugins.resourcemapper.data.repository.HospitalContactDa
 import net.frontlinesms.plugins.resourcemapper.data.repository.FieldMappingDao;
 import net.frontlinesms.plugins.resourcemapper.upload.CSVUploader;
 import net.frontlinesms.plugins.resourcemapper.upload.DocumentUploader;
-import net.frontlinesms.plugins.resourcemapper.upload.GoogleUploader;
 import net.frontlinesms.plugins.resourcemapper.upload.JSONUploader;
+import net.frontlinesms.plugins.resourcemapper.upload.ResourceFinderUploader;
 import net.frontlinesms.plugins.resourcemapper.upload.XMLUploader;
 
 /**
@@ -210,7 +210,7 @@ public class ResourceMapperDebug {
 	
 	public void createUploadGoogleDocument() {
 		LOG.debug("createUploadGoogleDocument");
-		DocumentUploader document = new GoogleUploader();
+		DocumentUploader document = new ResourceFinderUploader();
 		document.setPhoneNumber(this.getAuthor());
 		document.setHospitalId(this.getHospitalId());
 		for (FieldResponse fieldResponse : this.fieldResponseDao.getAllFieldResponses()) {

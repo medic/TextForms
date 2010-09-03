@@ -16,7 +16,7 @@
 		<label name="labelName" text="i18n.plugins.resourcemapper.name" icon="/icons/user.png" valign="top" />
 		<label name="labelNameValue" height="40" weightx="1" font="bold 12"/>
 		
-		<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/hospital.png" valign="top" />
+		<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/organization.png" valign="top" />
 		<label name="labelHospitalValue" weightx="1" font="bold 12" />
 		
 		<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" valign="top" />

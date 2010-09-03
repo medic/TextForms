@@ -106,7 +106,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 													"getMessageText"},
 									   new String[]{"/icons/date.png", 
 													"/icons/user_sender.png", 
-													"/icons/hospital.png", 
+													"/icons/organization.png", 
 													"/icons/field.png",
 													"/icons/sms_receive.png"},
 									   new String []{"dateSubmitted", 

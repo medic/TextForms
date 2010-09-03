@@ -91,6 +91,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		int index = 1;
 		for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
 			documentUploader.setUiGeneratorController(this.ui);
+			documentUploader.setApplicationContext(this.appContext);
 			Object comboBoxChoice = this.ui.createComboboxChoice(documentUploader.getTitle(), documentUploader);
 			this.ui.add(this.comboUploadDocuments, comboBoxChoice);
 			if (documentUploader == selectedDocumentUploader) {
@@ -120,13 +121,7 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		this.ui.removeAll(this.panelUploadOptions);
 		if (documentUploader != null) {
 			LOG.debug("uploadDocumentChanged: %s", documentUploader.getTitle());
-			try {
-				Object panel = this.ui.loadComponentFromFile(documentUploader.getPanelXML(), documentUploader);
-				this.ui.add(this.panelUploadOptions, panel);
-			}
-			catch (RuntimeException ex) {
-				LOG.error("RuntimeException: %s", ex);
-			}
+			this.ui.add(this.panelUploadOptions, documentUploader.getMainPanel());
 		}
 		else {
 			LOG.debug("uploadDocumentChanged: NULL");

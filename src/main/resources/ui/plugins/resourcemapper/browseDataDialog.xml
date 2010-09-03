@@ -6,10 +6,10 @@
 	<label name="labelSubmitter" text="i18n.plugins.resourcemapper.table.submitter" icon="/icons/user_sender.png" for="comboSubmitter" valign="top" />
 	<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this, textHospital)" />
 	
-	<label name="labelHospital" text="i18n.plugins.resourcemapper.table.organization" icon="/icons/hospital.png" for="textHospital" valign="top" />
+	<label name="labelHospital" text="i18n.plugins.resourcemapper.table.organization" icon="/icons/organization.png" for="textHospital" valign="top" />
 	<textarea name="textHospital" rows="1" columns="40" weightx="1" editable="false" enabled="false" />
 	
-	<label name="labelFieldTypes" icon="/icons/keyword.png" text="i18n.plugins.resourcemapper.field" for="comboFieldTypes" valign="top"/>
+	<label name="labelFieldTypes" icon="/icons/field_keyword.png" text="i18n.plugins.resourcemapper.field" for="comboFieldTypes" valign="top"/>
 	<combobox name="comboFieldTypes" editable="false" weightx="1" />
 	
 	<label name="labelResponse" text="i18n.plugins.resourcemapper.table.response" icon="/icons/sms_receive.png" for="textResponse" valign="top" />

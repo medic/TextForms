@@ -95,7 +95,7 @@ public class CSVUploader extends DocumentUploader {
 	}
 	
 	@Override
-	public String getPanelXML() {
+	protected String getPanelXML() {
 		return "/ui/plugins/resourcemapper/upload/CSVUploader.xml";
 	}
 	

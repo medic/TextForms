@@ -7,7 +7,7 @@
 	<label name="labelPhone" text="i18n.plugins.resourcemapper.phone" icon="/icons/phone_number.png" for="textPhone" valign="top" />
 	<textarea name="textPhone" rows="1" columns="50" />
 		
-	<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/hospital.png" for="textHospital" valign="top" />
+	<label name="labelHospital" text="i18n.plugins.resourcemapper.organization" icon="/icons/organization.png" for="textHospital" valign="top" />
 	<textarea name="textHospital" rows="3" columns="50" weightx="1"/>
 		
 	<label name="labelEmail" text="i18n.plugins.resourcemapper.email" icon="/icons/email.png" for="textEmail" valign="top" />

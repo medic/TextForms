@@ -52,6 +52,7 @@
 		<label name="labelUploadDocuments" text="i18n.plugins.resourcemapper.upload.handler" icon="/icons/sms_http.png" valign="top" />
 		<combobox name="comboUploadDocuments" editable="false" action="uploadDocumentChanged(this)" weightx="1"/>
 		
-		<panel name="panelUploadOptions" colspan="2" />
+		<label/>
+		<panel name="panelUploadOptions" weightx="1" weighty="1" />
 	</panel>
 </panel>
