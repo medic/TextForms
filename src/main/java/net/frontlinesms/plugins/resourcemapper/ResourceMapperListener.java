@@ -27,7 +27,7 @@ public class ResourceMapperListener implements EventObserver {
 	/**
 	 * MessageHandlers
 	 */
-	private List<MessageHandler> listeners;
+	private final List<MessageHandler> listeners;
 	
 	/**
 	 * MessageHandler Callbacks
