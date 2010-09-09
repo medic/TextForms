@@ -13,7 +13,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class HibernateHospitalContactDao extends BaseHibernateDao<HospitalContact> implements HospitalContactDao {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(HibernateHospitalContactDao.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(HibernateHospitalContactDao.class);
 	
 	private static final String HOSPITAL_ID_QUERY = "select hosp.hospitalId from HospitalContact hosp";
 	

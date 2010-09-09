@@ -37,7 +37,7 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 @SuppressWarnings("unchecked")
 public final class AnswerFactory {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(AnswerFactory.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(AnswerFactory.class);
 	
 	/**
 	 * Get list of Answer classes

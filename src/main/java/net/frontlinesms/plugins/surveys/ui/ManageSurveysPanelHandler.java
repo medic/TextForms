@@ -49,7 +49,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 public class ManageSurveysPanelHandler extends ExtendedThinlet implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
 	private static final long serialVersionUID = 1L;
-	private static SurveysLogger LOG = SurveysLogger.getLogger(ManageSurveysPanelHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageSurveysPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageSurveysPanel.xml";
 	
 	private final UiGeneratorController ui;
@@ -60,13 +60,12 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 	private final Object searchSurveys;
 	private final Object panelSurveys;
 	private final Object tableSurveys;
-	private final Object buttonAddSurvey;
 	private final Object buttonDeleteSurvey;
 	private final Object buttonEditSurvey;
 	private final Object buttonSendSurvey;
 	private final Object tableQuestions;
 	
-	private SurveyQueryGenerator queryGenerator;
+	private final SurveyQueryGenerator queryGenerator;
 	
 	private final SurveyDao surveyDao;
 	
@@ -80,7 +79,6 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 		this.searchSurveys = this.ui.find(this.mainPanel, "searchSurveys");
 		this.tableSurveys = this.ui.find(this.mainPanel, "tableSurveys");
 		this.panelSurveys = this.ui.find(this.mainPanel, "panelSurveys");
-		this.buttonAddSurvey = this.ui.find(this.mainPanel, "buttonAddSurvey");
 		this.buttonDeleteSurvey = this.ui.find(this.mainPanel, "buttonDeleteSurvey");
 		this.buttonEditSurvey = this.ui.find(this.mainPanel, "buttonEditSurvey");
 		this.buttonSendSurvey = this.ui.find(this.mainPanel, "buttonSendSurvey");

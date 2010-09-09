@@ -10,7 +10,7 @@ import com.ibm.icu.util.Calendar;
 public class CallbackInfo {
 	
 	@SuppressWarnings("unused")
-	private static SurveysLogger LOG = SurveysLogger.getLogger(CallbackInfo.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(CallbackInfo.class);
 	
 	private String phoneNumber;
 	private CallbackHandler handler;

@@ -27,7 +27,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  */
 public class ManageContactsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(ManageContactsPanelHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageContactsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageContactsPanel.xml";
 	
 	private final UiGeneratorController ui;

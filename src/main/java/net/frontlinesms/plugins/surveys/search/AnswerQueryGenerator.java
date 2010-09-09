@@ -14,7 +14,7 @@ import com.ibm.icu.util.Calendar;
 
 public class AnswerQueryGenerator extends QueryGenerator {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(AnswerQueryGenerator.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(AnswerQueryGenerator.class);
 	
 	public AnswerQueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable) {
 		super(appCon, resultsTable);

@@ -47,7 +47,7 @@ import net.frontlinesms.plugins.surveys.ui.components.PagedAdvancedTableControll
 @SuppressWarnings("unused")
 public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(BrowseDataPanelHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(BrowseDataPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/browseDataPanel.xml";
 	
 	private final UiGeneratorController ui;

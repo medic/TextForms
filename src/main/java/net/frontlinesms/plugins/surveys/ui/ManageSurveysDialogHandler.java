@@ -50,7 +50,7 @@ public class ManageSurveysDialogHandler extends ExtendedThinlet implements Thinl
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(ManageSurveysDialogHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageSurveysDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/surveys/manageSurveysDialog.xml";
 	
 	private final UiGeneratorController ui;

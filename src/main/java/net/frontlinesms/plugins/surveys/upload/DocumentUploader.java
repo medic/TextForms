@@ -28,7 +28,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 @SuppressWarnings("unchecked")
 public abstract class DocumentUploader implements ThinletUiEventHandler {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(DocumentUploader.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(DocumentUploader.class);
 	
 	/**
 	 * Implementing class needs to define toString() method

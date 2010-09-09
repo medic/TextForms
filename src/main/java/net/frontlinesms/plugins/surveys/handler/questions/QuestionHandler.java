@@ -29,7 +29,7 @@ import net.frontlinesms.plugins.surveys.upload.DocumentUploaderFactory;
  */
 public abstract class QuestionHandler<M extends Question> extends MessageHandler {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(QuestionHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(QuestionHandler.class);
 	
 	/**
 	 * QuestionDao

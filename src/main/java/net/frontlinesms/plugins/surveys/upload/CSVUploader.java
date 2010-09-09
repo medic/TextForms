@@ -15,7 +15,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  */
 public class CSVUploader extends DocumentUploader {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(CSVUploader.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(CSVUploader.class);
 	
 	/**
 	 * Collection of additional items

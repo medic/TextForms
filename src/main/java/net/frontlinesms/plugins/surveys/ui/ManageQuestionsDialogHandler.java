@@ -44,7 +44,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 @SuppressWarnings("unused")
 public class ManageQuestionsDialogHandler implements ThinletUiEventHandler {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(ManageQuestionsDialogHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageQuestionsDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/surveys/manageQuestionsDialog.xml";
 	
 	private final UiGeneratorController ui;

@@ -32,7 +32,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 @SuppressWarnings("unused")
 public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(BrowseDataDialogHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(BrowseDataDialogHandler.class);
 	private static final String DIALOG_XML = "/ui/plugins/surveys/browseDataDialog.xml";
 	
 	private final UiGeneratorController ui;

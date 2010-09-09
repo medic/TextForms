@@ -31,7 +31,7 @@ import net.frontlinesms.plugins.surveys.upload.XMLUploader;
 @SuppressWarnings("unchecked")
 public class SurveysDebug {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(SurveysDebug.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveysDebug.class);
 	
 	/**
 	 * MessageDao

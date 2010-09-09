@@ -18,7 +18,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
  */
 public class JSONUploader extends DocumentUploader {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(JSONUploader.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(JSONUploader.class);
 	
 	//Collection of additional items
 	private Map<String, Object> items = new HashMap<String, Object>();

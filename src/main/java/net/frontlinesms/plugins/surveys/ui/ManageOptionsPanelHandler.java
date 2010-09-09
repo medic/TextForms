@@ -22,7 +22,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 @SuppressWarnings("unused")
 public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(ManageContactsPanelHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageContactsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageOptionsPanel.xml";
 	
 	private final UiGeneratorController ui;

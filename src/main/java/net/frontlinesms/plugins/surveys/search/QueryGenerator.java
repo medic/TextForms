@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext;
  */
 public abstract class QueryGenerator {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(QueryGenerator.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(QueryGenerator.class);
 	
 	protected String previousQuery;
 	

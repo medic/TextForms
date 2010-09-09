@@ -19,7 +19,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class SurveysThinletTabController implements ThinletUiEventHandler, SurveysCallback {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(SurveysThinletTabController.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveysThinletTabController.class);
 	
 	private static final String XML_PATH = "/ui/plugins/surveys/mainTab.xml";
 	

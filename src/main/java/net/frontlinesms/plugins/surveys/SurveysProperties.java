@@ -6,7 +6,7 @@ import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class SurveysProperties extends UserHomeFilePropertySet {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(SurveysProperties.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveysProperties.class);
 	
 	private static final String DEBUG_MODE = "debug.mode";
 	private static final String BOOLEAN_VALUES_TRUE = "boolean.values.true";

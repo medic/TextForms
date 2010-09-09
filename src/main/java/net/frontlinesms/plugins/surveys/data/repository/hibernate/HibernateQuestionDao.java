@@ -14,7 +14,7 @@ import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 
 public class HibernateQuestionDao extends BaseHibernateDao<Question> implements QuestionDao {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(HibernateQuestionDao.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(HibernateQuestionDao.class);
 	
 	protected HibernateQuestionDao() {
 		super(Question.class);

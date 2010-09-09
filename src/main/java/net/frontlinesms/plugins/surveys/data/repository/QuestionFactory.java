@@ -35,7 +35,7 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
  */
 public final class QuestionFactory {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(QuestionFactory.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(QuestionFactory.class);
 	
 	/**
 	 * Get list of Question classes

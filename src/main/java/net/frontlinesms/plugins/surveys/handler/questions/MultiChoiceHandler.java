@@ -16,7 +16,7 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.MultiChoiceQuestio
 public class MultiChoiceHandler extends CodedHandler<MultiChoiceQuestion> {
 	
 	@SuppressWarnings("unused")
-	private static SurveysLogger LOG = SurveysLogger.getLogger(MultiChoiceHandler.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(MultiChoiceHandler.class);
 	
 	/**
 	 * MultiChoiceQuestion

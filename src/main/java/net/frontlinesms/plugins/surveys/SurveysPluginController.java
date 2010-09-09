@@ -24,7 +24,7 @@ import net.frontlinesms.ui.UiGeneratorController;
 		hibernateConfigPath="classpath:net/frontlinesms/plugins/surveys/surveys.hibernate.cfg.xml")
 public class SurveysPluginController extends BasePluginController {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(SurveysPluginController.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveysPluginController.class);
 	
 	/**
 	 * FrontlineSMS

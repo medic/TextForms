@@ -22,7 +22,7 @@ import net.frontlinesms.plugins.surveys.handler.questions.CallbackHandler;
  */
 public class SurveysListener implements EventObserver {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(SurveysListener.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveysListener.class);
 	
 	/**
 	 * MessageHandlers

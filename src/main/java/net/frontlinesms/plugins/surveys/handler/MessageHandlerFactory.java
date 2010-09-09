@@ -16,7 +16,7 @@ import net.frontlinesms.plugins.surveys.SurveysLogger;
  */
 public final class MessageHandlerFactory {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(MessageHandlerFactory.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(MessageHandlerFactory.class);
 	
 	/**
 	 * Get list of MessageHandlers

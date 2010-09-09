@@ -22,7 +22,7 @@ import net.frontlinesms.ui.i18n.InternationalisationUtils;
 @SuppressWarnings("unchecked")
 public class XMLUploader extends DocumentUploader {
 	
-	private static SurveysLogger LOG = SurveysLogger.getLogger(XMLUploader.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(XMLUploader.class);
 	
 	/**
 	 * Map of Namespaces

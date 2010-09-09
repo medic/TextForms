@@ -16,7 +16,7 @@ import net.frontlinesms.plugins.surveys.data.repository.SurveyDao;
 public class HibernateSurveyDao extends BaseHibernateDao<Survey> implements SurveyDao {
 
 	@SuppressWarnings("unused")
-	private static SurveysLogger LOG = SurveysLogger.getLogger(HibernateSurveyDao.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(HibernateSurveyDao.class);
 	
 	protected HibernateSurveyDao() {
 		super(Survey.class);

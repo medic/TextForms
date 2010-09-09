@@ -21,7 +21,7 @@
 					<column text="i18n.plugins.surveys.keyword" icon="/icons/question_keyword.png" width="100"/>
 					<column text="i18n.plugins.surveys.type" icon="/icons/question_type.png" width="100"/>
 					<column text="i18n.plugins.surveys.schema" icon="/icons/question_schema.png" width="100"/>
-					<column text="i18n.plugins.surveys.info" icon="/icons/question_info.png" width="200"/>
+					<column text="i18n.plugins.surveys.info" icon="/icons/question_info.png" />
 				</header>
 			</table>
 		</panel>

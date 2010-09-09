@@ -14,7 +14,7 @@ import net.frontlinesms.plugins.surveys.SurveysProperties;
  */
 public final class DocumentUploaderFactory {
 
-	private static SurveysLogger LOG = SurveysLogger.getLogger(DocumentUploaderFactory.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(DocumentUploaderFactory.class);
 	
 	/**
 	 * Get list of DocumentUploader handlers

@@ -24,7 +24,7 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 public abstract class Answer<M extends Question> {
 
 	@SuppressWarnings("unused")
-	private static SurveysLogger LOG = SurveysLogger.getLogger(Answer.class);
+	private static final SurveysLogger LOG = SurveysLogger.getLogger(Answer.class);
 	
 	public Answer() {}
 
