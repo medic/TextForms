@@ -51,7 +51,7 @@ public class HTTP {
      *    "Reason-Phrase": "OK" (for example)
      * }</pre>
      * In addition, the other parameters in the header will be captured, using
-     * the HTTP field names as JSON names, so that <pre>
+     * the HTTP question names as JSON names, so that <pre>
      *    Date: Sun, 26 May 2002 18:06:04 GMT
      *    Cookie: Q=q2=PPEAsg--; B=677gi6ouf29bn&b=2&f=s
      *    Cache-Control: no-cache</pre>
@@ -76,7 +76,7 @@ public class HTTP {
         t = x.nextToken();
         if (t.toUpperCase().startsWith("HTTP")) {
 
-// Response
+// Answer
 
             o.put("HTTP-Version", t);
             o.put("Status-Code", x.nextToken());
@@ -92,7 +92,7 @@ public class HTTP {
             o.put("HTTP-Version", x.nextToken());
         }
 
-// Fields
+// Questions
 
         while (x.more()) {
             String name = x.nextTo(':');
@@ -117,7 +117,7 @@ public class HTTP {
      *    "Status-Code": "200" (for example),
      *    "Reason-Phrase": "OK" (for example)
      * }</pre>
-     * Any other members of the JSONObject will be output as HTTP fields.
+     * Any other members of the JSONObject will be output as HTTP questions.
      * The result will end with two CRLF pairs.
      * @param o A JSONObject
      * @return An HTTP header string.

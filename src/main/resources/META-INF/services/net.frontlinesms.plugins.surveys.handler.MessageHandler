@@ -1,0 +1,8 @@
+net.frontlinesms.plugins.surveys.handler.InfoHandler
+net.frontlinesms.plugins.surveys.handler.RegisterHandler
+net.frontlinesms.plugins.surveys.handler.fields.PlainTextHandler
+net.frontlinesms.plugins.surveys.handler.fields.IntegerHandler
+net.frontlinesms.plugins.surveys.handler.fields.BooleanHandler
+net.frontlinesms.plugins.surveys.handler.fields.DateHandler
+net.frontlinesms.plugins.surveys.handler.fields.MultiChoiceHandler
+net.frontlinesms.plugins.surveys.handler.fields.ChecklistHandler

@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.frontlinesms.plugins</groupId>
-	<artifactId>frontlinesms-plugin-resource-mapper</artifactId>
-	<name>Resource Mapper</name>
-	<description>An SMS gateway to the web for sharing information about hospital status</description>
+	<artifactId>frontlinesms-plugin-surveys</artifactId>
+	<name>Surveys</name>
+	<description>Surveys, questions and answers via SMS.</description>
 	<version>0.0.1-SNAPSHOT</version>
 	
 	<dependencies>

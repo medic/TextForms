@@ -1,0 +1,15 @@
+<panel weightx="1" columns="1" gap="10" weightx="1" weighty="1">
+	<label name="labelTitle" text="i18n.plugins.surveys.document.uploader.google.info"/>
+	
+	<button text="i18n.plugins.surveys.document.uploader.google.questions" action="createResourceFinderQuestions" icon="/icons/question_add.png" weightx="1"/>
+	
+	<table name="tableQuestions" selection="single" weightx="1" weighty="1">
+		<header>
+		    <column icon="/icons/question.png" text="i18n.plugins.surveys.table.name" width="150"/>
+	        <column icon="/icons/question_keyword.png" text="i18n.plugins.surveys.table.keyword" width="100"/>
+	        <column icon="/icons/question_type.png" text="i18n.plugins.surveys.table.type" width="100"/>
+	        <column icon="/icons/question_schema.png" text="i18n.plugins.surveys.table.schema" width="100"/>
+	        <column icon="/icons/question_info.png" text="i18n.plugins.surveys.table.info" />
+		</header>
+	</table>
+</panel>

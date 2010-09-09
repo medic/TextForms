@@ -276,12 +276,12 @@ public class JSONObject {
     /**
      * Construct a JSONObject from an Object, using reflection to find the
      * public members. The resulting JSONObject's keys will be the strings
-     * from the names array, and the values will be the field values associated
+     * from the names array, and the values will be the question values associated
      * with those keys in the object. If a key is not found or not visible,
      * then it will not be copied into the new JSONObject.
-     * @param object An object that has fields that should be used to make a
+     * @param object An object that has questions that should be used to make a
      * JSONObject.
-     * @param names An array of strings, the names of the fields to be obtained
+     * @param names An array of strings, the names of the questions to be obtained
      * from the object.
      */
     public JSONObject(Object object, String names[]) {
@@ -532,9 +532,9 @@ public class JSONObject {
 
 
     /**
-     * Get an array of field names from a JSONObject.
+     * Get an array of question names from a JSONObject.
      *
-     * @return An array of field names, or null if there are no names.
+     * @return An array of question names, or null if there are no names.
      */
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
@@ -553,23 +553,23 @@ public class JSONObject {
 
 
     /**
-     * Get an array of field names from an Object.
+     * Get an array of question names from an Object.
      *
-     * @return An array of field names, or null if there are no names.
+     * @return An array of question names, or null if there are no names.
      */
     public static String[] getNames(Object object) {
         if (object == null) {
             return null;
         }
         Class klass = object.getClass();
-        Field[] fields = klass.getFields();
-        int length = fields.length;
+        Field[] questions = klass.getFields();
+        int length = questions.length;
         if (length == 0) {
             return null;
         }
         String[] names = new String[length];
         for (int i = 0; i < length; i += 1) {
-            names[i] = fields[i].getName();
+            names[i] = questions[i].getName();
         }
         return names;
     }

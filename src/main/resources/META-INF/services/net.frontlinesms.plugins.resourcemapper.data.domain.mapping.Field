@@ -1,6 +1,0 @@
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.PlainTextField
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.IntegerField
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.BooleanField
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.DateField
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.ChecklistField
-net.frontlinesms.plugins.resourcemapper.data.domain.mapping.MultiChoiceField
