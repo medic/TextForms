@@ -2,6 +2,7 @@ package net.frontlinesms.plugins.surveys.upload;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -16,10 +17,13 @@ import org.dom4j.QName;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
+import net.frontlinesms.plugins.surveys.data.domain.Survey;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionFactory;
+import net.frontlinesms.plugins.surveys.data.repository.SurveyDao;
 import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
@@ -57,6 +61,18 @@ public class ResourceFinderUploader extends DocumentUploader {
 			this.questionDao = (QuestionDao) appContext.getBean("questionDao");
 		}
 		return this.questionDao;
+	}
+	
+	/**
+	 * SurveyDao
+	 */
+	private SurveyDao surveyDao;
+	
+	private SurveyDao getSurveyDao() {
+		if (this.surveyDao == null) {
+			this.surveyDao = (SurveyDao) appContext.getBean("surveyDao");
+		}
+		return this.surveyDao;
 	}
 	
 	/**
@@ -126,55 +142,95 @@ public class ResourceFinderUploader extends DocumentUploader {
 		return document.asXML();
 	}
 	
-	public void createResourceFinderQuestions() {
-		this.ui.removeAll(this.getTable());
-		//PLAIN TEXT
-		createQuestion("Hospital Title", "title", "What is the hospital's title?", "plaintext", "title", null);
-		createQuestion("Hospital Alternative Title", "alt", "What is the hospital's alternative title?", "plaintext", "alt_title", null);
-		createQuestion("Hospital Contact Name", "contact", "What is hospital contact name?", "plaintext", "contact_name", null);
-		createQuestion("Hospital Phone", "phone", "What is hospital phone number?", "plaintext", "phone", null);
-		createQuestion("Hospital Email", "email", "What is hospital email address?", "plaintext", "email", null);
-		createQuestion("Hospital Department", "department", "What is the hospital department?", "plaintext", "department", null);
-		createQuestion("Hospital District", "district", "What is the hospital district?", "plaintext", "district", null);
-		createQuestion("Hospital Commune", "commune", "What is the hospital commune?", "plaintext", "commune", null);
-		createQuestion("Hospital Address", "address", "What is hospital address?", "plaintext", "address", null);
-		createQuestion("Hospital Location", "location", "What is hospital location (latitude,longitude)?", "plaintext", "location", null);
-		createQuestion("Hospital Location Accuracy", "accuracy", "What is hospital location accuracy?", "plaintext", "accuracy", null);
-		createQuestion("Hospital Damage", "damage", "What is the hospital damage?", "plaintext", "damage", null);
-		createQuestion("Additional Comments", "comments", "Additional comments?", "plaintext", "comments", null);
-		//INTEGER
-		createQuestion("Available Beds", "available", "How many beds does the hospital have available?", "integer", "available_beds", null);
-		createQuestion("Total Beds", "beds", "The total number of hospital beds?", "integer", "total_beds", null);
-		//BOOLEAN
-		createQuestion("Hospital Reachable By Road", "reachable", "Is the hospital reachable by road?", "boolean", "reachable_by_road", null);
-		createQuestion("Hospital Can Pick Up Patients", "pickup", "Can the hospital pick up patients?", "boolean", "can_pick_up_patients", null);
-		//MULTICHOICE
-		createQuestion("Hospital Type", "type", "What is the hospital type?", "multichoice", "organization_type",
-				new String [] {"PUBLIC", "FOR_PROFIT", "UNIVERSITY", "COMMUNITY", "NGO", "FAITH_BASED", "MILITARY", "MIXED"});
-		createQuestion("Hospital Category", "category", "What is the hospital category?", "multichoice", "category",
-				new String [] {"HOSPITAL", "CLINIC", "MOBILE_CLINIC", "DISPENSARY"});
-		createQuestion("Hospital Construction", "construction", "What is the hospital construction?", "multichoice", "construction",
-				new String [] {"REINFORCED_CONCRETE", "UNREINFORCED_MASONRY", "WOOD_FRAME", "ADOBE"});
-		createQuestion("Hospital Operational Status", "status", "What is the hospital operational status?", "multichoice", "operational_status",
-				new String [] {"OPERATIONAL", "NO_SURGICAL_CAPACITY", "FIELD_HOSPITAL", "FIELD_WITH_HOSPITAL", "CLOSED_OR_CLOSING"});
-		//CHECKLIST
-		createQuestion("Hospital Services", "services", "What services does the hospital offer?", "checklist", "services", 
-						new String [] {"GENERAL_SURGERY", "ORTHOPEDICS", "NEUROSURGERY", "VASCULAR_SURGERY", 
-									   "INTERNAL_MEDICINE", "CARDIOLOGY", "INFECTIOUS_DISEASE", "PEDIATRICS", 
-									   "POSTOPERATIVE_CARE", "REHABILITATION", "OBSTETRICS_GYNECOLOGY", "MENTAL_HEALTH",
-									   "DIALYSIS", "LAB", "X_RAY", "CT_SCAN", "BLOOD_BANK", "MORTUARY_SERVICES"});
+	public boolean createResourceFinderQuestions() {
+		try {
+			this.ui.removeAll(this.getTable());
+			List<Question> questions = new ArrayList<Question>();
+			//PLAIN TEXT
+			createPlainTextQuestion(questions, "Hospital Title", "title", "What is the hospital's title?", "title");
+			createPlainTextQuestion(questions, "Hospital Alternative Title", "alt", "What is the hospital's alternative title?", "alt_title");
+			createPlainTextQuestion(questions, "Hospital Contact Name", "contact", "What is hospital contact name?", "contact_name");
+			createPlainTextQuestion(questions, "Hospital Phone", "phone", "What is hospital phone number?", "phone");
+			createPlainTextQuestion(questions, "Hospital Email", "email", "What is hospital email address?", "email");
+			createPlainTextQuestion(questions, "Hospital Department", "department", "What is the hospital department?", "department");
+			createPlainTextQuestion(questions, "Hospital District", "district", "What is the hospital district?", "district");
+			createPlainTextQuestion(questions, "Hospital Commune", "commune", "What is the hospital commune?", "commune");
+			createPlainTextQuestion(questions, "Hospital Address", "address", "What is hospital address?", "address");
+			createPlainTextQuestion(questions, "Hospital Location", "location", "What is hospital location (latitude,longitude)?", "location");
+			createPlainTextQuestion(questions, "Hospital Location Accuracy", "accuracy", "What is hospital location accuracy?", "accuracy");
+			createPlainTextQuestion(questions, "Hospital Damage", "damage", "What is the hospital damage?", "damage");
+			createPlainTextQuestion(questions, "Additional Comments", "comments", "Additional comments?", "comments");
+			//INTEGER
+			createIntegerQuestion(questions, "Available Beds", "available", "How many beds does the hospital have available?", "available_beds");
+			createIntegerQuestion(questions, "Total Beds", "beds", "The total number of hospital beds?", "total_beds");
+			//BOOLEAN
+			createBooleanQuestion(questions, "Hospital Reachable By Road", "reachable", "Is the hospital reachable by road?", "reachable_by_road");
+			createBooleanQuestion(questions, "Hospital Can Pick Up Patients", "pickup", "Can the hospital pick up patients?", "can_pick_up_patients");
+			//MULTICHOICE
+			createMultiChoiceQuestion(questions, "Hospital Type", "type", "What is the hospital type?", "organization_type",
+										new String [] {"PUBLIC", "FOR_PROFIT", "UNIVERSITY", "COMMUNITY", "NGO", "FAITH_BASED", "MILITARY", "MIXED"});
+			createMultiChoiceQuestion(questions, "Hospital Category", "category", "What is the hospital category?", "category",
+										new String [] {"HOSPITAL", "CLINIC", "MOBILE_CLINIC", "DISPENSARY"});
+			createMultiChoiceQuestion(questions, "Hospital Construction", "construction", "What is the hospital construction?", "construction",
+										new String [] {"REINFORCED_CONCRETE", "UNREINFORCED_MASONRY", "WOOD_FRAME", "ADOBE"});
+			createMultiChoiceQuestion(questions, "Hospital Operational Status", "status", "What is the hospital operational status?", "operational_status",
+										new String [] {"OPERATIONAL", "NO_SURGICAL_CAPACITY", "FIELD_HOSPITAL", "FIELD_WITH_HOSPITAL", "CLOSED_OR_CLOSING"});
+			//CHECKLIST
+			createChecklistQuestion(questions, "Hospital Services", "services", "What services does the hospital offer?", "services", 
+									new String [] {"GENERAL_SURGERY", "ORTHOPEDICS", "NEUROSURGERY", "VASCULAR_SURGERY", 
+												   "INTERNAL_MEDICINE", "CARDIOLOGY", "INFECTIOUS_DISEASE", "PEDIATRICS", 
+												   "POSTOPERATIVE_CARE", "REHABILITATION", "OBSTETRICS_GYNECOLOGY", "MENTAL_HEALTH",
+												   "DIALYSIS", "LAB", "X_RAY", "CT_SCAN", "BLOOD_BANK", "MORTUARY_SERVICES"});
+			//SURVEY
+			Survey survey = new Survey("ResourceFinder Survey", "finder", questions);
+			this.getSurveyDao().saveSurvey(survey);
+			return true;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
 	}
 	
-	public void createQuestion(String name, String keyword, String infoSnippet, String type, String schema, String [] choices) {
+	protected Question createPlainTextQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.PLAINTEXT, schema, null);
+	}
+	
+	protected Question createDateQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.DATE, schema, null);
+	}
+	
+	protected Question createIntegerQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.INTEGER, schema, null);
+	}
+	
+	protected Question createBooleanQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.BOOLEAN, schema, null);
+	}
+	
+	protected Question createMultiChoiceQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema, String [] choices) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.MULTICHOICE, schema, choices);
+	}
+	
+	protected Question createChecklistQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String schema, String [] choices) {
+		return createQuestion(questions, name, keyword, infoSnippet, QuestionType.CHECKLIST, schema, choices);
+	}
+	
+	protected Question createQuestion(List<Question> questions, String name, String keyword, String infoSnippet, String type, String schema, String [] choices) {
 		try {
 			List<String> choiceList = choices != null ? Arrays.asList(choices) : null;
 			Question question = QuestionFactory.createQuestion(name, keyword, infoSnippet, type, schema, choiceList);
 			this.getQuestionDao().saveQuestion(question);
 			LOG.debug("Question Created [%s, %s, %s, %s]", question.getName(), question.getKeyword(), question.getType(), question.getSchemaName());
 			this.ui.add(getTable(), getRow(question));
+			questions.add(question);
+			return question;
 		} 
 		catch (DuplicateKeyException e) {
 			LOG.error("Question Exists [%s, %s, %s, %s]", name, keyword, type, schema);
+			Question question = this.getQuestionDao().getQuestionForKeyword(keyword);
+			questions.add(question);
+			return question;
 		}
 	}
 	
