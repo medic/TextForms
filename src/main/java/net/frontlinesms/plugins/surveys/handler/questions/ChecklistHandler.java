@@ -7,6 +7,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.questions.ChecklistQuestion;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * ChecklistHandler
@@ -18,21 +19,21 @@ public class ChecklistHandler extends CodedHandler<ChecklistQuestion> {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(ChecklistHandler.class);	
 	
 	/**
-	 * ChecklistQuestion
-	 */
-	private static final ChecklistQuestion checklistQuestion = new ChecklistQuestion();
-	
-	/**
 	 * ChecklistHandler
 	 */
 	public ChecklistHandler() {}
+	
+	@Override
+	public Class<ChecklistQuestion> getQuestionClass() {
+		return ChecklistQuestion.class;
+	}
 	
 	/**
 	 * Get ChecklistQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(checklistQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.CHECKLIST);
 	}
 	
 	@Override

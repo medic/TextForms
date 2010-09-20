@@ -18,9 +18,9 @@ import net.frontlinesms.plugins.surveys.data.repository.AnswerFactory;
  * CallbackHandler
  * @author dalezak
  *
- * @param <M> Question
+ * @param <Q> Question
  */
-public abstract class CallbackHandler<M extends Question> extends QuestionHandler<M> {
+public abstract class CallbackHandler<Q extends Question> extends QuestionHandler<Q> {
 
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(CallbackHandler.class);
 	
@@ -46,33 +46,15 @@ public abstract class CallbackHandler<M extends Question> extends QuestionHandle
 	/**
 	 * Handle Coded message
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				StringBuilder reply = new StringBuilder(question.getName());
-				reply.append(" (");
-				reply.append(question.getTypeLabel());
-				reply.append(")");
-				if (question.getInfoSnippet() != null && question.getInfoSnippet().length() > 0) {
-					reply.append(" ");
-					reply.append(question.getInfoSnippet());	
-				}
-				if (question.getChoices() != null && question.getChoices().size() > 0) {
-					int index = 1;
-					for (String choice : question.getChoices()) {
-						reply.append("\n");
-						reply.append(index);
-						reply.append(" ");
-						reply.append(choice);
-						index++;		
-					}
-				}
-				sendReply(message.getSenderMsisdn(), reply.toString(), false);
+				sendReply(message.getSenderMsisdn(), getQuestionText(question, true), false);
 				LOG.debug("Register Callback for '%s'", message.getTextContent());
 				SurveysListener.registerCallback(message.getSenderMsisdn(), this);
 				this.callbacks.put(message.getSenderMsisdn(), this.questionDao.getQuestionForKeyword(message.getTextContent()));
@@ -82,22 +64,22 @@ public abstract class CallbackHandler<M extends Question> extends QuestionHandle
 			}	
 		}
 		else if (isValidAnswer(words)) {
-			Question question = this.questionDao.getQuestionForKeyword(words[0]);
+			Question question = questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				HospitalContact contact = hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer response = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
-					if (response != null) {
-						this.answerDao.saveAnswer(response);
-						LOG.debug("Answer Created: %s", response);
+					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					if (answer != null) {
+						answerDao.saveAnswer(answer);
+						LOG.debug("Answer Created: %s", answer);
 						try {
 							contact.setLastAnswer(new Date());
-							this.hospitalContactDao.updateHospitalContact(contact);
+							hospitalContactDao.updateHospitalContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
-						if (this.publishAnswer(response) == false) {
+						if (publishAnswer(answer) == false) {
 							sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorUploadAnswer(), true);
 						}
 					}
@@ -114,7 +96,7 @@ public abstract class CallbackHandler<M extends Question> extends QuestionHandle
 			}
 		}
 		else {
-			Question question = this.questionDao.getQuestionForKeyword(words[0]);
+			Question question = questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerInvalidAnswer(question.getTypeLabel(), message.getTextContent()), true);
 			}
@@ -128,15 +110,15 @@ public abstract class CallbackHandler<M extends Question> extends QuestionHandle
 	public void handleCallback(FrontlineMessage message) {
 		LOG.debug("handleCallback: %s", message.getTextContent());
 		if (shouldHandleCallbackMessage(message)) {
-			Question question = this.callbacks.get(message.getSenderMsisdn());
+			Question question = callbacks.get(message.getSenderMsisdn());
 			if (question != null) {
-				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				HospitalContact contact = hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer response = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
-					if (response != null) {
-						this.answerDao.saveAnswer(response);
-						this.publishAnswer(response);
-						LOG.debug("Answer Created: %s", response.getClass());
+					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					if (answer != null) {
+						answerDao.saveAnswer(answer);
+						publishAnswer(answer);
+						LOG.debug("Answer Created: %s", answer.getClass());
 						try {
 							contact.setLastAnswer(new Date());
 							this.hospitalContactDao.updateHospitalContact(contact);

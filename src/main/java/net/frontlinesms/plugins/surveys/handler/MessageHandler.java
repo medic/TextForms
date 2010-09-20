@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
+import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
 /**
  * MessageHandler
@@ -102,6 +103,33 @@ public abstract class MessageHandler {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+	
+	/**
+	 * Get Question Text
+	 * @param question Question
+	 * @return text
+	 */
+	protected String getQuestionText(Question question, boolean includeChoices) {
+		StringBuilder questionText = new StringBuilder(question.getName());
+		questionText.append(" (");
+		questionText.append(question.getTypeLabel());
+		questionText.append(")");
+		if (question.getInfoSnippet() != null && question.getInfoSnippet().length() > 0) {
+			questionText.append(" ");
+			questionText.append(question.getInfoSnippet());	
+		}
+		if (includeChoices && question.getChoices() != null && question.getChoices().size() > 0) {
+			int index = 1;
+			for (String choice : question.getChoices()) {
+				questionText.append("\n");
+				questionText.append(index);
+				questionText.append(" ");
+				questionText.append(choice);
+				index++;		
+			}
+		}
+		return questionText.toString();
 	}
 	
 }

@@ -56,10 +56,10 @@ public interface QuestionDao {
 	
 	/**
 	 * Get keyword for given Question
-	 * @param question Question
+	 * @param questionType Question type
 	 * @return collection of keywords
 	 */
-	public List<String> getKeywordsForQuestion(Question question);
+	public List<String> getKeywordsForQuestion(String questionType);
 	
 	/**
 	 * Get Question for associated keyword 

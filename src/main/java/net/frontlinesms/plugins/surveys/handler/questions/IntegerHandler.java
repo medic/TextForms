@@ -5,6 +5,7 @@ import java.util.Collection;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.questions.IntegerQuestion;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * IntegerHandler
@@ -17,21 +18,21 @@ public class IntegerHandler extends CallbackHandler<IntegerQuestion> {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(IntegerHandler.class);
 	
 	/**
-	 * IntegerQuestion
-	 */
-	private static final IntegerQuestion integerQuestion = new IntegerQuestion();
-	
-	/**
 	 * IntegerHandler
 	 */
 	public IntegerHandler() {}
 
+	@Override
+	public Class<IntegerQuestion> getQuestionClass() {
+		return IntegerQuestion.class;
+	}
+	
 	/**
 	 * Get IntegerQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(integerQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.INTEGER);
 	}
 	
 	@Override

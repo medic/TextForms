@@ -5,6 +5,7 @@ import java.util.Collection;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.questions.PlainTextQuestion;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * PlainTextHandler
@@ -17,21 +18,21 @@ public class PlainTextHandler extends CallbackHandler<PlainTextQuestion> {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(PlainTextHandler.class);
 	
 	/**
-	 * PlainTextQuestion
-	 */
-	private static final PlainTextQuestion plainTextQuestion = new PlainTextQuestion();
-	
-	/**
 	 * PlainTextHandler
 	 */
 	public PlainTextHandler() {}
+	
+	@Override
+	public Class<PlainTextQuestion> getQuestionClass() {
+		return PlainTextQuestion.class;
+	}
 	
 	/**
 	 * Get PlainTextQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(plainTextQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.PLAINTEXT);
 	}
 	
 	@Override

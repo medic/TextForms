@@ -17,18 +17,19 @@ import javax.persistence.OneToOne;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.SurveyResponse;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Answer<M extends Question> {
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+public abstract class Answer<Q extends Question> {
 
 	@SuppressWarnings("unused")
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(Answer.class);
 	
 	public Answer() {}
 
-	public Answer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, M question) {
+	public Answer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, Q question) {
 		this.message = message;
 		this.submitter = submitter;
 		this.dateSubmitted = dateSubmitted.getTime();
@@ -36,23 +37,35 @@ public abstract class Answer<M extends Question> {
 		this.question = question;
 	}
 	
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id 
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(unique=true, nullable=false, updatable=false)
 	private long fid;
 
-	@OneToOne(cascade={},targetEntity=FrontlineMessage.class)
+	@OneToOne(cascade={})
 	protected FrontlineMessage message;
 
-	@OneToOne(cascade={},targetEntity=HospitalContact.class)
+	@OneToOne(cascade={})
 	protected HospitalContact submitter;
 
+	@OneToOne(cascade={})
+	protected SurveyResponse surveyResponse;
+	
 	protected long dateSubmitted;
 
 	protected String hospitalId;
 	
 	@OneToOne(targetEntity=Question.class)
-	M question;
+	Q question;
 
+	public SurveyResponse getSurveyResponse() {
+		return surveyResponse;
+	}
+	
+	public void setSurveyResponse(SurveyResponse surveyResponse) {
+		this.surveyResponse = surveyResponse;
+	}
+	
 	public FrontlineMessage getMessage() {
 		return message;
 	}
@@ -125,11 +138,11 @@ public abstract class Answer<M extends Question> {
 		this.hospitalId = hospitalId;
 	}
 
-	public M getQuestion() {
+	public Q getQuestion() {
 		return question;
 	}
 
-	public void setQuestion(M question) {
+	public void setQuestion(Q question) {
 		this.question = question;
 	}
 	
@@ -145,6 +158,13 @@ public abstract class Answer<M extends Question> {
 			return this.question.getTypeLabel();
 		}
 		return null;
+	}
+	
+	public long getQuestionID() {
+		if (this.question != null) {
+			return this.question.getID();
+		}
+		return 0;
 	}
 	
 	public String getQuestionName() {

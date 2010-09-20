@@ -6,6 +6,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysProperties;
 import net.frontlinesms.plugins.surveys.data.domain.questions.BooleanQuestion;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * BooleanHandler
@@ -17,21 +18,21 @@ public class BooleanHandler extends CodedHandler<BooleanQuestion> {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(BooleanHandler.class);
 	
 	/**
-	 * BooleanQuestion
-	 */
-	private static final BooleanQuestion booleanQuestion = new BooleanQuestion();
-	
-	/**
 	 * BooleanHandler
 	 */
 	public BooleanHandler() {}
+	
+	@Override
+	public Class<BooleanQuestion> getQuestionClass() {
+		return BooleanQuestion.class;
+	}
 	
 	/**
 	 * Get BooleanQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(booleanQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.BOOLEAN);
 	}
 	
 	@Override

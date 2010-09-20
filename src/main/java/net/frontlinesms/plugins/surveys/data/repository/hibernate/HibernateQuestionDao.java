@@ -57,10 +57,10 @@ public class HibernateQuestionDao extends BaseHibernateDao<Question> implements 
 		return keywords;
 	}
 	
-	public List<String> getKeywordsForQuestion(Question question) {
+	public List<String> getKeywordsForQuestion(String questionType) {
 		List<String> keywords = new ArrayList<String>();
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("class", question.getType()));
+		criteria.add(Restrictions.eq("class", questionType));
 		for (Question f : super.getList(criteria)) {
 			keywords.add(f.getKeyword());
 		}

@@ -25,9 +25,9 @@ import net.frontlinesms.plugins.surveys.upload.DocumentUploaderFactory;
  * QuestionHandler
  * @author dalezak
  *
- * @param <M> Question
+ * @param <Q> Question
  */
-public abstract class QuestionHandler<M extends Question> extends MessageHandler {
+public abstract class QuestionHandler<Q extends Question> extends MessageHandler {
 
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(QuestionHandler.class);
 	
@@ -50,6 +50,12 @@ public abstract class QuestionHandler<M extends Question> extends MessageHandler
 	 * QuestionHandler
 	 */
 	public QuestionHandler() {}
+	
+	/**
+	 * Get the question class
+	 * @return
+	 */
+	public abstract Class<Q> getQuestionClass();
 	
 	/**
 	 * Set ApplicationContext
@@ -75,15 +81,7 @@ public abstract class QuestionHandler<M extends Question> extends MessageHandler
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				StringBuilder reply = new StringBuilder(question.getName());
-				reply.append(" (");
-				reply.append(question.getTypeLabel());
-				reply.append(")");
-				if (question.getInfoSnippet() != null && question.getInfoSnippet().length() > 0) {
-					reply.append(" ");
-					reply.append(question.getInfoSnippet());	
-				}
-				sendReply(message.getSenderMsisdn(), reply.toString(), false);
+				sendReply(message.getSenderMsisdn(), getQuestionText(question, false), false);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
@@ -155,7 +153,7 @@ public abstract class QuestionHandler<M extends Question> extends MessageHandler
 	 * @param answer Answer
 	 * @return true if successful
 	 */
-	protected boolean publishAnswer(Answer<M> answer) {
+	protected boolean publishAnswer(Answer<Q> answer) {
 		if (answer != null) {
 			LOG.debug("publishAnswer: %s", answer);
 			DocumentUploader documentUploader = DocumentUploaderFactory.createDocumentUploader();

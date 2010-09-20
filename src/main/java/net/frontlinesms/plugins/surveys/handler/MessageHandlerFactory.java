@@ -37,7 +37,7 @@ public final class MessageHandlerFactory {
 					handler.setFrontline(frontline);
 					handler.setApplicationContext(appContext);
 					handlerClasses.add(handler);
-			    }
+				}
 			}
 			catch (ServiceConfigurationError ex) {
 				LOG.error("ServiceConfigurationError: %s", ex);

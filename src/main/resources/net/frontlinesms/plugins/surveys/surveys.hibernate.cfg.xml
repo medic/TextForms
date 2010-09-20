@@ -23,5 +23,6 @@
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.MultiChoiceAnswer" />
 		
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.Survey" />
+		<mapping class="net.frontlinesms.plugins.surveys.data.domain.SurveyResponse" />
 	</session-factory>
 </hibernate-configuration>

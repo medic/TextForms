@@ -7,6 +7,7 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.questions.MultiChoiceQuestion;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * MultiChoiceHandler
@@ -17,23 +18,23 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceQuestion> {
 	
 	@SuppressWarnings("unused")
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(MultiChoiceHandler.class);
-	
-	/**
-	 * MultiChoiceQuestion
-	 */
-	private static final MultiChoiceQuestion multiChoiceQuestion = new MultiChoiceQuestion();
 
 	/**
 	 * MultiChoiceHandler
 	 */
 	public MultiChoiceHandler() {}
 	
+	@Override
+	public Class<MultiChoiceQuestion> getQuestionClass() {
+		return MultiChoiceQuestion.class;
+	}
+	
 	/**
 	 * Get MultiChoiceQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(multiChoiceQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.MULTICHOICE);
 	}
 	
 	@Override

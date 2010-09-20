@@ -5,10 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 import net.frontlinesms.data.domain.Contact;
 
 @Entity
+@Table(name="hospital_contact")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class HospitalContact extends Contact {
 	
 	private boolean isBlacklisted;

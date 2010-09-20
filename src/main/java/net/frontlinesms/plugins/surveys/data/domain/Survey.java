@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -27,6 +26,7 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 @Entity
 public class Survey {
 	
+	public static final String FIELD_KEYWORD = "keyword";
 	public Survey() {}
 	
 	public Survey(String name, String keyword, List<Question> questions) {
@@ -38,10 +38,10 @@ public class Survey {
 	
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "survey_id", unique=true, nullable=false, updatable=false)
+	@Column(name="survey_id", unique=true, nullable=false, updatable=false)
 	protected long id;
 	
-	public long getID() {
+	public long getId() {
 		return this.id;
 	}
 	
@@ -56,7 +56,7 @@ public class Survey {
 		this.name = name;
 	}
 	
-	@Column(name="keyword", unique=true, nullable=false)
+	@Column(name=FIELD_KEYWORD, unique=true, nullable=false)
 	protected String keyword;
 	
 	public String getKeyword() {
@@ -78,8 +78,8 @@ public class Survey {
 		return questionNames.toString();
 	}
 	
-	@CollectionOfElements(targetElement=Question.class, fetch = FetchType.EAGER)
-	@JoinTable(name="survey_questions", joinColumns = @JoinColumn(name="survey_id"))
+	@CollectionOfElements(targetElement=Question.class, fetch=FetchType.EAGER)
+	@JoinTable(name="survey_questions", joinColumns=@JoinColumn(name="survey_id"))
 	@Column(name="questions")
 	@Fetch (FetchMode.SELECT)
 	private List<Question> questions;
@@ -88,16 +88,16 @@ public class Survey {
 		return this.questions;
 	}
 
-	public void setQuestions(List<Question> questions) {
+	public boolean setQuestions(List<Question> questions) {
 		this.questions = new ArrayList<Question>();
-		this.questions.addAll(questions);
+		return this.questions.addAll(questions);
 	}
 	
-	public void addQuestion(Question question) {
+	public boolean addQuestion(Question question) {
 		if (this.questions == null) {
 			this.questions = new ArrayList<Question>();
 		}
-		this.questions.add(question);
+		return this.questions.add(question);
 	}
 	
 	public boolean removeQuestion(Question question){

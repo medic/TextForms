@@ -1,6 +1,10 @@
 package net.frontlinesms.plugins.surveys.data.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
@@ -48,5 +52,19 @@ public class HibernateSurveyDao extends BaseHibernateDao<Survey> implements Surv
 
 	public void updateSurveyWithoutDuplicateHandling(Survey survey) {
 		super.updateWithoutDuplicateHandling(survey);
+	}
+	
+	public List<String> getKeywords() {
+		List<String> keywords = new ArrayList<String>();
+		for (Survey survey : super.getAll()) {
+			keywords.add(survey.getKeyword());
+		}
+		return keywords;
+	}
+
+	public Survey getSurveyByKeyword(String keyword) {
+		DetachedCriteria criteria = super.getCriterion();
+		criteria.add(Restrictions.eq(Survey.FIELD_KEYWORD, keyword));
+		return super.getUnique(criteria);		
 	}
 }

@@ -8,9 +8,11 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.domain.FrontlineMessage.Type;
-import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
+import net.frontlinesms.plugins.surveys.data.domain.SurveyResponse;
+import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.handler.MessageHandler;
 import net.frontlinesms.plugins.surveys.handler.MessageHandlerFactory;
 import net.frontlinesms.plugins.surveys.handler.questions.CallbackHandler;
@@ -27,12 +29,17 @@ public class SurveysListener implements EventObserver {
 	/**
 	 * MessageHandlers
 	 */
-	private final List<MessageHandler> listeners;
+	private static final List<MessageHandler> listeners = new ArrayList<MessageHandler>();
 	
 	/**
-	 * MessageHandler Callbacks
+	 * Collection of Callbacks
 	 */
 	private static final List<CallbackInfo> callbacks = new ArrayList<CallbackInfo>();
+	
+	/**
+	 * Collection of Surveys
+	 */
+	private static final List<SurveyResponse> surveys = new ArrayList<SurveyResponse>();
 	
 	/**
 	 * Are we listening?
@@ -56,7 +63,7 @@ public class SurveysListener implements EventObserver {
 	 */
 	public SurveysListener(FrontlineSMS frontlineController, ApplicationContext appContext, boolean listening) {
 		this.listening = listening;
-		this.listeners = MessageHandlerFactory.getHandlerClasses(frontlineController, appContext);
+		listeners.addAll(MessageHandlerFactory.getHandlerClasses(frontlineController, appContext));
 		frontlineController.getEventBus().registerObserver(this);
 	}
 	
@@ -80,25 +87,30 @@ public class SurveysListener implements EventObserver {
 	 * Handle FrontlineEventNotification events if notification is EntitySavedNotification or EntityUpdatedNotification
 	 * and it contains DatabaseEntity that is a FrontlineMessage
 	 */
-	@SuppressWarnings("unchecked")
 	public void notify(FrontlineEventNotification notification) {
-		if (this.listening) {
-			FrontlineMessage message = this.getFrontlineMessage(notification);
+		if (listening) {
+			FrontlineMessage message = getFrontlineMessage(notification);
 			if (message != null) {
 				LOG.debug("notify: %s", notification.getClass().getSimpleName());
 				
 				//first, remove all callbacks that have timed out
-				List<CallbackInfo> expiredCallbacks = this.getExpiredCallbacks();
+				List<CallbackInfo> expiredCallbacks = getExpiredCallbacks();
 				if (expiredCallbacks.size() > 0) {
 					LOG.debug("Removing %s Expired Callbacks", expiredCallbacks.size());
 					callbacks.removeAll(expiredCallbacks);
 				}
 				
+				List<SurveyResponse> expiredSurveys = getExpiredSurveys();
+				if (expiredSurveys.size() > 0) {
+					LOG.debug("Removing %s Expired Surveys", expiredSurveys.size());
+					surveys.removeAll(expiredSurveys);
+				}
+				
 				//see if there is a handler that wants to handle the message
-				MessageHandler handler = this.getMessageHandler(message);
+				MessageHandler handler = getMessageHandler(message);
 				
 				//now, see if there is a callback out on that message
-				CallbackHandler callbackHandler = this.getCallbackHandler(message);
+				CallbackHandler<?> callbackHandler = getCallbackHandler(message);
 				
 				if (handler != null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false) {
 					//if there is a keyword in the message and the callback handler doesn't seem
@@ -128,7 +140,7 @@ public class SurveysListener implements EventObserver {
 	 * @return MessageHandler, if matching keyword is found
 	 */
 	private MessageHandler getMessageHandler(FrontlineMessage message) {
-		for (MessageHandler handler : this.listeners) {
+		for (MessageHandler handler : listeners) {
 			String[] words = message.getTextContent().replaceFirst("[\\s]", " ").split(" ", 2);
 			if (words.length > 0) {
 				for (String keyword : handler.getKeywords()) {
@@ -146,11 +158,10 @@ public class SurveysListener implements EventObserver {
 	 * @param message FrontlineMessage
 	 * @return CallbackHandler, if one exists
 	 */
-	@SuppressWarnings("unchecked")
-	private CallbackHandler getCallbackHandler(FrontlineMessage message) {
+	private CallbackHandler<?> getCallbackHandler(FrontlineMessage message) {
 		for (CallbackInfo callback : callbacks) {
 			if (callback.getPhoneNumber().equalsIgnoreCase(message.getSenderMsisdn())) {
-				CallbackHandler callbackHandler = callback.getHandler();
+				CallbackHandler<?> callbackHandler = callback.getHandler();
 				LOG.debug("CallbackHandler: %s", callbackHandler);
 				return callbackHandler;
 			}
@@ -162,12 +173,11 @@ public class SurveysListener implements EventObserver {
 	 * Get expired callbacks
 	 * @return collection of expired callbacks
 	 */
-	@SuppressWarnings("unchecked")
 	private List<CallbackInfo> getExpiredCallbacks() {
 		List<CallbackInfo> expiredCallbacks = new ArrayList<CallbackInfo>();
 		for (CallbackInfo callback : callbacks) {
 			if (callback.hasTimedOut()) {
-				CallbackHandler callbackHandler = callback.getHandler();
+				CallbackHandler<?> callbackHandler = callback.getHandler();
 				if (callbackHandler != null) {
 					callbackHandler.callBackTimedOut(callback.getPhoneNumber());
 				}
@@ -178,16 +188,29 @@ public class SurveysListener implements EventObserver {
 	}
 	
 	/**
+	 * Get expired survey responses
+	 * @return collection of expired survey responses
+	 */
+	private List<SurveyResponse> getExpiredSurveys() {
+		List<SurveyResponse> expiredSurveyResponses = new ArrayList<SurveyResponse>();
+		for (SurveyResponse surveyResponse : surveys) {
+			if (surveyResponse.hasTimedOut(5)) {
+				expiredSurveyResponses.add(surveyResponse);
+			}
+		}
+		return expiredSurveyResponses;
+	}
+	
+	/**
 	 * Get FrontlineMessage from FrontlineEventNotification
 	 * @param notification
 	 * @return FrontlineMessage if notification is DatabaseEntityNotification and contains FrontlineMessage of Type.RECEIVED
 	 */
-	@SuppressWarnings("unchecked")
 	private FrontlineMessage getFrontlineMessage(FrontlineEventNotification notification) {
-		if (notification instanceof DatabaseEntityNotification) {
-			DatabaseEntityNotification databaseEntityNotification = (DatabaseEntityNotification)notification;
-			if (databaseEntityNotification.getDatabaseEntity() instanceof FrontlineMessage) {
-				FrontlineMessage message = (FrontlineMessage)databaseEntityNotification.getDatabaseEntity();
+		if (notification instanceof EntitySavedNotification<?>) {
+			EntitySavedNotification<?> entitySavedNotification = (EntitySavedNotification<?>)notification;
+			if (entitySavedNotification.getDatabaseEntity() instanceof FrontlineMessage) {
+				FrontlineMessage message = (FrontlineMessage)entitySavedNotification.getDatabaseEntity();
 				if (message.getType() == Type.RECEIVED) {
 					return message;
 				}
@@ -201,8 +224,7 @@ public class SurveysListener implements EventObserver {
 	 * @param msisdn HospitalContact phone number
 	 * @param handler CallbackHandler
 	 */
-	@SuppressWarnings("unchecked")
-	public static void registerCallback(String msisdn, CallbackHandler handler){
+	public static void registerCallback(String msisdn, CallbackHandler<?> handler){
 		LOG.debug("registerCallback(%s, %s)", msisdn, handler.getClass().getSimpleName());
 		//if there is already a callback out on that phone number, do nothing
 		for (CallbackInfo info : callbacks) {
@@ -211,6 +233,32 @@ public class SurveysListener implements EventObserver {
 			}
 		}
 		callbacks.add(new CallbackInfo(msisdn, handler));
+	}
+	
+	/**
+	 * Register survey response
+	 * @param msisdn HospitalContact phone number
+	 * @param surveyResponse SurveyResponse
+	 */
+	public static void registerSurvey(String msisdn, SurveyResponse surveyResponse, Question question) {
+		LOG.debug("registerSurvey(%s, %s, %s)", msisdn, surveyResponse.getSurveyName(), question.getClass());
+		//if there is already a survey response out on that phone number, do nothing
+		for (SurveyResponse survey : surveys) {
+			if (survey.getContactPhoneNumber().equalsIgnoreCase(msisdn)) {
+				return;
+			}
+		}
+		surveys.add(surveyResponse);
+		for (MessageHandler handler : listeners) {
+			if(handler instanceof CallbackHandler<?>) {
+				CallbackHandler<?> callbackHandler = (CallbackHandler<?>)handler;
+				if (callbackHandler.getQuestionClass() == question.getClass()) {
+					callbacks.add(new CallbackInfo(msisdn, callbackHandler));
+					LOG.debug("Registering Callback: %s", callbackHandler.getClass());
+					break;	
+				}
+			}
+		}
 	}
 	
 	/**

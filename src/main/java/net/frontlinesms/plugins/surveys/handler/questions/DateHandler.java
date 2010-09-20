@@ -8,6 +8,7 @@ import java.util.Collection;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.questions.DateQuestion;
+import net.frontlinesms.plugins.surveys.data.domain.questions.QuestionType;
 
 /**
  * DateHandler
@@ -20,21 +21,21 @@ public class DateHandler extends CallbackHandler<DateQuestion> {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(DateHandler.class);	
 	
 	/**
-	 * DateQuestion
-	 */
-	private static final DateQuestion dateQuestion = new DateQuestion();
-	
-	/**
 	 * DateHandler
 	 */
 	public DateHandler() {}
+	
+	@Override
+	public Class<DateQuestion> getQuestionClass() {
+		return DateQuestion.class;
+	}
 	
 	/**
 	 * Get DateQuestion keywords
 	 */
 	@Override
 	public Collection<String> getKeywords() {
-		return this.questionDao.getKeywordsForQuestion(dateQuestion);
+		return this.questionDao.getKeywordsForQuestion(QuestionType.DATE);
 	}
 	
 	@Override

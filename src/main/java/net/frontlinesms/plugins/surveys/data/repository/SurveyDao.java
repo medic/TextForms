@@ -24,4 +24,8 @@ public interface SurveyDao {
 	public void saveSurveyWithoutDuplicateHandling(Survey survey);
 	
 	public void updateSurveyWithoutDuplicateHandling(Survey survey);
+	
+	public List<String> getKeywords();
+	
+	public Survey getSurveyByKeyword(String keyword);
 }

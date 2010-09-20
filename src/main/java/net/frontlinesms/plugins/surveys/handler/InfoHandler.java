@@ -55,9 +55,9 @@ public class InfoHandler extends MessageHandler {
 	@Override
 	public void handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = toWords(message.getTextContent(), 2);
 		if (words.length == 2) {
-			Question question = this.questionDao.getQuestionForKeyword(words[1]);
+			Question question = questionDao.getQuestionForKeyword(words[1]);
 			if (question != null) {
 				StringBuilder reply = new StringBuilder(question.getName());
 				reply.append(" (");
@@ -83,7 +83,7 @@ public class InfoHandler extends MessageHandler {
 	 * @return
 	 */
 	private String [] getAllKeywords() {
-		List<String> keywords = this.questionDao.getKeywords();
+		List<String> keywords = questionDao.getKeywords();
 		return keywords.toArray(new String[keywords.size()]);
 	}
 
