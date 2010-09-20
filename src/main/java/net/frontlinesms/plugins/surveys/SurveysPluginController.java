@@ -11,6 +11,7 @@ import net.frontlinesms.plugins.PluginInitialisationException;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
 import net.frontlinesms.plugins.surveys.data.repository.SurveyDao;
+import net.frontlinesms.plugins.surveys.data.repository.SurveyResponseDao;
 import net.frontlinesms.plugins.surveys.ui.SurveysThinletTabController;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -62,6 +63,11 @@ public class SurveysPluginController extends BasePluginController {
 	private SurveyDao surveyDao;
 	
 	/**
+	 * SurveyResponseDao
+	 */
+	private SurveyResponseDao surveyResponseDao;
+	
+	/**
 	 * The main tab panel
 	 */
 	private Object mainTab;
@@ -85,9 +91,6 @@ public class SurveysPluginController extends BasePluginController {
 	 */
 	public void deinit() {
 		LOG.debug("deinit");
-		if (this.listener != null) {
-			this.listener.setListening(false);
-		}
 	}
 	
 	/**
@@ -98,13 +101,15 @@ public class SurveysPluginController extends BasePluginController {
 	public void init(FrontlineSMS frontlineController, ApplicationContext appContext) throws PluginInitialisationException {
 		this.frontlineController = frontlineController;
 		this.appContext = appContext;
-		this.listener = new SurveysListener(frontlineController, appContext);
 		
 		this.questionDao = (QuestionDao)appContext.getBean("questionDao", QuestionDao.class);
 		this.answerDao = (AnswerDao)appContext.getBean("answerDao", AnswerDao.class);
 		this.surveyDao = (SurveyDao)appContext.getBean("surveyDao", SurveyDao.class);
+		this.surveyResponseDao = (SurveyResponseDao)appContext.getBean("surveyResponseDao", SurveyResponseDao.class);
 		
-	    if (SurveysProperties.isDebugMode()) {
+		this.listener = new SurveysListener(frontlineController, appContext, this);
+		
+		if (SurveysProperties.isDebugMode()) {
             LOG.debug("Running SurveysDebug...");
             SurveysDebug resourceMapperDebug = new SurveysDebug(this.appContext);
             resourceMapperDebug.startDebugTerminal();
@@ -131,5 +136,9 @@ public class SurveysPluginController extends BasePluginController {
 	
 	public SurveyDao getSurveyDao() {
 		return this.surveyDao;
+	}
+	
+	public SurveyResponseDao getSurveyResponseDao() {
+		return this.surveyResponseDao;
 	}
 }

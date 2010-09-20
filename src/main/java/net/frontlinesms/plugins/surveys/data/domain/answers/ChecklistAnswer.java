@@ -41,7 +41,6 @@ public class ChecklistAnswer extends CodedAnswer<ChecklistQuestion> {
 	
 	private String toChecklistString(String words) {
 		List<String> results = new ArrayList<String>();
-		//TODO improve this if-else logic
 		if (words.indexOf(",") > -1) {
 			for (String answer : words.split(",")) {
 				if (answer.indexOf("-") > -1) {

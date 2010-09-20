@@ -53,7 +53,7 @@ public class InfoHandler extends MessageHandler {
 	 * Handle Info message
 	 */
 	@Override
-	public void handleMessage(FrontlineMessage message) {
+	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = toWords(message.getTextContent(), 2);
 		if (words.length == 2) {
@@ -68,6 +68,7 @@ public class InfoHandler extends MessageHandler {
 					reply.append(question.getInfoSnippet());	
 				}
 				sendReply(message.getSenderMsisdn(), reply.toString(), false);
+				return true;
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerInvalidKeyword(getAllKeywords()), true);
@@ -76,6 +77,7 @@ public class InfoHandler extends MessageHandler {
 		else {
 			sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerHelp(getAllKeywords()), false);
 		}
+		return false;
 	}
 	
 	/**

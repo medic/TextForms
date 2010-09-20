@@ -37,8 +37,17 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 	/**
 	 * Remove callback upon timeout
 	 */
-	public void callBackTimedOut(String msisdn) {
+	public void removeCallback(String msisdn) {
 		this.callbacks.remove(msisdn);
+	}
+	
+	/**
+	 * Add callback
+	 * @param msisdn phone number
+	 * @param question question
+	 */
+	public void addCallback(String msisdn, Question question) {
+		callbacks.put(msisdn, question);
 	}
 	
 	public abstract boolean shouldHandleCallbackMessage(FrontlineMessage m);
@@ -48,13 +57,14 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public void handleMessage(FrontlineMessage message) {
+	public boolean handleMessage(FrontlineMessage message) {
+		boolean successful = false;
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				sendReply(message.getSenderMsisdn(), getQuestionText(question, true), false);
+				sendReply(message.getSenderMsisdn(), question.toString(true), false);
 				LOG.debug("Register Callback for '%s'", message.getTextContent());
 				SurveysListener.registerCallback(message.getSenderMsisdn(), this);
 				this.callbacks.put(message.getSenderMsisdn(), this.questionDao.getQuestionForKeyword(message.getTextContent()));
@@ -79,9 +89,13 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
-						if (publishAnswer(answer) == false) {
-							sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorUploadAnswer(), true);
+						if(publishAnswer(answer)) {
+							LOG.debug("Answer Published: %s", answer.getClass().getSimpleName());
 						}
+						else {
+							LOG.debug("Answer NOT Published: %s", answer.getClass().getSimpleName());
+						}
+						successful = true;
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorSaveAnswer(), true);
@@ -104,21 +118,28 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorAnswer(message.getTextContent()), true);
 			}
 		}
+		return successful;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void handleCallback(FrontlineMessage message) {
+	public Answer<Q> handleCallback(FrontlineMessage message) {
 		LOG.debug("handleCallback: %s", message.getTextContent());
+		Answer<Q> answer = null;
 		if (shouldHandleCallbackMessage(message)) {
 			Question question = callbacks.get(message.getSenderMsisdn());
 			if (question != null) {
 				HospitalContact contact = hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
 					if (answer != null) {
 						answerDao.saveAnswer(answer);
-						publishAnswer(answer);
-						LOG.debug("Answer Created: %s", answer.getClass());
+						LOG.debug("Answer Saved: %s", answer.getClass().getSimpleName());
+						if(publishAnswer(answer)) {
+							LOG.debug("Answer Published: %s", answer.getClass().getSimpleName());
+						}
+						else {
+							LOG.debug("Answer NOT Published: %s", answer.getClass().getSimpleName());
+						}
 						try {
 							contact.setLastAnswer(new Date());
 							this.hospitalContactDao.updateHospitalContact(contact);
@@ -136,6 +157,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 				}		
 			}
 			else {
+				LOG.debug("Callback Question is NULL");
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerInvalidCallback(), true);
 			}
 		}
@@ -149,5 +171,6 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 			}
 		}
 		SurveysListener.unregisterCallback(message.getSenderMsisdn());
+		return answer;
 	}
 }

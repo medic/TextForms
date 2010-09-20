@@ -26,9 +26,9 @@ import net.frontlinesms.plugins.surveys.data.repository.SurveyResponseDao;
 public class SurveyHandler extends MessageHandler {
 	
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(SurveyHandler.class);
+	private ContactDao contactDao;
 	private SurveyDao surveyDao;
 	private SurveyResponseDao surveyResponseDao;
-	private ContactDao contactDao;
 	
 	@Override
 	public Collection<String> getKeywords() {
@@ -36,30 +36,38 @@ public class SurveyHandler extends MessageHandler {
 	}
 
 	@Override
-	public void handleMessage(FrontlineMessage message) {
+	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = toWords(message.getTextContent(), 2);
 		if (words.length > 0) {
 			Survey survey = surveyDao.getSurveyByKeyword(words[0]);
+			LOG.debug("Survey: %s", survey != null ? survey.getName() : "NULL");
 			Contact contact = getContact(message);
+			LOG.debug("Contact: %s", contact != null ? contact.getName() : "NULL");
 			if (survey != null && contact != null) {
 				SurveyResponse surveyResponse = new SurveyResponse();
+				surveyResponse.setStarted(new Date());
 				surveyResponse.setContact(contact);
 				surveyResponse.setSurvey(survey);
-				surveyResponse.setStarted(new Date());
 				try {
 					surveyResponseDao.saveSurvey(surveyResponse);
 					LOG.debug("SurveyResponse Created: %s", surveyResponse.getSurveyName());
-					
-					Question question = survey.getQuestions().get(0);
-					SurveysListener.registerSurvey(message.getSenderMsisdn(), surveyResponse, question);
-					sendReply(message.getSenderMsisdn(), getQuestionText(question, true), false);
+					Question question = surveyResponse.getNextQuestion();
+					if (question != null) {
+						SurveysListener.registerSurvey(message.getSenderMsisdn(), surveyResponse, question);
+						sendReply(message.getSenderMsisdn(), question.toString(true), false);
+						return true;	
+					}
+					else {
+						LOG.error("Questions is NULL");
+					}
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException %s", ex);
 				}
 			}
 		}
+		return false;
 	}
 
 	@Override
@@ -75,6 +83,6 @@ public class SurveyHandler extends MessageHandler {
 	}
 	
 	private Contact getContact(FrontlineMessage message) {
-		return contactDao.getFromMsisdn(message.getSenderMsisdn());
+		return message != null ? contactDao.getFromMsisdn(message.getSenderMsisdn()) : null;
 	}
 }

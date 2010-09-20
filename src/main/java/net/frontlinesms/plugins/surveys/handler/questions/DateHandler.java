@@ -44,7 +44,7 @@ public class DateHandler extends CallbackHandler<DateQuestion> {
 	}
 	
 	private boolean isValidDate(String word) {
-		for (String format : new String [] {"dd/MM/yyyy", "dd-MM-yyyy", "dd/MM/yy", "dd-MM-yy"}) {
+		for (String format : new String [] {"dd/MM/yyyy", "dd-MM-yyyy", "dd/MM/yy", "dd-MM-yy", "ddMMyyyy", "ddMMyy"}) {
 			try {
 				if (word != null && word.length() > 0) {
 					DateFormat dateFormat = new SimpleDateFormat(format);

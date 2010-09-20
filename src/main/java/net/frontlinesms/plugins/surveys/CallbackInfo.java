@@ -39,28 +39,8 @@ public class CallbackInfo {
 		this.handler = handler;
 	}
 
-	public boolean hasTimedOut() {
-		//TODO load from properties file
-		//String[] timeout = SurveysProperties.getInstance().getProperties().get("callback.timeout").split(":");
-		String [] timeout = new String [] {"0", "05"};
-		int hour = Integer.parseInt(timeout[0]);
-		int minute = Integer.parseInt(timeout[1]);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(0L);
-		if (hour > 0) {
-			calendar.set(Calendar.HOUR, hour);
-		}
-		if (minute > 0) {
-			calendar.set(Calendar.MINUTE, minute);			
-		}
-		long timeoutTime = calendar.getTimeInMillis();
-		long passedTime = Calendar.getInstance().getTimeInMillis() - startTime;
-		if (timeoutTime <= passedTime) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	public boolean hasTimedOut(double minutes) {
+		return (((double)Calendar.getInstance().getTimeInMillis() - (double)startTime) / (60 * 1000)) > minutes;
 	}
 	
 }

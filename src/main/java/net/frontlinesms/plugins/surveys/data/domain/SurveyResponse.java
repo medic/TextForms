@@ -73,6 +73,16 @@ public class SurveyResponse {
 		return survey != null ? survey.getQuestions() : null;
 	}
 	
+	public Question getNextQuestion() {
+		if (survey.getQuestions().size() > 0 && answers == null) {
+			return survey.getQuestions().get(0);
+		}
+		else if (survey.getQuestions().size() > answers.size()) {
+			return survey.getQuestions().get(answers.size());
+		}
+		return null;
+	}
+	
 	@ManyToOne
 	protected Contact contact;
 	
@@ -148,11 +158,11 @@ public class SurveyResponse {
 		return false;
 	}
 	
-	public boolean hasTimedOut(int minutes) {
+	public boolean hasTimedOut(double minutes) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(started);
 		Calendar now = Calendar.getInstance();
-		return ((now.getTimeInMillis() - calendar.getTimeInMillis()) * (60 * 1000)) > minutes;
+		return (((double)now.getTimeInMillis() - (double)calendar.getTimeInMillis()) / (60 * 1000)) > minutes;
 	}
 	
 }

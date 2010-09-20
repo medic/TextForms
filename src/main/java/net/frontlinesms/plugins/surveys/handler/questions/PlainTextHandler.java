@@ -37,7 +37,7 @@ public class PlainTextHandler extends CallbackHandler<PlainTextQuestion> {
 	
 	@Override
 	protected boolean isValidAnswer(String[] words) {
-		return words != null && words.length > 1 && isValidString(words[1]);
+		return words != null && words.length > 0 && isValidString(words[1]);
 	}
 
 	private boolean isValidString(String word) {

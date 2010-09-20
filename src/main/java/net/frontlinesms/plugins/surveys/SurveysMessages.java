@@ -133,6 +133,10 @@ public final class SurveysMessages {
 		return getI18NString("plugins.surveys.survey.questions");
 	}
 	
+	public static String getSurveryCompleted(String surveyName) {
+		return String.format("%s %s", surveyName, getI18NString("plugins.surveys.survey.completed"));
+	}
+	
 	private static String arrayToString(String [] args) {
 		StringBuilder sb = new StringBuilder();
 		for (String arg : args) {

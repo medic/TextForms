@@ -53,7 +53,7 @@ public class RegisterHandler extends MessageHandler {
 	 * Handle Register message
 	 */
 	@Override
-	public void handleMessage(FrontlineMessage message) {
+	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 2) {
@@ -64,6 +64,7 @@ public class RegisterHandler extends MessageHandler {
 					this.hospitalContactDao.updateHospitalContact(contact);
 					LOG.debug("HospitalContact '%s' Updated: %s", contact.getName(), contact.getHospitalId());
 					sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
+					return true;
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);
@@ -76,6 +77,7 @@ public class RegisterHandler extends MessageHandler {
 					this.hospitalContactDao.saveHospitalContact(newContact);
 					LOG.debug("HospitalContact '%s' Saved: %s", newContact.getName(), newContact.getHospitalId());
 					sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
+					return true;
 				} 
 				catch (DuplicateKeyException ex) {
 					LOG.error("DuplicateKeyException: %s", ex);
@@ -86,6 +88,7 @@ public class RegisterHandler extends MessageHandler {
 		else {
 			sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerRegister(SurveysProperties.getRegisterKeywords()), true);
 		}
+		return false;
 	}
 	
 }

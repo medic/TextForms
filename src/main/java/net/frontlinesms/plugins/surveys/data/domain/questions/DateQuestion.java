@@ -50,5 +50,9 @@ public class DateQuestion extends Question {
 	public String getChoicesLabel() {
 		return null;
 	}
-
+	
+	@Override
+	public String getFormatLabel() {
+		return "dd/MM/yyyy";
+	}
 }

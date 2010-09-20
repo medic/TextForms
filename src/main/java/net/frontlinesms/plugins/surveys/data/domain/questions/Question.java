@@ -108,4 +108,38 @@ public abstract class Question {
 	
 	public abstract String getTypeLabel();
 	
+	public String getFormatLabel() {
+		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+	
+	public String toString(boolean includeChoices) {
+		StringBuilder questionText = new StringBuilder(getName());
+		questionText.append(" (");
+		questionText.append(getTypeLabel());
+		if (getFormatLabel() != null) {
+			questionText.append(" ");
+			questionText.append(getFormatLabel());
+		}
+		questionText.append(")");
+		if (getInfoSnippet() != null && getInfoSnippet().length() > 0) {
+			questionText.append(" ");
+			questionText.append(getInfoSnippet());	
+		}
+		if (includeChoices && getChoices() != null && getChoices().size() > 0) {
+			int index = 1;
+			for (String choice : getChoices()) {
+				questionText.append("\n");
+				questionText.append(index);
+				questionText.append(" ");
+				questionText.append(choice);
+				index++;		
+			}
+		}
+		return questionText.toString();
+	}
 }

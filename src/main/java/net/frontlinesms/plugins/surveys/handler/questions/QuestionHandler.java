@@ -75,13 +75,14 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 	protected abstract boolean isValidAnswer(String[] words);
 	
 	@SuppressWarnings("unchecked")
-	public void handleMessage(FrontlineMessage message) {
+	public boolean handleMessage(FrontlineMessage message) {
+		boolean successful = false;
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.toWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				sendReply(message.getSenderMsisdn(), getQuestionText(question, false), false);
+				sendReply(message.getSenderMsisdn(), question.toString(), false);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
@@ -92,10 +93,10 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 			if (question != null) {
 				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer response = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
-					if (response != null) {
-						this.answerDao.saveAnswer(response);
-						LOG.debug("Answer Created: %s", response.getClass());
+					Answer answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					if (answer != null) {
+						this.answerDao.saveAnswer(answer);
+						LOG.debug("Answer Saved: %s", answer.getClass());
 						try {
 							contact.setLastAnswer(new Date());
 							this.hospitalContactDao.updateHospitalContact(contact);
@@ -103,9 +104,13 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
-						if (this.publishAnswer(response) == false) {
-							sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorUploadAnswer(), true);
+						if(publishAnswer(answer)) {
+							LOG.debug("Answer Published: %s", answer.getClass().getSimpleName());
 						}
+						else {
+							LOG.debug("Answer NOT Published: %s", answer.getClass().getSimpleName());
+						}
+						successful = true;
 					}
 					else {
 						sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorSaveAnswer(), true);
@@ -128,6 +133,7 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 				sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerErrorAnswer(message.getTextContent()), true);
 			}
 		}
+		return successful;
 	}
 	
 	/**

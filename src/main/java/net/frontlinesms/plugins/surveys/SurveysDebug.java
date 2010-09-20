@@ -228,7 +228,7 @@ public class SurveysDebug {
 	}
 	
 	public void startDebugTerminal() {
-		Thread thread = new DebugTerminal(this.getAuthor());
+		Thread thread = new DebugTerminal();
 		thread.start();
     }
 
@@ -238,12 +238,6 @@ public class SurveysDebug {
 	 *
 	 */
 	private class DebugTerminal extends Thread {
-		private String phoneNumber;
-		
-		public DebugTerminal(String phoneNumber) {
-			this.phoneNumber = phoneNumber;
-		}
-		
 		public void run() {
 			LOG.debug("startDebugTerminal...");
 			List<String> exitKeywords = Arrays.asList("exit", "x", "quit", "q");
@@ -255,7 +249,7 @@ public class SurveysDebug {
 	            	break;
 	            }
 	            else {
-	            	createAnswer(Calendar.getInstance().getTimeInMillis(), this.phoneNumber, message);
+	            	createAnswer(Calendar.getInstance().getTimeInMillis(), getAuthor(), message);
 	            }
 	        }
 	        LOG.debug("...startDebugTerminal");
