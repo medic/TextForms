@@ -10,7 +10,6 @@
 	<context:annotation-config />
 	<tx:annotation-driven />
 	
-	<bean id="hospitalContactDao" class="net.frontlinesms.plugins.surveys.data.repository.hibernate.HibernateHospitalContactDao" parent="baseHibernateDao"/>
 	<bean id="questionDao" class="net.frontlinesms.plugins.surveys.data.repository.hibernate.HibernateQuestionDao" parent="baseHibernateDao"/>
 	<bean id="answerDao" class="net.frontlinesms.plugins.surveys.data.repository.hibernate.HibernateAnswerDao" parent="baseHibernateDao"/>
 	<bean id="surveyDao" class="net.frontlinesms.plugins.surveys.data.repository.hibernate.HibernateSurveyDao" parent="baseHibernateDao"/>

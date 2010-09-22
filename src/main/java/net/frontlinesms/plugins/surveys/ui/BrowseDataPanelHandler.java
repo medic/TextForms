@@ -25,17 +25,22 @@ import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
 
+import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.repository.ContactDao;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.Survey;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.surveys.search.AnswerQueryGenerator;
 import net.frontlinesms.plugins.surveys.ui.components.AdvancedTableActionDelegate;
 import net.frontlinesms.plugins.surveys.ui.components.PagedAdvancedTableController;
@@ -45,7 +50,7 @@ import net.frontlinesms.plugins.surveys.ui.components.PagedAdvancedTableControll
  * @author Dale Zak
  */
 @SuppressWarnings("unused")
-public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
+public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate, EventObserver {
 	
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(BrowseDataPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/browseDataPanel.xml";
@@ -57,12 +62,12 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	private BrowseDataDialogHandler editDialog;
 	private final SurveysCallback callback;
 	
-	private HospitalContact selectedContact;
-	private final HospitalContactDao hospitalContactDao;
+	private Contact selectedContact;
+	private final ContactDao contactDao;
 	private final AnswerDao answerDao;
 	
 	private Question selectedQuestion;
-	private final Object comboSubmitter;
+	private final Object comboContact;
 	private final Object searchQuestion;
 	private final Object textDate;
 	
@@ -75,21 +80,23 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 	private AnswerQueryGenerator queryGenerator;
 	private PagedAdvancedTableController tableController;
 	
-	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback) {
+	public BrowseDataPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback, FrontlineSMS frontlineController) {
 		LOG.debug("BrowseDataPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
+		frontlineController.getEventBus().registerObserver(this);
 		this.callback = callback;
+		
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 		this.editDialog = new BrowseDataDialogHandler(this.ui, this.appContext, callback);
 		
-		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
-		this.answerDao = (AnswerDao)appContext.getBean("answerDao");
+		this.contactDao = (ContactDao)appContext.getBean("contactDao", ContactDao.class);
+		this.answerDao = (AnswerDao)appContext.getBean("answerDao", AnswerDao.class);
 		
 		this.tableQuestions = this.ui.find(this.mainPanel, "tableQuestions");
 		this.panelQuestions = this.ui.find(this.mainPanel, "panelQuestions");
 		this.searchQuestion = this.ui.find(this.mainPanel, "searchQuestion");
-		this.comboSubmitter = this.ui.find(this.mainPanel, "comboSubmitter");
+		this.comboContact = this.ui.find(this.mainPanel, "comboContact");
 		this.textDate = this.ui.find(this.mainPanel, "textDate");
 		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableQuestions, this.panelQuestions);
@@ -100,8 +107,8 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 													getI18NString(SurveysConstants.TABLE_QUESTION),
 													getI18NString(SurveysConstants.TABLE_ANSWER)}, 
 									   new String[]{"getDateSubmittedText", 
-													"getSubmitterName", 
-													"getHospitalId", 
+													"getContactName", 
+													"getOrganizationId", 
 													"getQuestionName", 
 													"getMessageText"},
 									   new String[]{"/icons/date.png", 
@@ -110,8 +117,8 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 													"/icons/question.png",
 													"/icons/sms_receive.png"},
 									   new String []{"dateSubmitted", 
-													 "submitter.name",
-													 "hospitalId",
+													 "contact.name",
+													 "organizationId",
 													 "question.name",
 													 "message.textMessageContent"});
 		
@@ -142,15 +149,15 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 	}
 	
-	public void loadHospitalContacts() {
-		this.ui.removeAll(this.comboSubmitter);
+	public void loadContacts() {
+		this.ui.removeAll(this.comboContact);
 		Object allContacts = this.ui.createComboboxChoice(SurveysMessages.getMessageAllContacts(), null);
 		this.ui.setIcon(allContacts, "/icons/users.png");
-		this.ui.add(this.comboSubmitter, allContacts);
-		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
+		this.ui.add(this.comboContact, allContacts);
+		for (Contact contact : this.contactDao.getAllContacts()) {
 			Object comboboxChoice = this.ui.createComboboxChoice(contact.getDisplayName(), contact);
 			this.ui.setIcon(comboboxChoice, "/icons/user.png");
-			this.ui.add(this.comboSubmitter, comboboxChoice);
+			this.ui.add(this.comboContact, comboboxChoice);
 		}
 	}
 	
@@ -185,18 +192,18 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 		String dateReceived = this.ui.getText(this.textDate);
 		String phoneNumber = null;
-		Object selectedSubmitter = this.ui.getSelectedItem(this.comboSubmitter);
-		if (selectedSubmitter != null) {
-			HospitalContact submitter = this.ui.getAttachedObject(selectedSubmitter, HospitalContact.class);
-			if (submitter != null) {
-				LOG.debug("submitterChanged: %s", submitter.getPhoneNumber());
-				phoneNumber = submitter.getPhoneNumber();
+		Object selectedContact = this.ui.getSelectedItem(this.comboContact);
+		if (selectedContact != null) {
+			Contact contact = this.ui.getAttachedObject(selectedContact, Contact.class);
+			if (contact != null) {
+				LOG.debug("contactChanged: %s", contact.getPhoneNumber());
+				phoneNumber = contact.getPhoneNumber();
 			}
 		}
 		this.queryGenerator.startSearch(searchText, this.sortColumn, this.sortAscending, dateReceived, phoneNumber);
 	}
 	
-	public void submitterChanged(Object comboSubmitter) {
+	public void contactChanged(Object comboContact) {
 		startSearch();
 	}
 	
@@ -213,15 +220,15 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		textfieldFocusLost(this.searchQuestion);
 	}
 	
-	public void setSelectedContact(HospitalContact contact) {
+	public void setSelectedContact(Contact contact) {
 		//LOG.debug("setSelectedContact: %s", contact);
 		this.selectedContact = contact;
 		if (contact != null) {
 			int index = 0;
-			for (Object comboboxChoice : this.ui.getItems(this.comboSubmitter)) {
-				HospitalContact contactItem = this.ui.getAttachedObject(comboboxChoice, HospitalContact.class);
+			for (Object comboboxChoice : this.ui.getItems(this.comboContact)) {
+				Contact contactItem = this.ui.getAttachedObject(comboboxChoice, Contact.class);
 				if (contact.equals(contactItem)) {
-					this.ui.setSelectedIndex(this.comboSubmitter, index);
+					this.ui.setSelectedIndex(this.comboContact, index);
 					LOG.debug("Selecting Contact: %s", contact.getDisplayName());
 					break;
 				}
@@ -229,7 +236,7 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 			}
 		}
 		else {
-			this.ui.setSelectedIndex(this.comboSubmitter, 0);
+			this.ui.setSelectedIndex(this.comboContact, 0);
 		}
 		startSearch();
 	}
@@ -278,6 +285,15 @@ public class BrowseDataPanelHandler implements ThinletUiEventHandler, AdvancedTa
 		}
 		else {
 			this.ui.setForeground(Color.BLACK);
+		}
+	}
+	
+	public void notify(FrontlineEventNotification notification) {
+		if (notification instanceof DatabaseEntityNotification<?>) {
+			DatabaseEntityNotification<?> databaseEntityNotification = (DatabaseEntityNotification<?>)notification;
+			if (databaseEntityNotification.getDatabaseEntity() instanceof Answer<?>) {
+				this.queryGenerator.refresh();
+			}
 		}
 	}
 }

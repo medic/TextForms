@@ -38,7 +38,7 @@ public class InfoHandler extends MessageHandler {
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class InfoHandler extends MessageHandler {
 	@Override
 	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = toWords(message.getTextContent(), 2);
+		String[] words = getWords(message.getTextContent(), 2);
 		if (words.length == 2) {
 			Question question = questionDao.getQuestionForKeyword(words[1]);
 			if (question != null) {

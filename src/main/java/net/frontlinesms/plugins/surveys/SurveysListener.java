@@ -117,11 +117,13 @@ public class SurveysListener implements EventObserver {
 							LOG.error("Next Question: %s", question.getName());
 							registerSurvey(message.getSenderMsisdn(), surveyResponse, question);
 							sendReply(message.getSenderMsisdn(), question.toString(true), false);	
+							LOG.out("%s", question.toString(true));
 						}
 						else {
 							LOG.debug("Survey '%s' Completed!", surveyResponse.getSurveyName());
 							sendReply(message.getSenderMsisdn(), SurveysMessages.getSurveryCompleted(surveyResponse.getSurveyName()), false);
 							surveys.remove(message.getSenderMsisdn());
+							LOG.out("%s", SurveysMessages.getSurveryCompleted(surveyResponse.getSurveyName()));
 							try {
 								surveyResponseDao.updateSurvey(surveyResponse);
 							} 
@@ -236,7 +238,7 @@ public class SurveysListener implements EventObserver {
 
 	/**
 	 * Register callback
-	 * @param msisdn HospitalContact phone number
+	 * @param msisdn Contact phone number
 	 * @param handler CallbackHandler
 	 */
 	public static void registerCallback(String msisdn, CallbackHandler<?> handler){
@@ -252,7 +254,7 @@ public class SurveysListener implements EventObserver {
 	
 	/**
 	 * Register survey response
-	 * @param msisdn HospitalContact phone number
+	 * @param msisdn Contact phone number
 	 * @param surveyResponse SurveyResponse
 	 */
 	public static void registerSurvey(String msisdn, SurveyResponse surveyResponse, Question question) {
@@ -273,7 +275,7 @@ public class SurveysListener implements EventObserver {
 	
 	/**
 	 * Unregister callback
-	 * @param msisdn HospitalContact phone number 
+	 * @param msisdn Contact phone number 
 	 */
 	public static void unregisterCallback(String msisdn) {
 		LOG.debug("unregisterCallback(%s)", msisdn);

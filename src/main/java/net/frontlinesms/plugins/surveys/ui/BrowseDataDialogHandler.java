@@ -10,18 +10,19 @@ import java.util.Date;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerFactory;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -45,11 +46,11 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	private Answer answer;
 	private final AnswerDao answerDao;
 	private final QuestionDao questionDao;
-	private final HospitalContactDao hospitalContactDao;
+	private final ContactDao contactDao;
 	private final MessageDao messageDao;
 	
 	private final Object comboQuestionTypes;
-	private final Object comboSubmitter;
+	private final Object comboContact;
 	private final Object textAnswer;
 	private final Object textDate;
 	private final Object textHospital;
@@ -61,25 +62,25 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		this.callback = callback;
 		this.mainDialog = this.ui.loadComponentFromFile(DIALOG_XML, this);
 		
-		this.answerDao = (AnswerDao) appContext.getBean("answerDao");
-		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
-		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
-		this.messageDao = (MessageDao)appContext.getBean("messageDao");
+		this.answerDao = (AnswerDao) appContext.getBean("answerDao", AnswerDao.class);
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
+		this.contactDao = (ContactDao)appContext.getBean("contactDao", ContactDao.class);
+		this.messageDao = (MessageDao)appContext.getBean("messageDao", MessageDao.class);
 		
 		this.comboQuestionTypes = this.ui.find(this.mainDialog, "comboQuestionTypes");
-		this.comboSubmitter = this.ui.find(this.mainDialog, "comboSubmitter");
+		this.comboContact = this.ui.find(this.mainDialog, "comboContact");
 		this.textAnswer = this.ui.find(this.mainDialog, "textAnswer");
 		this.textDate = this.ui.find(this.mainDialog, "textDate");
 		this.textHospital = this.ui.find(this.mainDialog, "textHospital");
 	}
 	
-	public void loadHospitalContacts() {
-		this.ui.removeAll(this.comboSubmitter);
-		this.ui.add(this.comboSubmitter, this.ui.createComboboxChoice("", null));
-		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
+	public void loadContacts() {
+		this.ui.removeAll(this.comboContact);
+		this.ui.add(this.comboContact, this.ui.createComboboxChoice("", null));
+		for (Contact contact : this.contactDao.getAllContacts()) {
 			Object comboboxChoice = this.ui.createComboboxChoice(contact.getName(), contact);
 			this.ui.setIcon(comboboxChoice, "/icons/user.png");
-			this.ui.add(this.comboSubmitter, comboboxChoice);
+			this.ui.add(this.comboContact, comboboxChoice);
 		}
 	}
 	
@@ -97,14 +98,14 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 	@SuppressWarnings("unchecked")
 	public void show(Answer answer) {
 		this.answer = answer;
-		this.ui.setSelectedIndex(this.comboSubmitter, 0);
+		this.ui.setSelectedIndex(this.comboContact, 0);
 		this.ui.setSelectedIndex(this.comboQuestionTypes, 0);
 		if (answer != null) {
 			this.ui.setText(this.textDate, answer.getDateSubmittedText());
 			this.ui.setText(this.textAnswer, answer.getMessageText());
-			this.setSelectedContact(answer.getSubmitter());
+			this.setSelectedContact(answer.getContact());
 			this.setSelectedQuestion(answer.getQuestion());
-			submitterChanged(this.comboSubmitter, this.textHospital);
+			contactChanged(this.comboContact, this.textHospital);
 			for (int index = 0; index < this.ui.getCount(this.comboQuestionTypes); index++) {
 				Object comboTypeItem = this.ui.getItem(this.comboQuestionTypes, index);
 				Question question = (Question)this.ui.getAttachedObject(comboTypeItem);
@@ -129,22 +130,22 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 			this.ui.setText(this.textAnswer, "");
 			this.ui.setEnabled(this.textAnswer, true);
 			this.ui.setEditable(this.textAnswer, true);
-			this.ui.setSelectedIndex(this.comboSubmitter, 0);
+			this.ui.setSelectedIndex(this.comboContact, 0);
 			this.ui.setSelectedIndex(this.comboQuestionTypes, 0);
 		}
 		this.ui.add(this.mainDialog);
 	}
 	
-	private void setSelectedContact(HospitalContact contact) {
+	private void setSelectedContact(Contact contact) {
 		LOG.debug("setSelectedContact: %s", contact);
 		if (contact != null) {
 			int index = 0;
-			for (Object comboboxChoice : this.ui.getItems(this.comboSubmitter)) {
+			for (Object comboboxChoice : this.ui.getItems(this.comboContact)) {
 				Object attachedObject = this.ui.getAttachedObject(comboboxChoice);
 				if (attachedObject != null) {
-					HospitalContact contactItem = (HospitalContact)attachedObject;
+					Contact contactItem = (Contact)attachedObject;
 					if (contact.equals(contactItem)) {
-						this.ui.setSelectedIndex(this.comboSubmitter, index);
+						this.ui.setSelectedIndex(this.comboContact, index);
 						LOG.debug("Selecting Contact: %s", contact.getName());
 						break;
 					}
@@ -153,7 +154,7 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 			}
 		}
 		else {
-			this.ui.setSelectedIndex(this.comboSubmitter, 0);
+			this.ui.setSelectedIndex(this.comboContact, 0);
 		}
 	}
 	
@@ -184,10 +185,10 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		LOG.debug("saveAnswer");
 		Date dateSubmitted = this.getDateSubmitted();
 		String response = this.ui.getText(this.textAnswer);
-		String hospitalId = this.ui.getText(this.textHospital);
-		HospitalContact submitter = this.getSubmitter();
+		String organizationId = this.ui.getText(this.textHospital);
+		Contact contact = this.getContact();
 		Question question = this.getQuestion();
-		if (submitter == null) {
+		if (contact == null) {
 			this.ui.alert(getI18NString(SurveysConstants.ALERT_MISSING_RESPONSE_SUBMITTER));
 		}
 		else if (question == null) {
@@ -201,10 +202,10 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		}
 		else if (this.answer != null) {
 			this.answer.setDateSubmitted(dateSubmitted);
-			this.answer.setSubmitter(submitter);
-			this.answer.setHospitalId(hospitalId);
+			this.answer.setContact(contact);
+			this.answer.setOrganizationId(organizationId);
 			if (this.answer.getMessage() == null) {
-				FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), submitter.getPhoneNumber(), null, response);
+				FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), contact.getPhoneNumber(), null, response);
 				this.messageDao.saveMessage(frontlineMessage);
 				this.answer.setMessage(frontlineMessage);
 				LOG.debug("FrontlineMessage Created!");
@@ -215,11 +216,11 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 			LOG.debug("Answer Updated!");
 		}
 		else {
-			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), Long.toString(submitter.getId()), null, response);
+			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateSubmitted.getTime(), Long.toString(contact.getId()), null, response);
 			this.messageDao.saveMessage(frontlineMessage);
 			LOG.debug("FrontlineMessage Created!");
 			
-			Answer newAnswer = AnswerFactory.createAnswer(frontlineMessage, submitter, dateSubmitted, hospitalId, question);
+			Answer newAnswer = AnswerFactory.createAnswer(frontlineMessage, contact, dateSubmitted, organizationId, question);
 			if (newAnswer != null) {
 				LOG.debug("Answer Created!");
 				this.answerDao.saveAnswer(newAnswer);
@@ -240,10 +241,10 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		return null;
 	}
 	
-	private HospitalContact getSubmitter() {
-		Object submitterItem = this.ui.getSelectedItem(this.comboSubmitter);
-		if (submitterItem != null) {
-			return (HospitalContact)this.ui.getAttachedObject(submitterItem);
+	private Contact getContact() {
+		Object contactItem = this.ui.getSelectedItem(this.comboContact);
+		if (contactItem != null) {
+			return (Contact)this.ui.getAttachedObject(contactItem);
 		}
 		return null;
 	}
@@ -267,12 +268,18 @@ public class BrowseDataDialogHandler implements ThinletUiEventHandler {
 		this.ui.remove(dialog);
 	}
 	
-	public void submitterChanged(Object comboSubmitter, Object textHospital) {
-		LOG.debug("submitterChanged");
-		Object submitterItem = this.ui.getSelectedItem(this.comboSubmitter);
-		if (submitterItem != null) {
-			HospitalContact submitter = (HospitalContact)this.ui.getAttachedObject(submitterItem);
-			this.ui.setText(this.textHospital, submitter.getHospitalId());
+	public void contactChanged(Object comboContact, Object textHospital) {
+		LOG.debug("contactChanged");
+		Object contactItem = this.ui.getSelectedItem(this.comboContact);
+		if (contactItem != null) {
+			Contact contact = this.ui.getAttachedObject(contactItem, Contact.class);
+			OrganizationDetails organizationsDetails = contact.getDetails(OrganizationDetails.class);
+			if (organizationsDetails != null) {
+				this.ui.setText(this.textHospital, organizationsDetails.getOrganizationId());
+			}
+			else {
+				this.ui.setText(this.textHospital, "");
+			}
 		}
 		else {
 			this.ui.setText(this.textHospital, "");

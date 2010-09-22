@@ -13,8 +13,8 @@
 	</panel>
     
     <panel gap="5" weightx="1" left="15">
-    	<label name="labelSubmitter" text="i18n.plugins.surveys.submitter" icon="/icons/user_sender.png" />
-		<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this)"/>
+    	<label name="labelContact" text="i18n.plugins.surveys.contact" icon="/icons/user_sender.png" />
+		<combobox name="comboContact" editable="false" weightx="1" action="contactChanged(this)"/>
 	</panel>
 	
 	<panel name="panelQuestions" border="false" colspan="3" weightx="1" weighty="1" valign="fill" gap="10">

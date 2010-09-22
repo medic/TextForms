@@ -58,7 +58,7 @@ public class ResourceFinderUploader extends DocumentUploader {
 	
 	private QuestionDao getQuestionDao() {
 		if (this.questionDao == null) {
-			this.questionDao = (QuestionDao) appContext.getBean("questionDao");
+			this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
 		}
 		return this.questionDao;
 	}
@@ -70,7 +70,7 @@ public class ResourceFinderUploader extends DocumentUploader {
 	
 	private SurveyDao getSurveyDao() {
 		if (this.surveyDao == null) {
-			this.surveyDao = (SurveyDao) appContext.getBean("surveyDao");
+			this.surveyDao = (SurveyDao) appContext.getBean("surveyDao", SurveyDao.class);
 		}
 		return this.surveyDao;
 	}
@@ -111,8 +111,8 @@ public class ResourceFinderUploader extends DocumentUploader {
 		
 		//subject
 		Element subjectElement = entryElement.addElement(new QName("subject", NAMESPACE_REPORT));
-		if (this.hospitalId != null) {
-			subjectElement.setText(this.hospitalId);
+		if (this.organizationId != null) {
+			subjectElement.setText(this.organizationId);
 		}
 		
 		//observed

@@ -38,7 +38,7 @@ public class SurveyHandler extends MessageHandler {
 	@Override
 	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = toWords(message.getTextContent(), 2);
+		String[] words = getWords(message.getTextContent(), 2);
 		if (words.length > 0) {
 			Survey survey = surveyDao.getSurveyByKeyword(words[0]);
 			LOG.debug("Survey: %s", survey != null ? survey.getName() : "NULL");
@@ -56,6 +56,7 @@ public class SurveyHandler extends MessageHandler {
 					if (question != null) {
 						SurveysListener.registerSurvey(message.getSenderMsisdn(), surveyResponse, question);
 						sendReply(message.getSenderMsisdn(), question.toString(true), false);
+						LOG.out("%s", question.toString(true));
 						return true;	
 					}
 					else {

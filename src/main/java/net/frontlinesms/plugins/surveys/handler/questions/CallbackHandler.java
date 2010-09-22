@@ -4,12 +4,13 @@ import java.util.Date;
 import java.util.HashMap;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysListener;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
 import net.frontlinesms.plugins.surveys.SurveysProperties;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerFactory;
@@ -60,11 +61,12 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 	public boolean handleMessage(FrontlineMessage message) {
 		boolean successful = false;
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = this.getWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
 				sendReply(message.getSenderMsisdn(), question.toString(true), false);
+				LOG.out("%s", question.toString(true));
 				LOG.debug("Register Callback for '%s'", message.getTextContent());
 				SurveysListener.registerCallback(message.getSenderMsisdn(), this);
 				this.callbacks.put(message.getSenderMsisdn(), this.questionDao.getQuestionForKeyword(message.getTextContent()));
@@ -76,15 +78,22 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		else if (isValidAnswer(words)) {
 			Question question = questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				HospitalContact contact = hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				Contact contact = contactDao.getFromMsisdn(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
+					String organizationId = details != null ? details.getOrganizationId() : null;
+					if (details != null) {
+						details.setLastAnswer(new Date());
+					}
+					else {
+						contact.addDetails(new OrganizationDetails(new Date()));
+					}
+					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), organizationId, question);
 					if (answer != null) {
 						answerDao.saveAnswer(answer);
 						LOG.debug("Answer Created: %s", answer);
 						try {
-							contact.setLastAnswer(new Date());
-							hospitalContactDao.updateHospitalContact(contact);
+							contactDao.updateContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
@@ -128,9 +137,17 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		if (shouldHandleCallbackMessage(message)) {
 			Question question = callbacks.get(message.getSenderMsisdn());
 			if (question != null) {
-				HospitalContact contact = hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				Contact contact = contactDao.getFromMsisdn(message.getSenderMsisdn());
 				if (contact != null) {
-					answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
+					String organizationId = details != null ? details.getOrganizationId() : null;
+					if (details != null) {
+						details.setLastAnswer(new Date());
+					}
+					else {
+						contact.addDetails(new OrganizationDetails(new Date()));
+					}
+					answer = AnswerFactory.createAnswer(message, contact, new Date(), organizationId, question);
 					if (answer != null) {
 						answerDao.saveAnswer(answer);
 						LOG.debug("Answer Saved: %s", answer.getClass().getSimpleName());
@@ -141,8 +158,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 							LOG.debug("Answer NOT Published: %s", answer.getClass().getSimpleName());
 						}
 						try {
-							contact.setLastAnswer(new Date());
-							this.hospitalContactDao.updateHospitalContact(contact);
+							this.contactDao.updateContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);

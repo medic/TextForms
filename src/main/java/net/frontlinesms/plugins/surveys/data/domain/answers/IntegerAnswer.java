@@ -4,8 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.questions.IntegerQuestion;
 
@@ -16,8 +16,8 @@ public class IntegerAnswer extends Answer<IntegerQuestion> {
 		super();
 	}
 
-	public IntegerAnswer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, IntegerQuestion question) {
-		super(message, submitter, dateSubmitted, hospitalId, question);
+	public IntegerAnswer(FrontlineMessage message, Contact contact, Date dateSubmitted, String organizationId, IntegerQuestion question) {
+		super(message, contact, dateSubmitted, organizationId, question);
 	}
 
 	@Override

@@ -1,9 +1,10 @@
 package net.frontlinesms.plugins.surveys.ui;
 
 import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.SurveysPluginController;
 import net.frontlinesms.plugins.surveys.data.domain.Survey;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
@@ -35,18 +36,18 @@ public class SurveysThinletTabController implements ThinletUiEventHandler, Surve
 	private final ManageOptionsPanelHandler panelManageOptions;
 	private final ManageSurveysPanelHandler panelManageSurveys;
 	
-	public SurveysThinletTabController(FrontlineSMS frontlineController, UiGeneratorController uiController, ApplicationContext appContext) {
+	public SurveysThinletTabController(FrontlineSMS frontlineController, UiGeneratorController uiController, ApplicationContext appContext, SurveysPluginController pluginController) {
 		LOG.debug("SurveysThinletTabController");
 		this.ui = uiController;
 		this.appContext = appContext;
 		this.mainTab = this.ui.loadComponentFromFile(XML_PATH, this);
 		this.mainPanel = this.ui.find(this.mainTab, "panelMainContent");
 		this.listTasks = this.ui.find(this.mainTab, "listTasks");
-		this.panelManageContacts = new ManageContactsPanelHandler(this.ui, this.appContext, this);
-		this.panelManagQuestions = new ManageQuestionsPanelHandler(this.ui, this.appContext, this);
-		this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this);
+		this.panelManageContacts = new ManageContactsPanelHandler(this.ui, this.appContext, this, frontlineController);
+		this.panelManagQuestions = new ManageQuestionsPanelHandler(this.ui, this.appContext, this, frontlineController);
+		this.panelBrowseData = new BrowseDataPanelHandler(this.ui, this.appContext, this, frontlineController);
 		this.panelManageOptions = new ManageOptionsPanelHandler(this.ui, this.appContext, this);
-		this.panelManageSurveys = new ManageSurveysPanelHandler(this.ui, this.appContext, this);
+		this.panelManageSurveys = new ManageSurveysPanelHandler(this.ui, this.appContext, this, frontlineController, pluginController);
 		
 		taskChanged(this.listTasks);
 	}
@@ -76,7 +77,7 @@ public class SurveysThinletTabController implements ThinletUiEventHandler, Surve
 		}
 	}
 	
-	public void viewAnswers(HospitalContact contact) {
+	public void viewAnswers(Contact contact) {
 		LOG.debug("viewAnswers by contact");
 		Object taskList = this.ui.find(this.mainTab, "listTasks");
 		for (Object item : this.ui.getItems(taskList)) {
@@ -96,7 +97,7 @@ public class SurveysThinletTabController implements ThinletUiEventHandler, Surve
 		showBrowseDataPanel(null, question);
 	}
 	
-	public void refreshContact(HospitalContact contact) {
+	public void refreshContact(Contact contact) {
 		LOG.debug("refreshContact: %s", contact);
 		this.panelManageContacts.refreshContacts(contact);
 	}
@@ -117,9 +118,9 @@ public class SurveysThinletTabController implements ThinletUiEventHandler, Surve
 		this.panelManageSurveys.reloadData();
 	}
 	
-	private void showBrowseDataPanel(HospitalContact contact, Question question) {
+	private void showBrowseDataPanel(Contact contact, Question question) {
 		this.ui.removeAll(this.mainPanel);
-		this.panelBrowseData.loadHospitalContacts();
+		this.panelBrowseData.loadContacts();
 		this.panelBrowseData.setSelectedContact(contact);
 		this.panelBrowseData.setSelectedQuestion(question);
 		this.ui.add(this.mainPanel, this.panelBrowseData.getMainPanel());

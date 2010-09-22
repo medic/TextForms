@@ -86,7 +86,7 @@ public class ManageQuestionsDialogHandler implements ThinletUiEventHandler {
 		this.textSchema = this.ui.find(this.mainDialog, "textSchema");
 		this.buttonQuestionAdd = this.ui.find(this.mainDialog, "buttonQuestionAdd");
 		this.placeholderChoices = this.ui.find(this.mainDialog, "placeholderChoices");
-		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
 		
 		loadQuestions();
 	}

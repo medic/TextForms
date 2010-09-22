@@ -25,6 +25,10 @@ import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
 
+import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
@@ -44,7 +48,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  * see {@link "http://www.frontlinesms.net"} for more details. 
  * copyright owned by Kiwanja.net
  */
-public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
+public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate, EventObserver {
 	
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageQuestionsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageQuestionsPanel.xml";
@@ -77,11 +81,13 @@ public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, Advan
 	
 	private QuestionDao questionDao;
 	
-	public ManageQuestionsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback) {
+	public ManageQuestionsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback, FrontlineSMS frontlineController) {
 		LOG.debug("ManageQuestionsPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
+		frontlineController.getEventBus().registerObserver(this);
+		
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 		
 		this.searchQuestion = this.ui.find(this.mainPanel, "searchQuestion");
@@ -101,7 +107,7 @@ public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, Advan
 		this.deleteButton = this.ui.find(this.mainPanel, "buttonDeleteQuestion");
 		this.viewAnswersButton = this.ui.find(this.mainPanel, "buttonViewAnswers");
 	
-		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
 		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableQuestions, this.panelQuestions);
 		this.tableController.putHeader(Question.class, 
@@ -267,6 +273,15 @@ public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, Advan
 		}
 		else {
 			this.ui.setForeground(Color.BLACK);
+		}
+	}
+	
+	public void notify(FrontlineEventNotification notification) {
+		if (notification instanceof DatabaseEntityNotification<?>) {
+			DatabaseEntityNotification<?> databaseEntityNotification = (DatabaseEntityNotification<?>)notification;
+			if (databaseEntityNotification.getDatabaseEntity() instanceof Question) {
+				this.queryGenerator.refresh();
+			}
 		}
 	}
 }

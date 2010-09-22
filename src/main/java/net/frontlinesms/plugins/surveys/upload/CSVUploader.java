@@ -52,12 +52,12 @@ public class CSVUploader extends DocumentUploader {
 			sb.append(this.phoneNumber);
 		}
 		//hospital id
-		if (this.hospitalId != null) {
+		if (this.organizationId != null) {
 			if (sb.length() > 0) {
 				sb.append("\n");
 			}
 			sb.append("hospital,");
-			sb.append(this.hospitalId);
+			sb.append(this.organizationId);
 		}
 		//items
 		for (String key : this.items.keySet()) {

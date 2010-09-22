@@ -9,9 +9,9 @@ import net.frontlinesms.plugins.surveys.data.domain.questions.CodedQuestion;
  * CodedHandler
  * @author dalezak
  *
- * @param <M> CodedQuestion
+ * @param <Q> CodedQuestion
  */
-public abstract class CodedHandler<M extends CodedQuestion> extends CallbackHandler<M> {
+public abstract class CodedHandler<Q extends CodedQuestion> extends CallbackHandler<Q> {
 
 	@SuppressWarnings("unused")
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(CodedHandler.class);

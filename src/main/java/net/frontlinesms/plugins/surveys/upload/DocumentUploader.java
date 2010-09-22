@@ -124,22 +124,22 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	/**
 	 * Hospital ID
 	 */
-	protected String hospitalId; 
+	protected String organizationId; 
 
 	/**
 	 * Set Hospital ID
-	 * @param hospitalId Hospital ID
+	 * @param organizationId Hospital ID
 	 */
-	public void setHospitalId(String hospitalId) {
-		this.hospitalId = hospitalId;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 	
 	/**
 	 * Get Hospital ID
 	 * @return Hospital ID
 	 */
-	public String getHospitalId() {
-		return this.hospitalId;
+	public String getOrganizationId() {
+		return this.organizationId;
 	}
 	
 	/**

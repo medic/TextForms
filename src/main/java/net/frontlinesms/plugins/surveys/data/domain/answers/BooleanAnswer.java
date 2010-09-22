@@ -4,9 +4,9 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysProperties;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.domain.questions.BooleanQuestion;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
@@ -17,9 +17,9 @@ public class BooleanAnswer extends Answer<BooleanQuestion> {
 		super();
 	}
 
-	public BooleanAnswer(FrontlineMessage message, HospitalContact submitter,
-			Date dateSubmitted, String hospitalId, BooleanQuestion question) {
-		super(message, submitter, dateSubmitted, hospitalId, question);
+	public BooleanAnswer(FrontlineMessage message, Contact contact,
+			Date dateSubmitted, String organizationId, BooleanQuestion question) {
+		super(message, contact, dateSubmitted, organizationId, question);
 	}
 	
 	@Override

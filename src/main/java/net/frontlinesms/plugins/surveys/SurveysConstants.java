@@ -15,7 +15,7 @@ public final class SurveysConstants {
 	public static final String TABLE_QUESTIONNAME = "plugins.surveys.table.name";
 	public static final String TABLE_ANSWER = "plugins.surveys.table.answer";
 	public static final String TABLE_DATE = "plugins.surveys.table.date";
-	public static final String TABLE_SUBMITTER = "plugins.surveys.table.submitter";
+	public static final String TABLE_SUBMITTER = "plugins.surveys.table.contact";
 	public static final String TABLE_KEYWORD = "plugins.surveys.table.keyword";
 	public static final String TABLE_ORGANIZATION = "plugins.surveys.table.organization";
 	public static final String TABLE_TYPE = "plugins.surveys.table.type";
@@ -45,7 +45,7 @@ public final class SurveysConstants {
 	public static final String ALERT_MISSING_CONTACT_HOSPITAL = "plugins.surveys.alert.missing.contact.hospital";
 	public static final String ALERT_MISSING_CONTACT_PHONE = "plugins.surveys.alert.missing.contact.phone";
 	public static final String ALERT_MISSING_CONTACT_EMAIL = "plugins.surveys.alert.missing.contact.email";	
-	public static final String ALERT_MISSING_RESPONSE_SUBMITTER = "plugins.surveys.alert.missing.answer.submitter";
+	public static final String ALERT_MISSING_RESPONSE_SUBMITTER = "plugins.surveys.alert.missing.answer.contact";
 	public static final String ALERT_MISSING_RESPONSE_FIELD = "plugins.surveys.alert.missing.answer.question";	
 	public static final String ALERT_MISSING_RESPONSE_DATE = "plugins.surveys.alert.missing.answer.date";
 	public static final String ALERT_MISSING_RESPONSE_TEXT = "plugins.surveys.alert.missing.answer.text";

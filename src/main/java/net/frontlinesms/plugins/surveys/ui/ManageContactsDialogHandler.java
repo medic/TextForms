@@ -24,11 +24,12 @@ import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
 
@@ -48,8 +49,8 @@ public class ManageContactsDialogHandler implements ThinletUiEventHandler {
 	
 	private final Object mainDialog;
 	
-	private HospitalContact contact;
-	private HospitalContactDao hospitalContactDao;
+	private Contact contact;
+	private ContactDao contactDao;
 	
 	private final Object textName;
 	private final Object textOrganization;
@@ -66,14 +67,20 @@ public class ManageContactsDialogHandler implements ThinletUiEventHandler {
 		this.textOrganization = this.ui.find(this.mainDialog, "textOrganization");
 		this.textPhone = this.ui.find(this.mainDialog, "textPhone");
 		this.textEmail = this.ui.find(this.mainDialog, "textEmail");
-		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		this.contactDao = (ContactDao) appContext.getBean("contactDao", ContactDao.class);
 	}
 	
-	public void show(HospitalContact contact) {
+	public void show(Contact contact) {
 		this.contact = contact;
 		if (contact != null) {
 			this.ui.setText(this.textName, contact.getName());
-			this.ui.setText(this.textOrganization, contact.getHospitalId());
+			OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
+			if (organizationDetails != null) {
+				this.ui.setText(this.textOrganization, organizationDetails.getOrganizationId());
+			}
+			else {
+				this.ui.setText(this.textOrganization, "");	
+			}
 			this.ui.setText(this.textPhone, contact.getPhoneNumber());
 			this.ui.setText(this.textEmail, contact.getEmailAddress());
 		}
@@ -100,16 +107,23 @@ public class ManageContactsDialogHandler implements ThinletUiEventHandler {
 		}
 		else if (this.contact != null) {
 			this.contact.setName(contactName);
-			this.contact.setHospitalId(contactOrganization);
+			OrganizationDetails details = this.contact.getDetails(OrganizationDetails.class);
+			if(details != null) {
+				details.setOrganizationId(contactOrganization);
+			}
+			else {
+				this.contact.addDetails(new OrganizationDetails(contactOrganization));
+			}
 			this.contact.setPhoneNumber(contactPhone);
 			this.contact.setEmailAddress(contactEmail);
-			this.hospitalContactDao.updateHospitalContact(this.contact);
+			this.contactDao.updateContact(this.contact);
 			this.callback.refreshContact(this.contact);
 			this.ui.remove(dialog);
 		}
 		else {
-			this.contact = new HospitalContact(contactName, contactPhone, contactEmail, true, contactOrganization);
-			this.hospitalContactDao.saveHospitalContact(this.contact);
+			this.contact = new Contact(contactName, contactPhone, null, contactEmail, null, true);
+			this.contact.addDetails(new OrganizationDetails(contactOrganization));
+			this.contactDao.saveContact(this.contact);
 			this.callback.refreshContact(this.contact);
 			this.ui.remove(dialog);
 		}

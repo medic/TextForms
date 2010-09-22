@@ -6,13 +6,18 @@ import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
 
+import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.domain.Contact;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.data.repository.ContactDao;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
-import net.frontlinesms.plugins.surveys.search.HospitalContactQueryGenerator;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
+import net.frontlinesms.plugins.surveys.search.ContactQueryGenerator;
 import net.frontlinesms.plugins.surveys.ui.components.AdvancedTableActionDelegate;
 import net.frontlinesms.plugins.surveys.ui.components.PagedAdvancedTableController;
 import net.frontlinesms.ui.ThinletUiEventHandler;
@@ -25,7 +30,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  * see {@link "http://www.frontlinesms.net"} for more details. 
  * copyright owned by Kiwanja.net
  */
-public class ManageContactsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate {
+public class ManageContactsPanelHandler implements ThinletUiEventHandler, AdvancedTableActionDelegate, EventObserver {
 	
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageContactsPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageContactsPanel.xml";
@@ -51,16 +56,18 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 	private final Object labelEmailValue;
 	private final Object labelAnswerValue;
 	
-	private final HospitalContactQueryGenerator queryGenerator;
+	private final ContactQueryGenerator queryGenerator;
 	private final PagedAdvancedTableController tableController;
 	
-	private final HospitalContactDao hospitalContactDao;
+	private final ContactDao contactDao;
 
-	public ManageContactsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback) {
+	public ManageContactsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback, FrontlineSMS frontlineController) {
 		LOG.debug("ManageContactsPanelHandler");
 		this.ui = ui;
 		this.appContext = appContext;
 		this.callback = callback;
+		frontlineController.getEventBus().registerObserver(this);
+		
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 		
 		this.editDialog = new ManageContactsDialogHandler(this.ui, this.appContext, callback);
@@ -77,18 +84,17 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 		this.labelEmailValue = this.ui.find(this.mainPanel, "labelEmailValue");
 		this.labelAnswerValue = this.ui.find(this.mainPanel, "labelAnswerValue");
 		
-		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		this.contactDao = (ContactDao) appContext.getBean("contactDao", ContactDao.class);
 		
 		this.tableController = new PagedAdvancedTableController(this, this.appContext, this.ui, this.tableContacts, this.panelContacts);
-		this.tableController.putHeader(HospitalContact.class, 
-									   new String[]{getI18NString(SurveysConstants.TABLE_NAME), 
-													getI18NString(SurveysConstants.TABLE_ORGANIZATION), 										
-													getI18NString(SurveysConstants.TABLE_PHONE), 
-													getI18NString(SurveysConstants.TABLE_ANSWER)}, 
-									   new String[]{"getName", "getHospitalId", "getPhoneNumber", "getLastAnswerText"},
-									   new String[]{"/icons/user.png", "/icons/organization.png", "/icons/phone_number.png", "/icons/date.png"},
-									   new String []{"name", "hospitalId", "phoneNumber", "lastAnswer"});
-		this.queryGenerator = new HospitalContactQueryGenerator(this.appContext, this.tableController);
+		this.tableController.putHeader(Contact.class, 
+									   new String[]{getI18NString(SurveysConstants.TABLE_NAME), 										
+													getI18NString(SurveysConstants.TABLE_PHONE),
+													getI18NString(SurveysConstants.TABLE_EMAIL)}, 
+									   new String[]{"getName", "getPhoneNumber", "getEmailAddress"},
+									   new String[]{"/icons/user.png", "/icons/phone_number.png", "/icons/email.png"},
+									   new String []{"name", "phoneNumber", "emailAddress"});
+		this.queryGenerator = new ContactQueryGenerator(this.appContext, this.tableController);
 		this.tableController.setQueryGenerator(this.queryGenerator);
 		this.tableController.setResultsPhrases(getI18NString(SurveysConstants.TABLE_RESULTS), 
 											   getI18NString(SurveysConstants.TABLE_NO_RESULTS), 
@@ -121,15 +127,15 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 	
 	public void deleteContact() {
 		LOG.debug("deleteContact");
-		HospitalContact contact = this.getSelectedContact();
+		Contact contact = this.getSelectedContact();
 		if (contact != null) {
-			this.hospitalContactDao.deleteHospitalContact(contact);
+			this.contactDao.deleteContact(contact);
 		}
 		this.ui.removeConfirmationDialog();
 		this.refreshContacts(null);
 	}
 	
-	public void refreshContacts(HospitalContact contact) {
+	public void refreshContacts(Contact contact) {
 		String searchText = this.ui.getText(this.searchContact);
 		if (searchText.equalsIgnoreCase(SurveysMessages.getMessageSearchContacts())) {
 			this.queryGenerator.startSearch("");
@@ -164,10 +170,10 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 		}	
 	}
 	
-	private HospitalContact getSelectedContact() {
+	private Contact getSelectedContact() {
 		final Object selectedRow = this.ui.getSelectedItem(this.tableContacts);
 		if (selectedRow != null) {
-			return (HospitalContact)this.ui.getAttachedObject(selectedRow, HospitalContact.class);
+			return (Contact)this.ui.getAttachedObject(selectedRow, Contact.class);
 		}
 		return null;
 	}
@@ -190,20 +196,22 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 	
 	public void selectionChanged(Object selectedObject) {
 		LOG.debug("selectionChanged");
-		HospitalContact contact = this.getSelectedContact();
+		Contact contact = this.getSelectedContact();
 		if (contact != null) {
 			LOG.debug("contact: %s" + contact.getName());
 			this.ui.setEnabled(this.buttonEditContact, true);
 			this.ui.setEnabled(this.buttonDeleteContact, true);
 			this.ui.setEnabled(this.buttonViewAnswers, true);
 			this.ui.setText(this.labelNameValue, contact.getName());
-			this.ui.setText(this.labelHospitalValue, contact.getHospitalId());
 			this.ui.setText(this.labelPhoneValue, contact.getPhoneNumber());
 			this.ui.setText(this.labelEmailValue, contact.getEmailAddress());
-			if (contact.getLastAnswer() != null) {
-				this.ui.setText(this.labelAnswerValue, contact.getLastAnswer().toString());
+			OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
+			if(details != null) {
+				this.ui.setText(this.labelHospitalValue, details.getOrganizationId());
+				this.ui.setText(this.labelAnswerValue, details.getLastAnswerText());
 			}
 			else {
+				this.ui.setText(this.labelHospitalValue, "");
 				this.ui.setText(this.labelAnswerValue, "");
 			}
 		}
@@ -235,6 +243,15 @@ public class ManageContactsPanelHandler implements ThinletUiEventHandler, Advanc
 		}
 		else {
 			this.ui.setForeground(Color.BLACK);
+		}
+	}
+
+	public void notify(FrontlineEventNotification notification) {
+		if (notification instanceof DatabaseEntityNotification<?>) {
+			DatabaseEntityNotification<?> databaseEntityNotification = (DatabaseEntityNotification<?>)notification;
+			if (databaseEntityNotification.getDatabaseEntity() instanceof Contact) {
+				this.queryGenerator.refresh();
+			}
 		}
 	}
 }

@@ -8,14 +8,15 @@ import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.data.repository.MessageDao;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionFactory;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 import net.frontlinesms.plugins.surveys.upload.CSVUploader;
 import net.frontlinesms.plugins.surveys.upload.DocumentUploader;
@@ -39,9 +40,9 @@ public class SurveysDebug {
 	private MessageDao messageDao;
 	
 	/**
-	 * HospitalContactDao
+	 * ContactDao
 	 */
-	private HospitalContactDao hospitalContactDao;
+	private ContactDao contactDao;
 	
 	/**
 	 * QuestionDao
@@ -58,10 +59,10 @@ public class SurveysDebug {
 	 * @param appContext ApplicationContext
 	 */
 	public SurveysDebug(ApplicationContext appContext) {
-		this.messageDao = (MessageDao)appContext.getBean("messageDao");
-		this.hospitalContactDao = (HospitalContactDao)appContext.getBean("hospitalContactDao");
-		this.questionDao = (QuestionDao)appContext.getBean("questionDao");
-		this.answerDao = (AnswerDao)appContext.getBean("answerDao");
+		this.messageDao = (MessageDao)appContext.getBean("messageDao", MessageDao.class);
+		this.contactDao = (ContactDao)appContext.getBean("contactDao", ContactDao.class);
+		this.questionDao = (QuestionDao)appContext.getBean("questionDao", QuestionDao.class);
+		this.answerDao = (AnswerDao)appContext.getBean("answerDao", AnswerDao.class);
 	}
 	
 	public void createDebugContacts() {
@@ -69,14 +70,15 @@ public class SurveysDebug {
 		createContact("Dale Zak", "+13063413644", "dalezak@gmail.com", true, "paho.org/HealthC_ID/1");
 	}
 	
-	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String hospitalId) {
+	public void createContact(String name, String phoneNumber, String emailAddress, boolean active, String organizationId) {
 		try {
-			HospitalContact hospitalContact = new HospitalContact(name, phoneNumber, emailAddress, active, hospitalId);
-			this.hospitalContactDao.saveHospitalContact(hospitalContact);
-			LOG.debug("Contact Created [%s, %s, %s, %s]", hospitalContact.getName(), hospitalContact.getPhoneNumber(), hospitalContact.getEmailAddress(), hospitalContact.getHospitalId());
+			Contact contact = new Contact(name, phoneNumber, null, emailAddress, null, active);
+			contact.addDetails(new OrganizationDetails(organizationId));
+			this.contactDao.saveContact(contact);
+			LOG.debug("Contact Created [%s, %s, %s, %s]", contact.getName(), contact.getPhoneNumber(), contact.getEmailAddress(), organizationId);
 		} 
 		catch (DuplicateKeyException ex) {
-			LOG.error("Contact Exists [%s, %s, %s, %s]", name, phoneNumber, emailAddress, hospitalId);
+			LOG.error("Contact Exists [%s, %s, %s, %s]", name, phoneNumber, emailAddress, organizationId);
 		}
 	}
 	
@@ -178,7 +180,7 @@ public class SurveysDebug {
 		LOG.debug("createUploadXMLDocument");
 		DocumentUploader document = new XMLUploader();
 		document.setPhoneNumber(this.getAuthor());
-		document.setHospitalId(this.getHospitalId());
+		document.setOrganizationId(this.getOrganizationId());
 		for (Answer answer : this.answerDao.getAllAnswers()) {
 			document.addAnswer(answer);
 		}
@@ -190,7 +192,7 @@ public class SurveysDebug {
 		LOG.debug("createUploadJSONDocument");
 		DocumentUploader document = new JSONUploader();
 		document.setPhoneNumber(this.getAuthor());
-		document.setHospitalId(this.getHospitalId());
+		document.setOrganizationId(this.getOrganizationId());
 		for (Answer answer : this.answerDao.getAllAnswers()) {
 			document.addAnswer(answer);
 		}
@@ -201,7 +203,7 @@ public class SurveysDebug {
 		LOG.debug("createUploadCSVDocument");
 		DocumentUploader document = new CSVUploader();
 		document.setPhoneNumber(this.getAuthor());
-		document.setHospitalId(this.getHospitalId());
+		document.setOrganizationId(this.getOrganizationId());
 		for (Answer answer : this.answerDao.getAllAnswers()) {
 			document.addAnswer(answer);
 		}
@@ -212,7 +214,7 @@ public class SurveysDebug {
 		LOG.debug("createUploadGoogleDocument");
 		DocumentUploader document = new ResourceFinderUploader();
 		document.setPhoneNumber(this.getAuthor());
-		document.setHospitalId(this.getHospitalId());
+		document.setOrganizationId(this.getOrganizationId());
 		for (Answer answer : this.answerDao.getAllAnswers()) {
 			document.addAnswer(answer);
 		}
@@ -257,7 +259,7 @@ public class SurveysDebug {
 	}
 	
 	private String getAuthor() {
-		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
+		for (Contact contact : this.contactDao.getAllContacts()) {
 			if (contact.getPhoneNumber() != null) {
 				return contact.getPhoneNumber();
 			}
@@ -268,9 +270,10 @@ public class SurveysDebug {
 		return null;
 	}
 	
-	private String getHospitalId() {
-		for (HospitalContact contact : this.hospitalContactDao.getAllHospitalContacts()) {
-			return contact.getHospitalId();
+	private String getOrganizationId() {
+		for (Contact contact : this.contactDao.getAllContacts()) {
+			OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
+			return organizationDetails != null ? organizationDetails.getOrganizationId() : null;
 		}
 		return null;
 	}

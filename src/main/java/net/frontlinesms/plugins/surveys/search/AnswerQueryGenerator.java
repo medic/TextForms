@@ -12,6 +12,11 @@ import org.springframework.context.ApplicationContext;
 
 import com.ibm.icu.util.Calendar;
 
+/**
+ * AnswerQueryGenerator
+ * @author dalezak
+ *
+ */
 public class AnswerQueryGenerator extends QueryGenerator {
 
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(AnswerQueryGenerator.class);
@@ -37,11 +42,11 @@ public class AnswerQueryGenerator extends QueryGenerator {
 	private String getSearchQuery(String text, String sortColumn, boolean sortAscending, String dateString, String phoneNumber) {
 		LOG.debug("text=%s date=%S contact=%s", text, dateString, phoneNumber);
 		String query = "SELECT fr FROM Answer fr";
-		query += " WHERE (lower(fr.hospitalId) LIKE lower('%"+text+"%')";
+		query += " WHERE (lower(fr.organizationId) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.question.name) LIKE lower('%"+text+"%')";
 		query += " OR lower(fr.question.keyword) LIKE lower('%"+text+"%'))";
 		if (phoneNumber != null && phoneNumber.length() > 0) {
-			query += " AND lower(fr.submitter.phoneNumber) LIKE lower('%"+phoneNumber+"%')";
+			query += " AND lower(fr.contact.phoneNumber) LIKE lower('%"+phoneNumber+"%')";
 		}
 		if (dateString != null && dateString.length() > 0) {
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

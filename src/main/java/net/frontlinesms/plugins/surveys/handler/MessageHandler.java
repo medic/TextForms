@@ -77,7 +77,7 @@ public abstract class MessageHandler {
 	 * @param limit number of times to split the string
 	 * @return array of strings
 	 */
-	protected String[] toWords(String message, int limit) {
+	protected String[] getWords(String message, int limit) {
 		if (message != null) {
 			return message.replaceFirst("[\\s]", " ").split(" ", limit);
 		}

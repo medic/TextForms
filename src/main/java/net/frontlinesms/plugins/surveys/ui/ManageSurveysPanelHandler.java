@@ -25,10 +25,15 @@ import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
 
+import net.frontlinesms.FrontlineSMS;
+import net.frontlinesms.data.events.DatabaseEntityNotification;
+import net.frontlinesms.events.EventObserver;
+import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.surveys.SurveysCallback;
 import net.frontlinesms.plugins.surveys.SurveysConstants;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
+import net.frontlinesms.plugins.surveys.SurveysPluginController;
 import net.frontlinesms.plugins.surveys.data.domain.Survey;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.repository.SurveyDao;
@@ -46,14 +51,16 @@ import net.frontlinesms.ui.UiGeneratorController;
  * see {@link "http://www.frontlinesms.net"} for more details. 
  * copyright owned by Kiwanja.net
  */
-public class ManageSurveysPanelHandler extends ExtendedThinlet implements ThinletUiEventHandler, AdvancedTableActionDelegate {
+public class ManageSurveysPanelHandler extends ExtendedThinlet implements ThinletUiEventHandler, AdvancedTableActionDelegate, EventObserver {
 	
 	private static final long serialVersionUID = 1L;
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(ManageSurveysPanelHandler.class);
 	private static final String PANEL_XML = "/ui/plugins/surveys/manageSurveysPanel.xml";
 	
+	private final FrontlineSMS frontline;
 	private final UiGeneratorController ui;
 	private final ApplicationContext appContext;
+	private final SurveysPluginController pluginController;
 	private final SurveysCallback callback;
 	
 	private final Object mainPanel;
@@ -69,10 +76,14 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 	
 	private final SurveyDao surveyDao;
 	
-	public ManageSurveysPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback) {
+	public ManageSurveysPanelHandler(UiGeneratorController ui, ApplicationContext appContext, SurveysCallback callback, FrontlineSMS frontlineController, SurveysPluginController pluginController) {
 		LOG.debug("ManageSurveysPanelHandler");
+		this.frontline = frontlineController;
 		this.ui = ui;
 		this.appContext = appContext;
+		this.pluginController = pluginController;
+		frontlineController.getEventBus().registerObserver(this);
+		
 		this.callback = callback;
 		this.mainPanel = this.ui.loadComponentFromFile(PANEL_XML, this);
 		
@@ -98,8 +109,7 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 		focusLost(this.searchSurveys);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private PagedAdvancedTableController getPagedAdvancedTableController(Object table, Object panel, Class clazz, String[] columnNames, String[] columnMethods, String[] columnIcons, String[] columnSorts) {
+	private PagedAdvancedTableController getPagedAdvancedTableController(Object table, Object panel, Class<?> clazz, String[] columnNames, String[] columnMethods, String[] columnIcons, String[] columnSorts) {
 		PagedAdvancedTableController tableController = new PagedAdvancedTableController(this, appContext, ui, table, panel);
 		tableController.putHeader(clazz, columnNames, columnMethods, columnIcons, columnSorts);
 		tableController.setResultsPhrases(getI18NString(SurveysConstants.TABLE_RESULTS), 
@@ -152,6 +162,11 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 	
 	public void sendSurvey() {
 		LOG.debug("sendSurvey");
+		SendSurveyDialogHandler sendSurveyDialog = new SendSurveyDialogHandler(frontline, ui, appContext, pluginController);
+		Survey survey = this.getSelectedSurvey();
+		if (survey != null) {
+			sendSurveyDialog.show(survey);
+		}
 	}
 	
 	public void searchSurveys(Object searchSurveys, Object tableSurveys) {
@@ -233,5 +248,14 @@ public class ManageSurveysPanelHandler extends ExtendedThinlet implements Thinle
 		this.createTableCell(row, question.getSchemaName());
 		this.createTableCell(row, question.getInfoSnippet());
 		return row;
+	}
+	
+	public void notify(FrontlineEventNotification notification) {
+		if (notification instanceof DatabaseEntityNotification<?>) {
+			DatabaseEntityNotification<?> databaseEntityNotification = (DatabaseEntityNotification<?>)notification;
+			if (databaseEntityNotification.getDatabaseEntity() instanceof Survey) {
+				this.queryGenerator.refresh();
+			}
+		}
 	}
 }

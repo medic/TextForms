@@ -40,6 +40,7 @@ public class SurveysPluginController extends BasePluginController {
 	/**
 	 * SurveysListener
 	 */
+	@SuppressWarnings("unused")
 	private SurveysListener listener;
 	
 	/**
@@ -78,7 +79,7 @@ public class SurveysPluginController extends BasePluginController {
 
 	@Override
 	protected Object initThinletTab(UiGeneratorController uiController) {
-		this.tabController = new SurveysThinletTabController(this.frontlineController, uiController, this.appContext);
+		this.tabController = new SurveysThinletTabController(frontlineController, uiController, appContext, this);
 		return this.tabController.getTab();
 	}
 

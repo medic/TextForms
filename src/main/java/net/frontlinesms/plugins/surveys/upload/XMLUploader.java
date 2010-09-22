@@ -67,8 +67,8 @@ public class XMLUploader extends DocumentUploader {
 			this.addElement("author", this.phoneNumber);
 		}
 		//hospital id
-		if (this.hospitalId != null) {
-			this.addElement("hospital", this.hospitalId);
+		if (this.organizationId != null) {
+			this.addElement("hospital", this.organizationId);
 		}
 		//add namespaces
 		for (Namespace namespace : this.namespaces.values()) {

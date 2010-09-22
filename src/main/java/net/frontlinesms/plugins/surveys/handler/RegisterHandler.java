@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
 import net.frontlinesms.plugins.surveys.SurveysProperties;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 
 import org.springframework.context.ApplicationContext;
 
@@ -23,9 +24,9 @@ public class RegisterHandler extends MessageHandler {
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(RegisterHandler.class);
 	
 	/**
-	 * HospitalContactDao
+	 * ContactDao
 	 */
-	protected HospitalContactDao hospitalContactDao;
+	protected ContactDao contactDao;
 	
 	/**
 	 * RegisterHandler
@@ -38,7 +39,7 @@ public class RegisterHandler extends MessageHandler {
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		this.contactDao = (ContactDao) appContext.getBean("contactDao", ContactDao.class);
 	}
 	
 	/**
@@ -55,14 +56,20 @@ public class RegisterHandler extends MessageHandler {
 	@Override
 	public boolean handleMessage(FrontlineMessage message) {
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = this.getWords(message.getTextContent(), 2);
 		if (words.length == 2) {
-			HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+			Contact contact = this.contactDao.getFromMsisdn(message.getSenderMsisdn());
 			if (contact != null) {
-				contact.setHospitalId(words[1]);
+				OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
+				if (details != null) {
+					details.setOrganizationId(words[1]);
+				}
+				else {
+					contact.addDetails(new OrganizationDetails(words[1]));
+				}
 				try {
-					this.hospitalContactDao.updateHospitalContact(contact);
-					LOG.debug("HospitalContact '%s' Updated: %s", contact.getName(), contact.getHospitalId());
+					this.contactDao.updateContact(contact);
+					LOG.debug("Contact '%s' Updated: %s", contact.getName(), words[1]);
 					sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
 					return true;
 				} 
@@ -72,10 +79,11 @@ public class RegisterHandler extends MessageHandler {
 				}
 			}
 			else {
-				HospitalContact newContact = new HospitalContact(null, message.getSenderMsisdn(), null, true, words[1]);
+				Contact newContact = new Contact(null, message.getSenderMsisdn(), null, null, null, true);
+				newContact.addDetails(new OrganizationDetails(words[1]));
 				try {
-					this.hospitalContactDao.saveHospitalContact(newContact);
-					LOG.debug("HospitalContact '%s' Saved: %s", newContact.getName(), newContact.getHospitalId());
+					this.contactDao.saveContact(newContact);
+					LOG.debug("Contact '%s' Saved: %s", newContact.getName(), words[1]);
 					sendReply(message.getSenderMsisdn(), SurveysMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
 					return true;
 				} 

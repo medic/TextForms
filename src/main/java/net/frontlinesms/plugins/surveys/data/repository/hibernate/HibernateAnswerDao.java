@@ -2,8 +2,8 @@ package net.frontlinesms.plugins.surveys.data.repository.hibernate;
 
 import java.util.List;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.repository.hibernate.BaseHibernateDao;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
@@ -44,22 +44,22 @@ public class HibernateAnswerDao extends BaseHibernateDao<Answer> implements Answ
 		return super.getList(c);
 	}
 	
-	public List<Answer> getAnswersForHospitalId(String hospitalId) {
+	public List<Answer> getAnswersForOrganizationId(String organizationId) {
 		DetachedCriteria c = super.getCriterion();
-		c.add(Restrictions.eq("hospitalId", hospitalId));
+		c.add(Restrictions.eq("organizationId", organizationId));
 		return super.getList(c);
 	}
 	
-	public List<Answer> getAnswersForSubmitter(HospitalContact contact) {
+	public List<Answer> getAnswersForContact(Contact contact) {
 		DetachedCriteria c = super.getCriterion();
-		c.add(Restrictions.eq("submitter", contact));
+		c.add(Restrictions.eq("contact", contact));
 		return super.getList(c);
 	}
 	
-	public List<Answer> getAnswers(Question question, HospitalContact contact) {
+	public List<Answer> getAnswers(Question question, Contact contact) {
 		DetachedCriteria c = super.getCriterion();
 		c.add(Restrictions.eq("question", question));
-		c.add(Restrictions.eq("submitter", contact));
+		c.add(Restrictions.eq("contact", contact));
 		return super.getList(c);
 	}
 	

@@ -6,17 +6,18 @@ import java.util.List;
 import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.data.DuplicateKeyException;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.SurveysMessages;
 import net.frontlinesms.plugins.surveys.SurveysProperties;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.repository.QuestionDao;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerDao;
 import net.frontlinesms.plugins.surveys.data.repository.AnswerFactory;
-import net.frontlinesms.plugins.surveys.data.repository.HospitalContactDao;
 import net.frontlinesms.plugins.surveys.handler.MessageHandler;
 import net.frontlinesms.plugins.surveys.upload.DocumentUploader;
 import net.frontlinesms.plugins.surveys.upload.DocumentUploaderFactory;
@@ -42,9 +43,9 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 	protected AnswerDao answerDao;
 	
 	/**
-	 * HospitalContactDao
+	 * ContactDao
 	 */
-	protected HospitalContactDao hospitalContactDao;
+	protected ContactDao contactDao;
 	
 	/**
 	 * QuestionHandler
@@ -62,9 +63,9 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 	 * @param appContext appContext
 	 */
 	public void setApplicationContext(ApplicationContext appContext) { 
-		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
-		this.answerDao = (AnswerDao) appContext.getBean("answerDao");
-		this.hospitalContactDao = (HospitalContactDao) appContext.getBean("hospitalContactDao");
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
+		this.answerDao = (AnswerDao) appContext.getBean("answerDao", AnswerDao.class);
+		this.contactDao = (ContactDao) appContext.getBean("contactDao", ContactDao.class);
 	}
 	
 	/**
@@ -78,7 +79,7 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 	public boolean handleMessage(FrontlineMessage message) {
 		boolean successful = false;
 		LOG.debug("handleMessage: %s", message.getTextContent());
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = this.getWords(message.getTextContent(), 2);
 		if (words.length == 1) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
@@ -91,15 +92,22 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 		else if (isValidAnswer(words)) {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				HospitalContact contact = this.hospitalContactDao.getHospitalContactByPhoneNumber(message.getSenderMsisdn());
+				Contact contact = this.contactDao.getFromMsisdn(message.getSenderMsisdn());
 				if (contact != null) {
-					Answer answer = AnswerFactory.createAnswer(message, contact, new Date(), contact.getHospitalId(), question);
+					OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
+					String organizationId = details != null ? details.getOrganizationId() : null;
+					if (details != null) {
+						details.setLastAnswer(new Date());
+					}
+					else {
+						contact.addDetails(new OrganizationDetails(new Date()));
+					}
+					Answer answer = AnswerFactory.createAnswer(message, contact, new Date(), organizationId, question);
 					if (answer != null) {
 						this.answerDao.saveAnswer(answer);
 						LOG.debug("Answer Saved: %s", answer.getClass());
 						try {
-							contact.setLastAnswer(new Date());
-							this.hospitalContactDao.updateHospitalContact(contact);
+							this.contactDao.updateContact(contact);
 						} 
 						catch (DuplicateKeyException ex) {
 							LOG.error("DuplicateKeyException: %s", ex);
@@ -164,8 +172,8 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 			LOG.debug("publishAnswer: %s", answer);
 			DocumentUploader documentUploader = DocumentUploaderFactory.createDocumentUploader();
 			if (documentUploader != null) {
-				documentUploader.setPhoneNumber(answer.getSubmitterPhone());
-				documentUploader.setHospitalId(answer.getSubmitterHospitalId());
+				documentUploader.setPhoneNumber(answer.getContactPhone());
+				documentUploader.setOrganizationId(answer.getContactOrganizationId());
 				documentUploader.addAnswer(answer);
 				return documentUploader.upload();
 			}

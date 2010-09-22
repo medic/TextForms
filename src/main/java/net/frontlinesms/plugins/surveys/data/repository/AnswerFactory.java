@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ServiceLoader;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
@@ -59,21 +59,21 @@ public final class AnswerFactory {
 	/**
 	 * Create instance of QuestionRespone for associated Question question
 	 * @param message FrontlineMessage
-	 * @param submitter HospitalContact
+	 * @param contact Contact
 	 * @param dateSubmitted date submitted
-	 * @param hospitalId Hospital ID
+	 * @param organizationId Hospital ID
 	 * @param question Question
 	 * @return Answer
 	 */
-	public static Answer createAnswer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, Question question) {
+	public static Answer createAnswer(FrontlineMessage message, Contact contact, Date dateSubmitted, String organizationId, Question question) {
 		for (Answer answerClass : getAnswerClasses()) {
 			if (answerClass.isAnswerFor(question)) {
 				try {
 					Answer answer = answerClass.getClass().newInstance();
 					answer.setMessage(message);
-					answer.setSubmitter(submitter);
+					answer.setContact(contact);
 					answer.setDateSubmitted(dateSubmitted);
-					answer.setHospitalId(hospitalId);
+					answer.setOrganizationId(organizationId);
 					answer.setQuestion(question);
 					LOG.debug("Answer Created: %s", answer.getClass().getSimpleName());
 					return answer;

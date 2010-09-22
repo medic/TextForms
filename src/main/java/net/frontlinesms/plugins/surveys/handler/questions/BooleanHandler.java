@@ -37,7 +37,7 @@ public class BooleanHandler extends CodedHandler<BooleanQuestion> {
 	
 	@Override
 	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = this.getWords(message.getTextContent(), 2);
 		return words != null && words.length == 1 && isValidBoolean(words[0]);
 	}
 	

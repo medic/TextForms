@@ -2,7 +2,7 @@ package net.frontlinesms.plugins.surveys.data.repository;
 
 import java.util.List;
 
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 
@@ -46,17 +46,17 @@ public interface AnswerDao {
 	
 	/**
 	 * Get all Answers for a given Hospital ID
-	 * @param hospitalId Hospital ID
+	 * @param organizationId Hospital ID
 	 * @return collection of Answers
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Answer> getAnswersForHospitalId(String hospitalId);
+	public List<Answer> getAnswersForOrganizationId(String organizationId);
 	
 	/**
-	 * Get all Answers for given submitter HospitalContact
-	 * @param contact HospitalContact
+	 * Get all Answers for given contact Contact
+	 * @param contact Contact
 	 * @return collection of Answers
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Answer> getAnswersForSubmitter(HospitalContact contact);
+	public List<Answer> getAnswersForContact(Contact contact);
 }

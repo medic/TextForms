@@ -2,8 +2,8 @@
 <dialog name="browseDataDialog" icon="/icons/browse.png" text="i18n.plugins.surveys.browse.data" 
 		modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
 
-	<label name="labelSubmitter" text="i18n.plugins.surveys.table.submitter" icon="/icons/user_sender.png" for="comboSubmitter" valign="top" />
-	<combobox name="comboSubmitter" editable="false" weightx="1" action="submitterChanged(this, textHospital)" />
+	<label name="labelContact" text="i18n.plugins.surveys.table.contact" icon="/icons/user_sender.png" for="comboContact" valign="top" />
+	<combobox name="comboContact" editable="false" weightx="1" action="contactChanged(this, textHospital)" />
 	
 	<label name="labelHospital" text="i18n.plugins.surveys.table.organization" icon="/icons/organization.png" for="textHospital" valign="top" />
 	<textarea name="textHospital" rows="1" columns="40" weightx="1" editable="false" enabled="false" />

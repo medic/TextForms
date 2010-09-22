@@ -40,7 +40,7 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceQuestion> {
 	@Override
 	protected boolean isValidAnswer(String[] words) {
 		if (words != null && words.length > 1) {
-			Question question = this.questionDao.getQuestionForKeyword(words[0]);
+			Question question = questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
 				List<String> choices = question.getChoices();
 				return isValidInteger(choices, words[1]) || isValidString(choices, words[1]);
@@ -54,7 +54,7 @@ public class MultiChoiceHandler extends CodedHandler<MultiChoiceQuestion> {
 		Question question = this.callbacks.get(message.getSenderMsisdn());
 		if (question != null) {
 			List<String> choices = question.getChoices();
-			String[] words = this.toWords(message.getTextContent(), 2);
+			String[] words = getWords(message.getTextContent(), 2);
 			if (words != null && words.length == 1 && (isValidInteger(choices, words[0]) || isValidString(choices, words[0]))) {
 				return true;
 			}

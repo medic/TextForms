@@ -14,9 +14,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
+import net.frontlinesms.plugins.surveys.data.domain.OrganizationDetails;
 import net.frontlinesms.plugins.surveys.data.domain.SurveyResponse;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
@@ -29,11 +30,11 @@ public abstract class Answer<Q extends Question> {
 	
 	public Answer() {}
 
-	public Answer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, Q question) {
+	public Answer(FrontlineMessage message, Contact contact, Date dateSubmitted, String organizationId, Q question) {
 		this.message = message;
-		this.submitter = submitter;
+		this.contact = contact;
 		this.dateSubmitted = dateSubmitted.getTime();
-		this.hospitalId = hospitalId;
+		this.organizationId = organizationId;
 		this.question = question;
 	}
 	
@@ -46,14 +47,14 @@ public abstract class Answer<Q extends Question> {
 	protected FrontlineMessage message;
 
 	@OneToOne(cascade={})
-	protected HospitalContact submitter;
+	protected Contact contact;
 
 	@OneToOne(cascade={})
 	protected SurveyResponse surveyResponse;
 	
 	protected long dateSubmitted;
 
-	protected String hospitalId;
+	protected String organizationId;
 	
 	@OneToOne(targetEntity=Question.class)
 	Q question;
@@ -81,40 +82,41 @@ public abstract class Answer<Q extends Question> {
 		return null;
 	}
 	
-	public HospitalContact getSubmitter() {
-		return submitter;
+	public Contact getContact() {
+		return contact;
 	}
 	
-	public String getSubmitterName() {
-		if (this.submitter != null) {
-			return this.submitter.getName();
+	public String getContactName() {
+		if (this.contact != null) {
+			return this.contact.getName();
 		}
 		return null;
 	}
 	
-	public String getSubmitterDisplayName() {
-		if (this.submitter != null) {
-			return this.submitter.getDisplayName();
+	public String getContactDisplayName() {
+		if (this.contact != null) {
+			return this.contact.getDisplayName();
 		}
 		return null;
 	}
 	
-	public String getSubmitterPhone() {
-		if (this.submitter != null) {
-			return this.submitter.getPhoneNumber();
+	public String getContactPhone() {
+		if (this.contact != null) {
+			return this.contact.getPhoneNumber();
 		}
 		return null;
 	}
 
-	public String getSubmitterHospitalId() {
-		if (this.submitter != null) {
-			return this.submitter.getHospitalId();
+	public String getContactOrganizationId() {
+		if (this.contact != null) {
+			OrganizationDetails organizationsDetails = contact.getDetails(OrganizationDetails.class);
+			return organizationsDetails != null ? organizationsDetails.getOrganizationId() : null;
 		}
 		return null;
 	}
 	
-	public void setSubmitter(HospitalContact submitter) {
-		this.submitter = submitter;
+	public void setContact(Contact contact) {
+		this.contact = contact;
 	}
 
 	public Date getDateSubmitted() {
@@ -130,12 +132,12 @@ public abstract class Answer<Q extends Question> {
 		this.dateSubmitted = dateSubmitted.getTime();
 	}
 
-	public String getHospitalId() {
-		return hospitalId;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setHospitalId(String hospitalId) {
-		this.hospitalId = hospitalId;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public Q getQuestion() {

@@ -5,9 +5,14 @@ import net.frontlinesms.plugins.surveys.ui.components.PagedAdvancedTableControll
 
 import org.springframework.context.ApplicationContext;
 
-public class HospitalContactQueryGenerator extends QueryGenerator {
+/**
+ * ContactQueryGenerator
+ * @author dalezak
+ *
+ */
+public class ContactQueryGenerator extends QueryGenerator {
 
-	public HospitalContactQueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable) {
+	public ContactQueryGenerator(ApplicationContext appCon, PagedAdvancedTableController resultsTable) {
 		super(appCon, resultsTable);
 	}
 
@@ -22,17 +27,16 @@ public class HospitalContactQueryGenerator extends QueryGenerator {
 	}
 
 	private String getSearchQuery(String text, String sortColumn, boolean sortAscending) {
-		String query = "SELECT hos FROM HospitalContact hos";
-		query += " WHERE lower(hos.name) LIKE lower('%"+text+"%')";
-		query += " OR lower(hos.emailAddress) LIKE lower('%"+text+"%')";
-		query += " OR lower(hos.phoneNumber) LIKE lower('%"+text+"%')";
-		query += " OR lower(hos.hospitalId) LIKE lower('%"+text+"%')";
+		String query = "SELECT c FROM Contact c";
+		query += " WHERE lower(c) LIKE lower('%"+text+"%')";
+		query += " OR lower(c) LIKE lower('%"+text+"%')";
+		query += " OR lower(c) LIKE lower('%"+text+"%')";
 		if (sortColumn != null && sortColumn.length() > 0) {
 			if (sortAscending) {
-				query += String.format(" ORDER BY hos.%s ASC", sortColumn);
+				query += String.format(" ORDER BY c.%s ASC", sortColumn);
 			}
 			else {
-				query += String.format(" ORDER BY hos.%s DESC", sortColumn);
+				query += String.format(" ORDER BY c.%s DESC", sortColumn);
 			}
 		}
 		return query;

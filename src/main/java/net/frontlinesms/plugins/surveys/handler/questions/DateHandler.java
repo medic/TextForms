@@ -60,7 +60,7 @@ public class DateHandler extends CallbackHandler<DateQuestion> {
 
 	@Override
 	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
-		String[] words = this.toWords(message.getTextContent(), 2);
+		String[] words = this.getWords(message.getTextContent(), 2);
 		return words != null && words.length == 1 && isValidDate(words[0]);
 	}
 

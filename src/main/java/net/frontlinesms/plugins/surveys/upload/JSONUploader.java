@@ -54,9 +54,9 @@ public class JSONUploader extends DocumentUploader {
 			}
 		}
 		//hospital id
-		if (this.hospitalId != null) {
+		if (this.organizationId != null) {
 			try {
-				json.put("hospital", this.hospitalId);
+				json.put("hospital", this.organizationId);
 			} 
 			catch (JSONException ex) {
 				LOG.error("JSONException: %s", ex);

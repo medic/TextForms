@@ -6,8 +6,8 @@ import java.util.List;
 
 import javax.persistence.Entity;
 
+import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
-import net.frontlinesms.plugins.surveys.data.domain.HospitalContact;
 import net.frontlinesms.plugins.surveys.data.domain.questions.ChecklistQuestion;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
 
@@ -18,8 +18,8 @@ public class ChecklistAnswer extends CodedAnswer<ChecklistQuestion> {
 		super();
 	}
 
-	public ChecklistAnswer(FrontlineMessage message, HospitalContact submitter, Date dateSubmitted, String hospitalId, ChecklistQuestion question) {
-		super(message, submitter, dateSubmitted, hospitalId, question);
+	public ChecklistAnswer(FrontlineMessage message, Contact contact, Date dateSubmitted, String organizationId, ChecklistQuestion question) {
+		super(message, contact, dateSubmitted, organizationId, question);
 	}
 	
 	@Override

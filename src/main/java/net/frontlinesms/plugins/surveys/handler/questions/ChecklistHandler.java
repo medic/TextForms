@@ -45,7 +45,7 @@ public class ChecklistHandler extends CodedHandler<ChecklistQuestion> {
 	public boolean shouldHandleCallbackMessage(FrontlineMessage message) {
 		Question question = this.callbacks.get(message.getSenderMsisdn());
 		if (question != null) {
-			String[] words = this.toWords(message.getTextContent(), 2);
+			String[] words = this.getWords(message.getTextContent(), 2);
 			return words != null && words.length == 1 && areValidChoices(question.getKeyword(), words[0]);
 		}
 		return false;
