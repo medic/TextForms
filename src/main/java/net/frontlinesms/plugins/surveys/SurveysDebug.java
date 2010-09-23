@@ -259,7 +259,9 @@ public class SurveysDebug {
 	}
 	
 	private String getAuthor() {
-		for (Contact contact : this.contactDao.getAllContacts()) {
+		List<Contact> contacts = this.contactDao.getAllContacts();
+		for(int index = contacts.size() - 1; index >= 0; index--){
+			Contact contact = contacts.get(index);
 			if (contact.getPhoneNumber() != null) {
 				return contact.getPhoneNumber();
 			}
@@ -271,9 +273,13 @@ public class SurveysDebug {
 	}
 	
 	private String getOrganizationId() {
-		for (Contact contact : this.contactDao.getAllContacts()) {
+		List<Contact> contacts = this.contactDao.getAllContacts();
+		for(int index = contacts.size() - 1; index >= 0; index--){
+			Contact contact = contacts.get(index);
 			OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
-			return organizationDetails != null ? organizationDetails.getOrganizationId() : null;
+			if (organizationDetails != null) {
+				return organizationDetails.getOrganizationId();
+			}
 		}
 		return null;
 	}
