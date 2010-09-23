@@ -24,6 +24,7 @@ import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.plugins.surveys.SurveysLogger;
 import net.frontlinesms.plugins.surveys.data.domain.answers.Answer;
 import net.frontlinesms.plugins.surveys.data.domain.questions.Question;
+import net.frontlinesms.ui.i18n.InternationalisationUtils;
 
 /**
  * SurveyResponse
@@ -98,6 +99,10 @@ public class SurveyResponse {
 		return contact != null ? contact.getPhoneNumber() : null;
 	}
 	
+	public String getContactName() {
+		return contact != null ? contact.getName() : null;
+	}
+	
 	@CollectionOfElements(targetElement=Answer.class, fetch=FetchType.EAGER)
 	@JoinTable(name="survey_answers", joinColumns=@JoinColumn(name="id"))
 	@Column(name="answers")
@@ -128,6 +133,10 @@ public class SurveyResponse {
 	
 	public Date getStarted() {
 		return started;
+	}
+	
+	public String getStartedString() {
+		return started != null ? InternationalisationUtils.getDatetimeFormat().format(started) : null;
 	}
 	
 	public void setStarted(Date started) {
