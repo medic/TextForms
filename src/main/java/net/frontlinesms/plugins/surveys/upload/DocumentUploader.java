@@ -1,11 +1,6 @@
 package net.frontlinesms.plugins.surveys.upload;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,53 +155,24 @@ public abstract class DocumentUploader implements ThinletUiEventHandler {
 	
 	/**
 	 * Upload document
-	 * @return
+	 * @return true if successful
 	 */
 	public boolean upload() {
 		String document = toString();
 		if (SurveysProperties.getPublishURL() != null) {
 			LOG.debug("url: %s document: %s", SurveysProperties.getPublishURL(), document);
 			try {
-				URL url = new URL(SurveysProperties.getPublishURL());
-			    URLConnection connection = url.openConnection();
-			    connection.setDoInput(true);
-			    connection.setDoOutput(true);
-			    connection.setUseCaches(false);
-			    connection.setDefaultUseCaches(false);
-			    connection.setRequestProperty ("Content-Type", this.getContentType());
-			    Writer writer = new OutputStreamWriter(connection.getOutputStream());
-			    try {
-			    	 writer.write(document);
-			    	 writer.flush(); 	
-			    }
-			    finally {
-			    	writer.close();	
-			    }		 
-			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			    try {
-			    	String inputLine = null;
-			    	StringBuilder response = new StringBuilder();
-			        while ((inputLine = reader.readLine()) != null) {
-			        	LOG.debug(inputLine);
-			        	response.append(inputLine);
-			        }
-				    LOG.debug("Answer: %s", response.toString());
-			    }
-			    finally {
-			    	reader.close();
-			    }
-			    return true;
-			}
-			catch (Exception ex) {
-				LOG.error("UploadException");
-				ex.printStackTrace();
-				return false;
+				new ThreadedUploader(SurveysProperties.getPublishURL(), this.getContentType(), document).run();
+				return true;
+			} 
+			catch (MalformedURLException e) {
+				LOG.error("MalformedURLException: %s", e);
 			}
 		}
 		else {
 			LOG.debug("No Document Uploader URL Specified");
 		}
-		return true;
+		return false;
 	}
 	
 	public Object getMainPanel() {

@@ -126,6 +126,7 @@ public class ManageQuestionsDialogHandler implements ThinletUiEventHandler {
 	
 	private void loadQuestions() {
 		for (Question questionClass : QuestionFactory.getQuestionClasses()) {
+			LOG.debug("Question: %s", questionClass.getTypeLabel());
 			Object comboBoxChoice = this.ui.createComboboxChoice(questionClass.getTypeLabel(), questionClass.getType());
 			this.ui.add(this.comboQuestionTypes, comboBoxChoice);
 		}

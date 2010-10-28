@@ -82,6 +82,7 @@ public class SurveysListener implements EventObserver {
 				LOG.debug("Removing %s Expired Callbacks", expiredCallbacks.size());
 				callbacks.removeAll(expiredCallbacks);
 			}
+			
 			//remove all surveys that have timed out
 			List<String> expiredSurveys = getExpiredSurveys();
 			if (expiredSurveys.size() > 0) {
@@ -90,8 +91,10 @@ public class SurveysListener implements EventObserver {
 					surveys.remove(telephone);
 				}
 			}
+			
 			//see if there is a handler that wants to handle the message
 			MessageHandler handler = getMessageHandler(message);
+			
 			//now, see if there is a callback out on that message
 			CallbackHandler<?> callbackHandler = getCallbackHandler(message);
 			if (handler != null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false) {

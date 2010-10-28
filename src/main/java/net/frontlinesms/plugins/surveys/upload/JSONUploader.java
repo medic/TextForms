@@ -20,7 +20,9 @@ public class JSONUploader extends DocumentUploader {
 
 	private static final SurveysLogger LOG = SurveysLogger.getLogger(JSONUploader.class);
 	
-	//Collection of additional items
+	/**
+	 * Collection of additional items
+	 */
 	private Map<String, Object> items = new HashMap<String, Object>();
 	
 	/**

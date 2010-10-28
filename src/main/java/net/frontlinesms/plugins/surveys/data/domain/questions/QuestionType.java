@@ -36,4 +36,9 @@ public class QuestionType {
 	 * PlainTextQuestion
 	 */
 	public static final String PLAINTEXT = "plaintext";
+	
+	/**
+	 * ImageQuestion
+	 */
+	public static final String IMAGE = "image";
 }

@@ -33,6 +33,7 @@ public final class SurveysConstants {
 	public static final String TYPE_BOOLEAN = "plugins.surveys.type.boolean";
 	public static final String TYPE_CHECKLIST = "plugins.surveys.type.checklist";
 	public static final String TYPE_MULTICHOICE = "plugins.surveys.type.multichoice";
+	public static final String TYPE_IMAGE = "plugins.surveys.type.image";
 	public static final String TYPE_CODED = "plugins.surveys.type.coded";
 
 	public static final String CONFIRM_DELETE_CONTACT = "plugins.surveys.confirm.delete.contact";

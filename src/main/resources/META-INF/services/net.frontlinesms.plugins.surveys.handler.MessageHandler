@@ -7,3 +7,4 @@ net.frontlinesms.plugins.surveys.handler.questions.BooleanHandler
 net.frontlinesms.plugins.surveys.handler.questions.DateHandler
 net.frontlinesms.plugins.surveys.handler.questions.MultiChoiceHandler
 net.frontlinesms.plugins.surveys.handler.questions.ChecklistHandler
+net.frontlinesms.plugins.surveys.handler.questions.ImageHandler

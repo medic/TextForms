@@ -4,3 +4,4 @@ net.frontlinesms.plugins.surveys.data.domain.questions.BooleanQuestion
 net.frontlinesms.plugins.surveys.data.domain.questions.DateQuestion
 net.frontlinesms.plugins.surveys.data.domain.questions.ChecklistQuestion
 net.frontlinesms.plugins.surveys.data.domain.questions.MultiChoiceQuestion
+net.frontlinesms.plugins.surveys.data.domain.questions.ImageQuestion

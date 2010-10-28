@@ -12,6 +12,7 @@
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.questions.BooleanQuestion" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.questions.ChecklistQuestion" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.questions.MultiChoiceQuestion" />
+		<mapping class="net.frontlinesms.plugins.surveys.data.domain.questions.ImageQuestion" />
 		
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.Answer" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.PlainTextAnswer" />
@@ -21,6 +22,7 @@
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.BooleanAnswer" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.ChecklistAnswer" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.MultiChoiceAnswer" />
+		<mapping class="net.frontlinesms.plugins.surveys.data.domain.answers.ImageAnswer" />
 		
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.Survey" />
 		<mapping class="net.frontlinesms.plugins.surveys.data.domain.SurveyResponse" />

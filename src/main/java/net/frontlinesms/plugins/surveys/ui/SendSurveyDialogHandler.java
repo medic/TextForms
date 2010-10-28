@@ -24,6 +24,7 @@ import net.frontlinesms.ui.UiGeneratorController;
  * @author dalezak
  *
  */
+@SuppressWarnings("unused")
 public class SendSurveyDialogHandler extends ExtendedThinlet implements ThinletUiEventHandler {
 
 	private static final long serialVersionUID = 1L;
