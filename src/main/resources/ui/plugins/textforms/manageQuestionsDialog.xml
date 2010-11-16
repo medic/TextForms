@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="manageQuestionDialog" icon="/icons/question.png" text="i18n.plugins.textforms.manage.question" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13" weighty="1">
+
+	<label name="labelName" icon="/icons/question.png" text="i18n.plugins.textforms.name" for="textName" valign="top"/>
+	<textarea name="textName" rows="1" columns="50" weightx="1"/>
+	
+	<label name="labelKeyword" text="i18n.plugins.textforms.keyword" icon="/icons/question_keyword.png" for="textKeyword" valign="top" />
+	<textarea name="textKeyword"  rows="1" columns="50" weightx="1" />
+	
+	<label name="labelSchema" text="i18n.plugins.textforms.schema" icon="/icons/question_schema.png" for="textSchema" valign="top" />
+	<textarea name="textSchema" wrap="true" columns="50" rows="1" weightx="1"/>
+	
+	<label name="labelQuestionTypes" text="i18n.plugins.textforms.type" icon="/icons/question_type.png" for="comboQuestionTypes" valign="top" />
+	<combobox name="comboQuestionTypes" editable="false" action="questionTypeChanged(this, panelQuestionChoices, listQuestionChoices)" weightx="1"/>
+	
+	<label name="labelQuestionChoices" text="i18n.plugins.textforms.choices" icon="/icons/question_choices.png" valign="top" />
+	<panel name="panelQuestionChoices" weightx="1" columns="3" gap="8">
+		<list name="listQuestionChoices" selection="single" colspan="3" weightx="1" height="100" action="questionChoiceChanged(this, buttonQuestionDelete)" />
+		<textfield name="textQuestionChoice" action="textQuestionChoiceChanged(this, listQuestionChoices, buttonQuestionAdd)" perform="addQuestionChoice(this, listQuestionChoices, buttonQuestionAdd)" weightx="1"/>
+		<button name="buttonQuestionAdd" text="i18n.plugins.textforms.add" icon="/icons/add.png" action="addQuestionChoice(textQuestionChoice, listQuestionChoices, this)" enabled="false"/>
+		<button name="buttonQuestionDelete" text="i18n.plugins.textforms.delete" icon="/icons/delete.png" action="deleteChoice(listQuestionChoices, this)" enabled="false"/>
+	</panel>
+	
+	<label name="labelInfoSnippet" text="i18n.plugins.textforms.info" icon="/icons/question_info.png" for="textInfoSnippet" valign="top" />
+	<textarea name="textInfoSnippet" wrap="true" columns="50" rows="4" weightx="1" weighty="1"/>
+
+	<panel name="placeholderChoices" colspan="2" columns="1">
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+		<label text=""/>
+	</panel>
+	
+	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(manageQuestionDialog)" weightx="1" />	
+	<button name="buttonSave" text="i18n.plugins.textforms.question.save" icon="/icons/tick.png" action="saveQuestion(manageQuestionDialog)" weightx="1" />
+</dialog>

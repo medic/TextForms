@@ -1,0 +1,30 @@
+<splitpane i18n="true" name="panelManageReports" orientation="horizontal" divider="450" weightx="1" weighty="1">
+	<panel columns="2" weightx="1" weighty="1" scrollable="false" gap="5">
+		<label icon="/icons/search.png" for="searchTextForms" />
+		<textfield name="searchTextForms" weightx="1" columns="0" action="searchTextForms(this,panelTextForms)" focusgained="focusGained(this)" focuslost="focusLost(this)"/>
+		
+		<panel name="panelTextForms" border="false" weightx="1" weighty="1" colspan="2" gap="10">
+			<table name="tableTextForms" selection="single" weightx="1" weighty="1" />
+		</panel>
+		
+		<panel colspan="2" gap="5" columns="3">
+			<button name="buttonAddTextForm" icon="/icons/big_textform_add.png" text="i18n.plugins.textforms.textform.add" action="addTextForm()" weightx="1" />
+			<button name="buttonEditTextForm" icon="/icons/big_textform_edit.png" text="i18n.plugins.textforms.textform.edit" action="editTextForm()" weightx="1" enabled="false"/>
+			<button name="buttonDeleteTextForm" icon="/icons/big_textform_delete.png" text="i18n.plugins.textforms.textform.delete" action="showConfirmationDialog('deleteTextForm')" weightx="1" enabled="false"/>
+		</panel>
+	</panel>
+	<panel gap="5" columns="1">
+		<panel text="i18n.plugins.textforms.questions" columns="1" weightx="1" weighty="1" gap="15" border="true" top="8" left="8" right="8" bottom="8">
+			<table name="tableQuestions" selection="single" weightx="1" weighty="1">
+				<header>
+					<column text="i18n.plugins.textforms.name" icon="/icons/question.png" width="175"/>
+					<column text="i18n.plugins.textforms.keyword" icon="/icons/question_keyword.png" width="100"/>
+					<column text="i18n.plugins.textforms.type" icon="/icons/question_type.png" width="100"/>
+					<column text="i18n.plugins.textforms.schema" icon="/icons/question_schema.png" width="100"/>
+					<column text="i18n.plugins.textforms.info" icon="/icons/question_info.png" />
+				</header>
+			</table>
+		</panel>
+		<button name="buttonSendTextForm" icon="/icons/big_textform_send.png" text="i18n.plugins.textforms.textform.send" action="sendTextForm()" weightx="1" enabled="false"/>
+	</panel>
+</splitpane>

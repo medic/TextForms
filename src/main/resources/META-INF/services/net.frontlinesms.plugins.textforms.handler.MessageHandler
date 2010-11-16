@@ -1,0 +1,10 @@
+net.frontlinesms.plugins.textforms.handler.InfoHandler
+net.frontlinesms.plugins.textforms.handler.RegisterHandler
+net.frontlinesms.plugins.textforms.handler.SurveyHandler
+net.frontlinesms.plugins.textforms.handler.questions.PlainTextHandler
+net.frontlinesms.plugins.textforms.handler.questions.IntegerHandler
+net.frontlinesms.plugins.textforms.handler.questions.BooleanHandler
+net.frontlinesms.plugins.textforms.handler.questions.DateHandler
+net.frontlinesms.plugins.textforms.handler.questions.MultiChoiceHandler
+net.frontlinesms.plugins.textforms.handler.questions.ChecklistHandler
+net.frontlinesms.plugins.textforms.handler.questions.ImageHandler

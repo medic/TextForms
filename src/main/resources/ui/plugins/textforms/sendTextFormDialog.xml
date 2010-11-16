@@ -1,0 +1,13 @@
+<dialog name="dlgSendTextForm" icon="/icons/textform.png" text="i18n.plugins.textforms.textform.send" width="500" height="400"
+		modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
+		
+	<table name="tblContacts" weightx="1" weighty="1" colspan="2" selection="multiple" action="contactsChanged(this)">
+		<header>
+			<column text="i18n.common.name" icon="/icons/user.png" width="230"/>
+			<column text="i18n.common.phone" icon="/icons/phone_number.png" width="230"/>
+		</header>
+	</table>
+		
+	<button name="btnCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(dlgSendTextForm)" weightx="1" />	
+	<button name="btnSend" text="i18n.plugins.textforms.textform.send" icon="/icons/big_textform_send.png" action="sendTextForm(tblContacts)" weightx="1" />
+</dialog>

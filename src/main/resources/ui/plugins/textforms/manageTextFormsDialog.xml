@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="dialogManageTextForms" icon="/icons/textform.png" text="i18n.plugins.textforms.manage.textform" modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13" weighty="1">
+
+	<label icon="/icons/textform.png" text="i18n.plugins.textforms.textform.name" for="textTextFormName" valign="top"/>
+	<textfield name="textTextFormName" columns="45" weightx="1"/>
+	
+	<label icon="/icons/textform_keyword.png" text="i18n.plugins.textforms.textform.keyword" for="textTextFormKeyword" valign="top"/>
+	<textfield name="textTextFormKeyword" columns="45" weightx="1"/>
+	
+	<label icon="/icons/question.png" text="i18n.plugins.textforms.questions" valign="top"/>
+	<panel columns="2" gap="5" weightx="1">
+		<combobox name="comboQuestions" editable="false" weightx="1" action="comboChanged(comboQuestions,buttonAddQuestion)" />
+		<button name="buttonAddQuestion" icon="/icons/question_add.png" text="i18n.plugins.textforms.question.add" action="addQuestion(comboQuestions)" enabled="false" />
+	
+		<table name="tableQuestions" selection="single" weightx="1" weighty="1" action="tableChanged(tableQuestions, buttonDeleteQuestion)" colspan="2">
+			<header>
+				<column text="i18n.plugins.textforms.name" icon="/icons/question.png" width="125"/>
+				<column text="i18n.plugins.textforms.keyword" icon="/icons/question_keyword.png" width="90"/>
+				<column text="i18n.plugins.textforms.type" icon="/icons/question_type.png" width="80"/>
+			</header>
+		</table>
+		<button name="buttonDeleteQuestion" icon="/icons/question_delete.png" text="i18n.plugins.textforms.question.delete" colspan="2"
+				action="deleteQuestion(tableQuestions,buttonDeleteQuestion)" enabled="false" />
+	</panel>
+			
+	<button name="buttonCancel" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(dialogManageTextForms)" weightx="1" />	
+	<button name="buttonSave" text="i18n.plugins.textforms.textform.save" icon="/icons/tick.png" action="saveTextForm" weightx="1" />
+</dialog>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.OrganizationDetails" />
+		
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.Question" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.PlainTextQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.IntegerQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.DateQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.CodedQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.BooleanQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.ChecklistQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.MultiChoiceQuestion" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.questions.ImageQuestion" />
+		
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.Answer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.PlainTextAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.IntegerAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.DateAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.CodedAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.BooleanAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.ChecklistAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.MultiChoiceAnswer" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.answers.ImageAnswer" />
+		
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.TextForm" />
+		<mapping class="net.frontlinesms.plugins.textforms.data.domain.TextFormResponse" />
+	</session-factory>
+</hibernate-configuration>

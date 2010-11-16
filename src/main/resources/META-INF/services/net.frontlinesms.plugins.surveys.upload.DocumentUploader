@@ -1,4 +1,0 @@
-net.frontlinesms.plugins.surveys.upload.XMLUploader
-net.frontlinesms.plugins.surveys.upload.JSONUploader
-net.frontlinesms.plugins.surveys.upload.CSVUploader
-net.frontlinesms.plugins.surveys.upload.ResourceFinderUploader

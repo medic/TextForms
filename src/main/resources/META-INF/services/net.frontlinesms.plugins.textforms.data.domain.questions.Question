@@ -1,0 +1,7 @@
+net.frontlinesms.plugins.textforms.data.domain.questions.PlainTextQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.IntegerQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.BooleanQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.DateQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.ChecklistQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.MultiChoiceQuestion
+net.frontlinesms.plugins.textforms.data.domain.questions.ImageQuestion

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog name="browseDataDialog" icon="/icons/browse.png" text="i18n.plugins.textforms.browse.data" 
+		modal="true" resizable="false" closable="true" close="removeDialog(this)" bottom="10" top="10" left="10" right="10" columns="2" gap="13">
+
+	<label name="labelContact" text="i18n.plugins.textforms.table.contact" icon="/icons/user_sender.png" for="comboContact" valign="top" />
+	<combobox name="comboContact" editable="false" weightx="1" action="contactChanged(this, textHospital)" />
+	
+	<label name="labelHospital" text="i18n.plugins.textforms.table.organization" icon="/icons/organization.png" for="textHospital" valign="top" />
+	<textarea name="textHospital" rows="1" columns="40" weightx="1" editable="false" enabled="false" />
+	
+	<label name="labelQuestionTypes" icon="/icons/question_keyword.png" text="i18n.plugins.textforms.question" for="comboQuestionTypes" valign="top"/>
+	<combobox name="comboQuestionTypes" editable="false" weightx="1" />
+	
+	<label name="labelAnswer" text="i18n.plugins.textforms.table.answer" icon="/icons/sms_receive.png" for="textAnswer" valign="top" />
+	<textarea name="textAnswer" rows="3" columns="40" weightx="1" />
+	
+	<label name="labelDate" text="i18n.plugins.textforms.table.date" icon="/icons/date.png" for="textDate" valign="top" />
+	<panel columns="2" weightx="2" gap="5">
+		<textfield name="textDate" weightx="1" tooltip="DD/MM/YYYY"/>
+		<button name="buttonDate" icon="/icons/date.png" action="showDateSelecter(textDate)"/>
+	</panel>
+	
+	<button name="buttonCancelAnswer" text="i18n.action.cancel" icon="/icons/cross.png" action="removeDialog(browseDataDialog)" weightx="1" />	
+	<button name="buttonSaveAnswer" text="i18n.action.save" icon="/icons/tick.png" action="saveAnswer(browseDataDialog)" weightx="1" />
+</dialog>

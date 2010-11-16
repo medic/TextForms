@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.frontlinesms.plugins</groupId>
-	<artifactId>frontlinesms-plugin-surveys</artifactId>
-	<name>Surveys</name>
-	<description>Surveys, questions and answers via SMS.</description>
+	<artifactId>frontlinesms-plugin-textforms</artifactId>
+	<name>TextForms</name>
+	<description>TextForms, questions and answers via SMS.</description>
 	<version>1.0-SNAPSHOT</version>
 	
 	<build>

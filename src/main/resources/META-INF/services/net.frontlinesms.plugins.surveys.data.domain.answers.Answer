@@ -1,7 +1,0 @@
-net.frontlinesms.plugins.surveys.data.domain.answers.PlainTextAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.IntegerAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.BooleanAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.DateAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.ChecklistAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.MultiChoiceAnswer
-net.frontlinesms.plugins.surveys.data.domain.answers.ImageAnswer

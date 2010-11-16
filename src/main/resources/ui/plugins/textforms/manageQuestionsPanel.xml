@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<splitpane i18n="true" name="panelManageQuestions" orientation="horizontal" divider="450" weightx="1" weighty="1">
+	<panel columns="2" weightx="1" weighty="1" scrollable="false" gap="5">
+		<label name="labelQuestion" icon="/icons/search.png" for="searchQuestion" />
+		<textfield name="searchQuestion" weightx="1" columns="0" action="searchByQuestion(this, tableQuestions)" focusgained="focusGained(this)" focuslost="focusLost(this)"/>
+		
+		<panel name="panelQuestions" border="false" weightx="1" weighty="1" colspan="2" gap="10">
+			<table name="tableQuestions" selection="single" weightx="1" weighty="1"/>
+		</panel>
+		
+		<panel colspan="2" columns="3" gap="5" weightx="1">
+			<button name="buttonAddQuestion" icon="/icons/big_question_add.png" text="i18n.plugins.textforms.question.add" action="addQuestion(panelQuestions)" weightx="1" colspan="2"/>
+			<button name="buttonEditQuestion" icon="/icons/big_question_edit.png" text="i18n.plugins.textforms.question.edit" action="editQuestion(panelQuestions)" weightx="1" enabled="false"/>
+			<button name="buttonDeleteQuestion" icon="/icons/big_question_delete.png" text="i18n.plugins.textforms.question.delete" action="showConfirmationDialog('deleteQuestion')" weightx="1" colspan="2" enabled="false"/>
+		</panel>
+	</panel>
+	<panel gap="5" columns="1">
+		<panel text="i18n.plugins.textforms.question" columns="2" weightx="1" weighty="1" gap="10" border="true" top="8" left="8" right="8" bottom="8">
+			<label name="labelName" icon="/icons/question.png" text="i18n.plugins.textforms.name" valign="top"/>
+			<label name="labelNameValue"  weightx="1" font="bold 12" />
+			
+			<label name="labelKeyword" text="i18n.plugins.textforms.keyword" icon="/icons/question_keyword.png" valign="top" />
+			<label name="labelKeywordValue" weightx="1"  font="bold 12" valign="top"/>
+			
+			<label name="labelType" text="i18n.plugins.textforms.type" icon="/icons/question_type.png" valign="top" />
+			<label name="labelTypeValue" weightx="1" font="bold 12" valign="top"/>
+			
+			<label name="labelChoices" text="i18n.plugins.textforms.choices" icon="/icons/question_choices.png" valign="top" />
+			<textarea name="labelChoicesValue" weightx="1" font="bold 12" valign="top" wrap="true" editable="false" border="false" rows="0" />
+			
+			<label name="labelSchema" text="i18n.plugins.textforms.schema" icon="/icons/question_schema.png" valign="top" />
+			<label name="labelSchemaValue" weightx="1" font="bold 12" valign="top"/>
+			
+			<label name="labelInfo" text="i18n.plugins.textforms.info" icon="/icons/question_info.png" valign="top"/>
+			<textarea name="labelInfoValue" weightx="1" weighty="1" font="bold 12" valign="top" wrap="true" editable="false" border="false" />
+		</panel>
+		<button name="buttonViewAnswers" icon="/icons/big_answers.png" text="i18n.plugins.textforms.view.answers" action="viewAnswers(panelQuestions)" weightx="1" enabled="false"/>
+	</panel>
+</splitpane>
