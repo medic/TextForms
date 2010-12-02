@@ -56,6 +56,10 @@ public class TextFormsThinletTabController implements ThinletUiEventHandler, Tex
 		return this.mainTab;
 	}
 	
+	public void showHelpPage(String page) {
+		ui.showHelpPage(page);
+	}
+	
 	public void taskChanged(Object listTasks) {
 		Object selectedListItem = this.ui.getSelectedItem(listTasks);
 		String selectedProperty = this.ui.getProperty(selectedListItem, "value").toString();

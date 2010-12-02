@@ -24,6 +24,7 @@ import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
@@ -158,7 +159,13 @@ public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, Advan
 		LOG.debug("deleteQuestion");
 		Question question = this.getSelectedQuestion();
 		if (question != null) {
-			this.questionDao.deleteQuestion(question);
+			try {
+				this.questionDao.deleteQuestion(question);
+			}
+			catch (DataIntegrityViolationException ex) {
+				LOG.error(ex);
+				this.ui.alert(getI18NString(TextFormsConstants.WARNING_EXISTING_PARENT));
+			}
 		}
 		this.ui.removeConfirmationDialog();
 		this.refreshQuestions(null);

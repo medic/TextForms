@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tab i18n="true"  name="tabTextForms" icon="/icons/big_textforms.png" text="i18n.plugins.textforms.title">
     <panel name="panelTextForms" bottom="9" columns="2" gap="9" left="9" right="9" top="9" weightx="1" weighty="1" scrollable="false">
-		<label name="labelTextForms" icon="/icons/header_textforms.png" valign="top" />
+    	<panel weighty="1" columns="1">
+    		<label name="labelTextForms" icon="/icons/header_textforms.png" valign="top" />
+    		<label weighty="1"/>
+			<button tooltip="i18n.tooltip.click.for.help" valign="bottom" icon="/icons/big_help.png" type="link" action="showHelpPage('textforms.htm')" />
+		</panel>
 		<splitpane orientation="horizontal" divider="170" weightx="1" weighty="1">
 			 <panel name="panelMenu" weightx="1" weighty="1" columns="1" top="6" left="6" right="6" bottom="6" gap="5" scrollable="false">
 			 	<label name="labelTasks" text="i18n.plugins.textforms.tasks" icon="/icons/status.png" weightx="1" />

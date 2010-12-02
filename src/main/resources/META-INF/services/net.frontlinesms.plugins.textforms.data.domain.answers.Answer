@@ -4,4 +4,3 @@ net.frontlinesms.plugins.textforms.data.domain.answers.BooleanAnswer
 net.frontlinesms.plugins.textforms.data.domain.answers.DateAnswer
 net.frontlinesms.plugins.textforms.data.domain.answers.ChecklistAnswer
 net.frontlinesms.plugins.textforms.data.domain.answers.MultiChoiceAnswer
-net.frontlinesms.plugins.textforms.data.domain.answers.ImageAnswer

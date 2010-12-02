@@ -57,4 +57,6 @@ public final class TextFormsConstants {
 	public static final String DOCUMENT_UPLOAD_GOOGLE = "plugins.textforms.document.uploader.google";
 	public static final String DOCUMENT_UPLOAD_SPREADSHEET = "plugins.textforms.document.uploader.spreadsheet";
 	
+	public static final String WARNING_EXISTING_PARENT = "plugins.textforms.warning.existing.parent";
+	
 }

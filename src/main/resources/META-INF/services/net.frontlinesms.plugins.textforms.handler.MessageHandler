@@ -7,4 +7,3 @@ net.frontlinesms.plugins.textforms.handler.questions.BooleanHandler
 net.frontlinesms.plugins.textforms.handler.questions.DateHandler
 net.frontlinesms.plugins.textforms.handler.questions.MultiChoiceHandler
 net.frontlinesms.plugins.textforms.handler.questions.ChecklistHandler
-net.frontlinesms.plugins.textforms.handler.questions.ImageHandler
