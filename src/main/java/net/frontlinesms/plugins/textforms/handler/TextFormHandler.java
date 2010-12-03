@@ -56,7 +56,7 @@ public class TextFormHandler extends MessageHandler {
 					if (question != null) {
 						TextFormsListener.registerTextForm(message.getSenderMsisdn(), textformResponse, question);
 						sendReply(message.getSenderMsisdn(), question.toString(true), false);
-						LOG.out("%s", question.toString(true));
+						LOG.debug("%s", question.toString(true));
 						return true;	
 					}
 					else {

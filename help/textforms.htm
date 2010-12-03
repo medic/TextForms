@@ -3,7 +3,7 @@
 		<meta http-equiv="Content-Language" content="en-gb">
 		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 		<link href="frontlinehelp.css" rel="stylesheet" type="text/css">
-		<title>FrontlineSMS Help :: Event Mapping</title>
+		<title>FrontlineSMS Help :: TextForms</title>
 	</head>
 	<body>
 		<div class="header">
@@ -11,9 +11,31 @@
 		</div>
 		<div class="content">
 			<h1>TextForms</h1>
-			<h4>The TextForms allows complex data gathering and simple type validation via SMS through a familiar question and answer format.</h4>
-			
+			<h4>The TextForms plugin allows complex data gathering and simple type validation via SMS.</h4>
 			<img border="0" src="img/textforms-questions.jpg" vspace="5">
+			
+			<h2>What can I do with the TextForms?</h2>
+			<h3>
+				TextForms provides a powerful mechanism to gather data via SMS. 
+				Data can be gathered as an individual question or as a series of questions called a TextForm.
+				Each question has an associated keyword, which triggers a question handler if an incoming SMS message starts with that keyword.
+				<br/>
+				<br/>
+				For example, the question with name <i>Total Beds</i>, keyword <i>beds</i>, type <i>Integer</i> and phrase <i>The total number of hospital beds?</i>
+				will allow the plugin to receive the SMS message <i>"beds 46"</i>, storing the answer <i>46</i>.
+				<br/>
+				<br/>
+				If the plugin simply receives the keyword <i>beds</i>, it is assumed the user is requesting information about that question, so will receive a message like 
+				<i>Total Beds (Integer) The total number of hospital beds?</i>, which they can then simply reply with their answer (for example <i>ABC</i>).
+				<br/>
+				<br/>
+				If the user submits an invalid answer (for example <i>ABC</i>) they will receive back a response message 
+				<i>Invalid answer for Total Beds (expected Integer)</i> notifying them they entered an invalid response.
+				<br/>
+				<br/>
+				You can also organize a series of questions into a TextForm, which will automatically send the user the next question after receiving a valid answer.
+			</h3>
+			
 			<h2>Activating the TextForms plugin</h2>
 			<h3>
 				When FrontlineSMS is installed for the first time, the TextForms module is initially hidden from view. 
@@ -32,7 +54,7 @@
 			</h3>
 			<img border="0" src="img/textforms-contacts.jpg" vspace="5">
 			<h3>
-				Note, you can filter the contact list by entering a search term into the Search contacts... textbox.
+				Note, you can filter the contact list by entering a search term into the <i>Search contacts...</i> textbox.
 			</h3>
 			
 			<h2>Add / Edit Contact</h2>
@@ -58,7 +80,7 @@
 			</h3>
 			<img border="0" src="img/textforms-questions.jpg" vspace="5">
 			<h3>
-				Note, you can filter the question list by entering a search term into the Search questions... textbox.
+				Note, you can filter the question list by entering a search term into the <i>Search questions...</i> textbox.
 			</h3>
 			
 			<h2>Add / Edit Question</h2>
@@ -83,7 +105,7 @@
 			</h3>
 			<img border="0" src="img/textforms-textforms.jpg" vspace="5">
 			<h3>
-				Note, you can filter the textform list by entering a search term into the Search textforms... textbox.
+				Note, you can filter the textform list by entering a search term into the <i>Search textforms...</i> textbox.
 			</h3>
 			
 			<h2>Add / Edit TextForm</h2>

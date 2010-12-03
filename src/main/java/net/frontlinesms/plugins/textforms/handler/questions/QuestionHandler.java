@@ -135,7 +135,7 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 		else {
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getTypeLabel(), message.getTextContent()), true);
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);

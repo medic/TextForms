@@ -3,6 +3,7 @@ package net.frontlinesms.plugins.textforms.data.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,10 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 
@@ -81,7 +86,7 @@ public class TextForm {
 	@CollectionOfElements(targetElement=Question.class, fetch=FetchType.EAGER)
 	@JoinTable(name="textform_questions", joinColumns=@JoinColumn(name="textform_id"))
 	@Column(name="questions")
-	@Fetch (FetchMode.SELECT)
+	@Fetch(FetchMode.SELECT)
 	private List<Question> questions;
 	
 	public List<Question> getQuestions() {

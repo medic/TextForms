@@ -25,8 +25,9 @@ public final class TextFormsMessages {
 		return String.format("%s : %s", getI18NString("plugins.textforms.handler.invalid.keyword"), arrayToString(keywords));
 	}
 	
-	public static String getHandlerInvalidAnswer(String questionTypeLabel, String response) {
-		return String.format("%s (%s) : %s", getI18NString("plugins.textforms.handler.invalid.response"), questionTypeLabel, response);
+	public static String getHandlerInvalidAnswer(String questionName, String questionTypeLabel) {
+		return String.format("%s %s (%s %s)", getI18NString("plugins.textforms.handler.invalid.answer"), questionName, 
+											 getI18NString("plugins.textforms.handler.expected.type"), questionTypeLabel);
 	}
 	
 	public static String getHandlerInvalidCallback() {
@@ -46,15 +47,19 @@ public final class TextFormsMessages {
 	}
 	
 	public static String getHandlerErrorAnswer(String response) {
-		return String.format("%s : %s", getI18NString("plugins.textforms.handler.error.response"), response);
+		return String.format("%s : %s", getI18NString("plugins.textforms.handler.error.answer"), response);
 	}
 	
 	public static String getHandlerErrorSaveAnswer() {
-		return getI18NString("plugins.textforms.handler.error.save.response");
+		return getI18NString("plugins.textforms.handler.error.save.answer");
 	}
 	
 	public static String getHandlerErrorUploadAnswer() {
-		return getI18NString("plugins.textforms.handler.error.upload.response");
+		return getI18NString("plugins.textforms.handler.error.upload.answer");
+	}
+	
+	public static String getHandlerErrorSaveTextForm() {
+		return getI18NString("plugins.textforms.handler.error.save.textform");
 	}
 	
 	public static String getMessageAllContacts() {
@@ -90,11 +95,11 @@ public final class TextFormsMessages {
 	}
 	
 	public static String getMessageSearchAnswers() {
-		return getI18NString("plugins.textforms.search.responses");
+		return getI18NString("plugins.textforms.search.answers");
 	}
 	
 	public static String getMessageSearchContacts() {
-		return getI18NString("plugins.textforms.search.people");
+		return getI18NString("plugins.textforms.search.contacts");
 	}
 	
 	public static String getMessageSearchQuestions() {

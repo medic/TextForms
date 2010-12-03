@@ -136,15 +136,16 @@ public class ManageTextFormsDialogHandler extends ExtendedThinlet implements Thi
 			this.ui.alert(TextFormsMessages.getTextFormQuestionsRequired());
 		}
 		else if (textform == null) {
-			textform = new TextForm(textformName, textformKeyword, questions);
+			TextForm newTextform = new TextForm(textformName, textformKeyword, questions);
 			try {
-				this.textformDao.saveTextForm(textform);
+				this.textformDao.saveTextForm(newTextform);
+				this.ui.remove(this.mainDialog);
+				this.callback.refreshTextForm(newTextform);
 			} 
 			catch (DuplicateKeyException e) {
 				e.printStackTrace();
+				this.ui.alert(TextFormsMessages.getHandlerErrorSaveTextForm());
 			}
-			this.ui.remove(this.mainDialog);
-			this.callback.refreshTextForm(textform);
 		}
 		else {
 			textform.setName(textformName);

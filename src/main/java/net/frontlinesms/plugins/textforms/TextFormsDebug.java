@@ -161,15 +161,15 @@ public class TextFormsDebug {
 											"invalid abc123", //invalid response
 											"invalid" //invalid keyword
 											}) {
-			createAnswer(this.getDateReceived(), this.getAuthor(), message);
+			createMessage(this.getDateReceived(), this.getAuthor(), message);
 		}
 	}
 	
-	public void createAnswer(long dateReceived, String senderMsisdn, String message) {
+	public void createMessage(long dateReceived, String senderMsisdn, String message) {
 		try {
 			FrontlineMessage frontlineMessage = FrontlineMessage.createIncomingMessage(dateReceived, senderMsisdn, null, message);
 			this.messageDao.saveMessage(frontlineMessage);
-			LOG.debug("Answer Created [%s, %s, %s]", dateReceived, senderMsisdn, message);
+			LOG.debug("Message Saved [%s, %s, %s]", dateReceived, senderMsisdn, message);
 		}
 		catch (Exception ex) {
 			LOG.error("Exception: %s", ex);
@@ -251,7 +251,7 @@ public class TextFormsDebug {
 	            	break;
 	            }
 	            else {
-	            	createAnswer(Calendar.getInstance().getTimeInMillis(), getAuthor(), message);
+	            	createMessage(Calendar.getInstance().getTimeInMillis(), getAuthor(), message);
 	            }
 	        }
 	        LOG.debug("...startDebugTerminal");
@@ -259,13 +259,11 @@ public class TextFormsDebug {
 	}
 	
 	private String getAuthor() {
-		List<Contact> contacts = this.contactDao.getAllContacts();
-		for(int index = contacts.size() - 1; index >= 0; index--){
-			Contact contact = contacts.get(index);
-			if (contact.getPhoneNumber() != null) {
+		for(Contact contact : this.contactDao.getAllContacts()) {
+			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false) {
 				return contact.getPhoneNumber();
 			}
-			else if (contact.getOtherPhoneNumber() != null) {
+			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false) {
 				return contact.getOtherPhoneNumber();
 			}
 		}
@@ -273,12 +271,18 @@ public class TextFormsDebug {
 	}
 	
 	private String getOrganizationId() {
-		List<Contact> contacts = this.contactDao.getAllContacts();
-		for(int index = contacts.size() - 1; index >= 0; index--){
-			Contact contact = contacts.get(index);
-			OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
-			if (organizationDetails != null) {
-				return organizationDetails.getOrganizationId();
+		for(Contact contact : this.contactDao.getAllContacts()) {
+			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false) {
+				OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
+				if (organizationDetails != null) {
+					return organizationDetails.getOrganizationId();
+				}
+			}
+			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false) {
+				OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
+				if (organizationDetails != null) {
+					return organizationDetails.getOrganizationId();
+				}
 			}
 		}
 		return null;

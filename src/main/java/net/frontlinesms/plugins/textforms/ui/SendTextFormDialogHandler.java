@@ -86,7 +86,7 @@ public class SendTextFormDialogHandler extends ExtendedThinlet implements Thinle
 				if (question != null) {
 					TextFormsListener.registerTextForm(contact.getPhoneNumber(), textformResponse, question);
 					frontline.sendTextMessage(contact.getPhoneNumber(), question.toString(true));
-					LOG.out("%s", question.toString(true));
+					LOG.debug("%s", question.toString(true));
 				}
 				else {
 					LOG.error("Questions is NULL");

@@ -66,7 +66,6 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
 				sendReply(message.getSenderMsisdn(), question.toString(true), false);
-				LOG.out("%s", question.toString(true));
 				LOG.debug("Register Callback for '%s'", message.getTextContent());
 				TextFormsListener.registerCallback(message.getSenderMsisdn(), this);
 				this.callbacks.put(message.getSenderMsisdn(), this.questionDao.getQuestionForKeyword(message.getTextContent()));
@@ -121,7 +120,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		else {
 			Question question = questionDao.getQuestionForKeyword(words[0]);
 			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getTypeLabel(), message.getTextContent()), true);
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);
@@ -180,7 +179,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		else {
 			Question question = this.callbacks.get(message.getSenderMsisdn());
 			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getTypeLabel(), message.getTextContent()), true);
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
 			}
 			else {
 				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);

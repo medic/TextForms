@@ -1,6 +1,6 @@
 net.frontlinesms.plugins.textforms.handler.InfoHandler
 net.frontlinesms.plugins.textforms.handler.RegisterHandler
-net.frontlinesms.plugins.textforms.handler.SurveyHandler
+net.frontlinesms.plugins.textforms.handler.TextFormHandler
 net.frontlinesms.plugins.textforms.handler.questions.PlainTextHandler
 net.frontlinesms.plugins.textforms.handler.questions.IntegerHandler
 net.frontlinesms.plugins.textforms.handler.questions.BooleanHandler

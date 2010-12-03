@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.FrontlineMessage;
+import net.frontlinesms.data.domain.FrontlineMessage.Status;
 import net.frontlinesms.data.domain.FrontlineMessage.Type;
 import net.frontlinesms.data.events.EntitySavedNotification;
 import net.frontlinesms.events.EventObserver;
@@ -75,7 +76,6 @@ public class TextFormsListener implements EventObserver {
 	public void notify(FrontlineEventNotification notification) {
 		FrontlineMessage message = getFrontlineMessage(notification);
 		if (message != null) {
-			LOG.debug("notify: %s", notification.getClass().getSimpleName());
 			//first, remove all callbacks that have timed out
 			List<CallbackInfo> expiredCallbacks = getExpiredCallbacks();
 			if (expiredCallbacks.size() > 0) {
@@ -94,9 +94,16 @@ public class TextFormsListener implements EventObserver {
 			
 			//see if there is a handler that wants to handle the message
 			MessageHandler handler = getMessageHandler(message);
+			if (handler != null) {
+				LOG.debug("%s %s (%s) %s", handler.getClass().getSimpleName(), message.getType(), message.getSenderMsisdn(), message.getTextContent());
+			}
 			
 			//now, see if there is a callback out on that message
 			CallbackHandler<?> callbackHandler = getCallbackHandler(message);
+			if (callbackHandler != null) {
+				LOG.debug("%s %s (%s) %s", callbackHandler.getClass().getSimpleName(), message.getType(), message.getSenderMsisdn(), message.getTextContent());
+			}
+			
 			if (handler != null && callbackHandler != null && callbackHandler.shouldHandleCallbackMessage(message) == false) {
 				//if there is a keyword in the message and the callback handler doesn't seem
 				//to know what to do with it, give the message to the keyword handler as opposed
@@ -120,13 +127,13 @@ public class TextFormsListener implements EventObserver {
 							LOG.error("Next Question: %s", question.getName());
 							registerTextForm(message.getSenderMsisdn(), textformResponse, question);
 							sendReply(message.getSenderMsisdn(), question.toString(true), false);	
-							LOG.out("%s", question.toString(true));
+							LOG.debug("%s", question.toString(true));
 						}
 						else {
 							LOG.debug("TextForm '%s' Completed!", textformResponse.getTextFormName());
 							sendReply(message.getSenderMsisdn(), TextFormsMessages.getSurveryCompleted(textformResponse.getTextFormName()), false);
 							textforms.remove(message.getSenderMsisdn());
-							LOG.out("%s", TextFormsMessages.getSurveryCompleted(textformResponse.getTextFormName()));
+							LOG.debug("%s", TextFormsMessages.getSurveryCompleted(textformResponse.getTextFormName()));
 							try {
 								textformResponseDao.updateTextForm(textformResponse);
 							} 
@@ -135,6 +142,9 @@ public class TextFormsListener implements EventObserver {
 							}
 						}
 					}
+				}
+				else if(handler.handleMessage(message)) {
+					LOG.error("%s Handler Successful", handler.getClass().getSimpleName());
 				}
 			}
 			else if (handler != null) {
@@ -231,7 +241,7 @@ public class TextFormsListener implements EventObserver {
 			EntitySavedNotification<?> entitySavedNotification = (EntitySavedNotification<?>)notification;
 			if (entitySavedNotification.getDatabaseEntity() instanceof FrontlineMessage) {
 				FrontlineMessage message = (FrontlineMessage)entitySavedNotification.getDatabaseEntity();
-				if (message.getType() == Type.RECEIVED) {
+				if (message.getType() == Type.RECEIVED && message.getStatus() == Status.RECEIVED) {
 					return message;
 				}
 			}
