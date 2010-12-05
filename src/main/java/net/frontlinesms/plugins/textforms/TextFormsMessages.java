@@ -62,6 +62,10 @@ public final class TextFormsMessages {
 		return getI18NString("plugins.textforms.handler.error.save.textform");
 	}
 	
+	public static String getHandlerErrorDeleteTextForm() {
+		return getI18NString("plugins.textforms.handler.error.delete.textform");
+	}
+	
 	public static String getMessageAllContacts() {
 		return getI18NString("plugins.textforms.all.contacts");
 	}
@@ -121,6 +125,10 @@ public final class TextFormsMessages {
 	public static String getTextFormKeywordRequired() {
 		return getI18NString("plugins.textforms.textform.keyword.required");
 	} 
+	
+	public static String getTextFormKeywordUnique() {
+		return getI18NString("plugins.textforms.textform.keyword.unique");
+	}
 	
 	public static String getTextFormQuestionsRequired() {
 		return getI18NString("plugins.textforms.textform.questions.required");

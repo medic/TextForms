@@ -15,11 +15,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 
@@ -83,10 +81,13 @@ public class TextForm {
 		return questionNames.toString();
 	}
 	
-	@CollectionOfElements(targetElement=Question.class, fetch=FetchType.EAGER)
-	@JoinTable(name="textform_questions", joinColumns=@JoinColumn(name="textform_id"))
-	@Column(name="questions")
-	@Fetch(FetchMode.SELECT)
+	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@JoinTable(name="textform_questions", 
+	         	joinColumns = @JoinColumn(name="textform_id"), 
+	         	inverseJoinColumns = @JoinColumn(name="question_id"))
+	@GenericGenerator(name="uuid-gen", strategy="uuid")
+    @CollectionId(columns=@Column(name="collection_id"), type=@Type(type="string"), generator="uuid-gen") 
 	private List<Question> questions;
 	
 	public List<Question> getQuestions() {

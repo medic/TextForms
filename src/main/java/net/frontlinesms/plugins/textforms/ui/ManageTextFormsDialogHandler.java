@@ -126,6 +126,13 @@ public class ManageTextFormsDialogHandler extends ExtendedThinlet implements Thi
 		for(Object item : this.ui.getItems(this.tableQuestions)) {
 			questions.add((Question)this.ui.getAttachedObject(item));
 		}
+		List<String> keywords = new ArrayList<String>();
+		for(String keyword : this.questionDao.getKeywords()) {
+			keywords.add(keyword.toLowerCase());
+		}
+		for(String keyword : this.textformDao.getKeywords()) {
+			keywords.add(keyword.toLowerCase());
+		}
 		if (textformName == null || textformName.length() == 0) {
 			this.ui.alert(TextFormsMessages.getTextFormNameRequired());
 		}
@@ -135,8 +142,11 @@ public class ManageTextFormsDialogHandler extends ExtendedThinlet implements Thi
 		else if (questions.size() == 0) {
 			this.ui.alert(TextFormsMessages.getTextFormQuestionsRequired());
 		}
+		else if (keywords.contains(textformKeyword.toLowerCase())) {
+			this.ui.alert(TextFormsMessages.getTextFormKeywordUnique());
+		}
 		else if (textform == null) {
-			TextForm newTextform = new TextForm(textformName, textformKeyword, questions);
+			TextForm newTextform = new TextForm(textformName, textformKeyword.toLowerCase(), questions);
 			try {
 				this.textformDao.saveTextForm(newTextform);
 				this.ui.remove(this.mainDialog);
@@ -149,7 +159,7 @@ public class ManageTextFormsDialogHandler extends ExtendedThinlet implements Thi
 		}
 		else {
 			textform.setName(textformName);
-			textform.setKeyword(textformKeyword);
+			textform.setKeyword(textformKeyword.toLowerCase());
 			textform.setQuestions(questions);
 			try {
 				this.textformDao.updateTextForm(textform);

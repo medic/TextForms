@@ -24,6 +24,7 @@ import static net.frontlinesms.ui.i18n.InternationalisationUtils.getI18NString;
 import java.awt.Color;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.events.DatabaseEntityNotification;
@@ -148,8 +149,14 @@ public class ManageTextFormsPanelHandler extends ExtendedThinlet implements Thin
 		LOG.debug("deleteTextForm");
 		TextForm textform = this.getSelectedTextForm();
 		if (textform != null) {
-			this.textformDao.deleteTextForm(textform);
-			this.queryGenerator.refresh();
+			try{
+				this.textformDao.deleteTextForm(textform);
+				this.queryGenerator.refresh();	
+			}
+			catch(DataIntegrityViolationException ex) {
+				ex.printStackTrace();
+				this.ui.alert(TextFormsMessages.getHandlerErrorDeleteTextForm());
+			}
 		}
 		this.ui.removeConfirmationDialog();
 	}
