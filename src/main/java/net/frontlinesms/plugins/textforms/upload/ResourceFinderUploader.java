@@ -2,7 +2,6 @@ package net.frontlinesms.plugins.textforms.upload;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;

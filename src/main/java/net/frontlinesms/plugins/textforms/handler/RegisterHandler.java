@@ -70,7 +70,7 @@ public class RegisterHandler extends MessageHandler {
 				try {
 					this.contactDao.updateContact(contact);
 					LOG.debug("Contact '%s' Updated: %s", contact.getName(), words[1]);
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(words[1], message.getSenderMsisdn()), true);
 					return true;
 				} 
 				catch (DuplicateKeyException ex) {
@@ -84,7 +84,7 @@ public class RegisterHandler extends MessageHandler {
 				try {
 					this.contactDao.saveContact(newContact);
 					LOG.debug("Contact '%s' Saved: %s", newContact.getName(), words[1]);
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(message.getSenderMsisdn()), true);
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(words[1], message.getSenderMsisdn()), true);
 					return true;
 				} 
 				catch (DuplicateKeyException ex) {
@@ -92,6 +92,9 @@ public class RegisterHandler extends MessageHandler {
 					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorSaveContact(message.getSenderMsisdn()), true);
 				}
 			}
+		}
+		else if (words.length == 1) {
+			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(words[0]), true);
 		}
 		else {
 			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(TextFormsProperties.getRegisterKeywords()), true);

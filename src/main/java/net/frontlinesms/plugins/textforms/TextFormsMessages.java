@@ -13,12 +13,16 @@ public final class TextFormsMessages {
 		return String.format("%s : %s", getI18NString("plugins.textforms.handler.help"), arrayToString(keywords));
 	}
 	
-	public static String getHandlerRegister(String[] keywords) {
-		return String.format("%s : %s", getI18NString("plugins.textforms.handler.register"), arrayToString(keywords));
+	public static String getHandlerRegister(String keyword) {
+		return String.format("%s : %s %s", getI18NString("plugins.textforms.handler.register.keyword"), keyword, getI18NString("plugins.textforms.handler.register.organization"));
 	}
 	
-	public static String getHandlerRegisterSuccessful(String phoneNumber) {
-		return String.format("%s : %s", getI18NString("plugins.textforms.handler.register.successful"), phoneNumber);
+	public static String getHandlerRegister(String[] keywords) {
+		return String.format("%s : %s", getI18NString("plugins.textforms.handler.register.keywords"), arrayToString(keywords));
+	}
+	
+	public static String getHandlerRegisterSuccessful(String organization, String phoneNumber) {
+		return String.format("%s %s %s", organization, getI18NString("plugins.textforms.handler.register.successful"), phoneNumber);
 	}
 	
 	public static String getHandlerInvalidKeyword(String[] keywords) {
