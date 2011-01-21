@@ -5,24 +5,21 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
-import org.springframework.context.ApplicationContext;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.data.repository.MessageDao;
 import net.frontlinesms.plugins.textforms.data.domain.OrganizationDetails;
-import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 import net.frontlinesms.plugins.textforms.data.domain.answers.Answer;
-import net.frontlinesms.plugins.textforms.data.repository.QuestionFactory;
+import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 import net.frontlinesms.plugins.textforms.data.repository.AnswerDao;
 import net.frontlinesms.plugins.textforms.data.repository.QuestionDao;
-import net.frontlinesms.plugins.textforms.upload.CSVUploader;
+import net.frontlinesms.plugins.textforms.data.repository.QuestionFactory;
 import net.frontlinesms.plugins.textforms.upload.DocumentUploader;
-import net.frontlinesms.plugins.textforms.upload.JSONUploader;
 import net.frontlinesms.plugins.textforms.upload.ResourceFinderUploader;
-import net.frontlinesms.plugins.textforms.upload.XMLUploader;
+
+import org.springframework.context.ApplicationContext;
 
 /**
  * TextFormsDebug
@@ -226,10 +223,10 @@ public class TextFormsDebug {
 	
 	private String getAuthor() {
 		for(Contact contact : this.contactDao.getAllContacts()) {
-			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false) {
+			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false && contact.getPhoneNumber().trim().equalsIgnoreCase("") == false) {
 				return contact.getPhoneNumber();
 			}
-			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false) {
+			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false && contact.getOtherPhoneNumber().trim().equalsIgnoreCase("") == false) {
 				return contact.getOtherPhoneNumber();
 			}
 		}
@@ -238,13 +235,13 @@ public class TextFormsDebug {
 	
 	private String getOrganizationId() {
 		for(Contact contact : this.contactDao.getAllContacts()) {
-			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false) {
+			if (contact.getPhoneNumber() != null && contact.getPhoneNumber().equalsIgnoreCase("000") == false && contact.getPhoneNumber().trim().equalsIgnoreCase("") == false) {
 				OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
 				if (organizationDetails != null) {
 					return organizationDetails.getOrganizationId();
 				}
 			}
-			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false) {
+			else if (contact.getOtherPhoneNumber() != null && contact.getOtherPhoneNumber().equalsIgnoreCase("000") == false && contact.getOtherPhoneNumber().trim().equalsIgnoreCase("") == false) {
 				OrganizationDetails organizationDetails = contact.getDetails(OrganizationDetails.class);
 				if (organizationDetails != null) {
 					return organizationDetails.getOrganizationId();
