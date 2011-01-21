@@ -11,7 +11,7 @@
 			 	<label name="labelTasks" text="i18n.plugins.textforms.tasks" icon="/icons/status.png" weightx="1" />
 			 	<list name="listTasks" selection="single" weightx="1" weighty="1" action="taskChanged(listTasks)" >
 					<item text="i18n.plugins.textforms.manage.contacts" icon="/icons/users.png" property="value=people" selected="true" />
-					<item text="i18n.plugins.textforms.manage.questions" icon="/icons/question.png" property="value=questions"/>
+					<item text="i18n.plugins.textforms.manage.questions" icon="/icons/help.png" property="value=questions"/>
 					<item text="i18n.plugins.textforms.manage.textforms" icon="/icons/report.png" property="value=textforms"/>
 					<item text="i18n.plugins.textforms.browse.data" icon="/icons/browse.png" property="value=data"/>
 					<item text="i18n.plugins.textforms.manage.options" icon="/icons/keyword.png" property="value=options"/>

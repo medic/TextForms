@@ -45,14 +45,10 @@
 		</panel>
 	</panel>
 	
-	<panel gap="10" weightx="1" weighty="1" text="i18n.plugins.textforms.upload.options" border="true" columns="2" bottom="10" top="10" left="10" right="10">
+	<panel gap="10" weightx="1" text="i18n.plugins.textforms.upload.options" border="true" columns="2" bottom="10" top="10" left="10" right="10">
 		<label name="labelUploadURL" text="i18n.plugins.textforms.upload.url" icon="/icons/httpRequest.png" valign="top" />
 		<textfield name="textUploadURL" weightx="1" action="uploadUrlChanged(this)"/>
-		
-		<label name="labelUploadDocuments" text="i18n.plugins.textforms.upload.handler" icon="/icons/sms_http.png" valign="top" />
-		<combobox name="comboUploadDocuments" editable="false" action="uploadDocumentChanged(this)" weightx="1"/>
-		
-		<label/>
-		<panel name="panelUploadOptions" weightx="1" weighty="1" />
+		<button name="createFieldsButton" text="Create ResourceFinder Fields" action="createResourceFinderQuestions()" colspan="2" halign="center" weightx="1"/>
+		<label visible="false" name="fieldCreationSuccessLabel" weightx="1" halign="center" text="Fields created successfully" colspan="2" icon="/icons/tick.png"/>
 	</panel>
 </panel>

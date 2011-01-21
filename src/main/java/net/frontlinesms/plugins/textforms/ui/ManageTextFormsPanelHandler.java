@@ -71,7 +71,7 @@ public class ManageTextFormsPanelHandler extends ExtendedThinlet implements Thin
 	private final Object buttonDeleteTextForm;
 	private final Object buttonEditTextForm;
 	private final Object buttonSendTextForm;
-	private final Object tableQuestions;
+	private final Object listQuestions;
 	
 	private final TextFormQueryGenerator queryGenerator;
 	
@@ -94,7 +94,7 @@ public class ManageTextFormsPanelHandler extends ExtendedThinlet implements Thin
 		this.buttonDeleteTextForm = this.ui.find(this.mainPanel, "buttonDeleteTextForm");
 		this.buttonEditTextForm = this.ui.find(this.mainPanel, "buttonEditTextForm");
 		this.buttonSendTextForm = this.ui.find(this.mainPanel, "buttonSendTextForm");
-		this.tableQuestions = this.ui.find(this.mainPanel, "tableQuestions");
+		this.listQuestions = this.ui.find(this.mainPanel, "listQuestions");
 		
 		this.textformDao = (TextFormDao) appContext.getBean("textformDao", TextFormDao.class);
 		
@@ -238,23 +238,13 @@ public class ManageTextFormsPanelHandler extends ExtendedThinlet implements Thin
 		this.ui.setEnabled(this.buttonDeleteTextForm, hasSelectedItem);
 		this.ui.setEnabled(this.buttonSendTextForm, hasSelectedItem);
 		
-		this.ui.removeAll(this.tableQuestions);
+		this.ui.removeAll(listQuestions);
 		TextForm textform = (TextForm)selectedObject;
 		if (textform != null) {
 			for (Question question : textform.getQuestions()) {
-				this.ui.add(tableQuestions, getRow(question));
+				this.ui.add(listQuestions, ui.createListItem(question.getName(), null));
 			}	
 		}
-	}
-	
-	public Object getRow(Question question){
-		Object row = this.ui.createTableRow(question);
-		this.createTableCell(row, question.getName());
-		this.createTableCell(row, question.getKeyword());
-		this.createTableCell(row, question.getTypeLabel());
-		this.createTableCell(row, question.getSchemaName());
-		this.createTableCell(row, question.getInfoSnippet());
-		return row;
 	}
 	
 	public void notify(FrontlineEventNotification notification) {

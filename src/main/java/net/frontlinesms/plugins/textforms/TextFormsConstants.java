@@ -15,7 +15,7 @@ public final class TextFormsConstants {
 	public static final String TABLE_QUESTIONNAME = "plugins.textforms.table.name";
 	public static final String TABLE_ANSWER = "plugins.textforms.table.answer";
 	public static final String TABLE_DATE = "plugins.textforms.table.date";
-	public static final String TABLE_SUBMITTER = "plugins.textforms.table.contact";
+	public static final String TABLE_SUBMITTER = "plugins.textforms.submitter";
 	public static final String TABLE_KEYWORD = "plugins.textforms.table.keyword";
 	public static final String TABLE_ORGANIZATION = "plugins.textforms.table.organization";
 	public static final String TABLE_TYPE = "plugins.textforms.table.type";
