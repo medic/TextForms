@@ -67,7 +67,7 @@ public abstract class Question {
 	}
 	
 	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+		this.keyword = keyword.toLowerCase();
 	}
 	
 	/**

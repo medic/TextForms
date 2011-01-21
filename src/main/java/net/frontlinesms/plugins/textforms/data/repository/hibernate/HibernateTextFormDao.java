@@ -64,7 +64,7 @@ public class HibernateTextFormDao extends BaseHibernateDao<TextForm> implements 
 
 	public TextForm getTextFormByKeyword(String keyword) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq(TextForm.FIELD_KEYWORD, keyword));
+		criteria.add(Restrictions.eq(TextForm.FIELD_KEYWORD, keyword.toLowerCase()));
 		return super.getUnique(criteria);		
 	}
 }

@@ -208,6 +208,10 @@ public class ManageQuestionsDialogHandler implements ThinletUiEventHandler {
 		this.ui.remove(dialog);
 	}
 	
+	public void questionKeywordChanged(String text){
+		ui.setText(textKeyword,text.replaceAll("[^a-zA-Z0-9_]", "").toLowerCase());
+	}
+	
 	public void questionTypeChanged(Object comboTypes, Object panelChoices, Object listChoices) {
 		LOG.debug("typeChanged");
 		Object selectedItem = this.ui.getSelectedItem(comboTypes);

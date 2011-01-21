@@ -5,7 +5,7 @@
 	<textfield name="textTextFormName" columns="45" weightx="1"/>
 	
 	<label icon="/icons/textform_keyword.png" text="i18n.plugins.textforms.textform.keyword" for="textTextFormKeyword" valign="top"/>
-	<textfield name="textTextFormKeyword" columns="45" weightx="1"/>
+	<textfield name="textTextFormKeyword" columns="45" weightx="1" action="keywordChanged(this.text)"/>
 	
 	<label icon="/icons/question.png" text="i18n.plugins.textforms.questions" valign="top"/>
 	<panel columns="2" gap="5" weightx="1">

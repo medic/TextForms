@@ -172,6 +172,10 @@ public class ManageTextFormsDialogHandler extends ExtendedThinlet implements Thi
 		}
 	}
 	
+	public void keywordChanged(String text){
+		ui.setText(textTextFormKeyword,text.replaceAll("[^a-zA-Z0-9_]", "").toLowerCase());
+	}
+	
 	public void tableChanged(Object table, Object button) {
 		this.ui.setEnabled(button, this.ui.getSelectedItem(table) != null);
 	}

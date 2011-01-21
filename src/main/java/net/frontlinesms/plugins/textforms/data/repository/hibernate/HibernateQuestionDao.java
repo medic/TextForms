@@ -69,7 +69,7 @@ public class HibernateQuestionDao extends BaseHibernateDao<Question> implements 
 	
 	public Question getQuestionForKeyword(String keyword) {
 		DetachedCriteria criteria = super.getCriterion();
-		criteria.add(Restrictions.eq("keyword", keyword.trim()));
+		criteria.add(Restrictions.eq("keyword", keyword.trim().toLowerCase()));
 		return super.getUnique(criteria);
 	}
 	

@@ -67,7 +67,7 @@ public class TextForm {
 	}
 	
 	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+		this.keyword = keyword.toLowerCase();
 	}
 	
 	public String getQuestionNames() {
