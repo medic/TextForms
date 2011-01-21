@@ -1,4 +1,1 @@
-net.frontlinesms.plugins.textforms.upload.XMLUploader
-net.frontlinesms.plugins.textforms.upload.JSONUploader
-net.frontlinesms.plugins.textforms.upload.CSVUploader
 net.frontlinesms.plugins.textforms.upload.ResourceFinderUploader

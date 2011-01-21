@@ -1,18 +1,24 @@
 package net.frontlinesms.plugins.textforms.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
+import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.plugins.textforms.TextFormsCallback;
 import net.frontlinesms.plugins.textforms.TextFormsLogger;
 import net.frontlinesms.plugins.textforms.TextFormsMessages;
 import net.frontlinesms.plugins.textforms.TextFormsProperties;
-import net.frontlinesms.plugins.textforms.upload.DocumentUploader;
-import net.frontlinesms.plugins.textforms.upload.DocumentUploaderFactory;
+import net.frontlinesms.plugins.textforms.data.domain.TextForm;
+import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
+import net.frontlinesms.plugins.textforms.data.domain.questions.QuestionType;
+import net.frontlinesms.plugins.textforms.data.repository.QuestionDao;
+import net.frontlinesms.plugins.textforms.data.repository.QuestionFactory;
+import net.frontlinesms.plugins.textforms.data.repository.TextFormDao;
 import net.frontlinesms.ui.ThinletUiEventHandler;
 import net.frontlinesms.ui.UiGeneratorController;
+
+import org.springframework.context.ApplicationContext;
 
 /**
  * ManageOptionsPanelHandler
@@ -40,6 +46,32 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 	private final Object checkboxDebugYes;
 	private final Object checkboxDebugNo;
 	private final Object panelUploadOptions;
+	private Object createFieldsButton;
+	private Object creationSuccessfulLabel;
+	
+	/**
+	 * QuestionDao
+	 */
+	private QuestionDao questionDao;
+	
+	private QuestionDao getQuestionDao() {
+		if (this.questionDao == null) {
+			this.questionDao = (QuestionDao) appContext.getBean("questionDao", QuestionDao.class);
+		}
+		return this.questionDao;
+	}
+	
+	/**
+	 * TextFormDao
+	 */
+	private TextFormDao textformDao;
+	
+	private TextFormDao getTextFormDao() {
+		if (this.textformDao == null) {
+			this.textformDao = (TextFormDao) appContext.getBean("textformDao", TextFormDao.class);
+		}
+		return this.textformDao;
+	}
 	
 	public ManageOptionsPanelHandler(UiGeneratorController ui, ApplicationContext appContext, TextFormsCallback callback) {
 		LOG.debug("ManageOptionsPanelHandler");
@@ -57,10 +89,13 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		this.checkboxDebugYes = this.ui.find(this.mainPanel, "checkboxDebugYes");	
 		this.checkboxDebugNo = this.ui.find(this.mainPanel, "checkboxDebugNo");	
 		this.panelUploadOptions = this.ui.find(this.mainPanel, "panelUploadOptions");	
-		
+		this.createFieldsButton = this.ui.find(this.mainPanel,"createFieldsButton");
+		this.creationSuccessfulLabel = this.ui.find(this.mainPanel,"fieldCreationSuccessLabel");
+		if(TextFormsProperties.areResourceFinderQuestionsGenerated()){
+			ui.setVisible(createFieldsButton, false);
+		}
 		loadDebugMode();
 		loadUploadURL();
-		loadUploadDocuments();
 		loadBooleanValues();
 		loadInfoValues();
 		loadRegisterValues();
@@ -85,23 +120,6 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		}
 	}
 	
-	private void loadUploadDocuments() {
-		this.ui.add(this.comboUploadDocuments, this.ui.createComboboxChoice("", null));
-		DocumentUploader selectedDocumentUploader = TextFormsProperties.getDocumentUploader();
-		int index = 1;
-		for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
-			documentUploader.setUiGeneratorController(this.ui);
-			documentUploader.setApplicationContext(this.appContext);
-			Object comboBoxChoice = this.ui.createComboboxChoice(documentUploader.getTitle(), documentUploader);
-			this.ui.add(this.comboUploadDocuments, comboBoxChoice);
-			if (documentUploader == selectedDocumentUploader) {
-				this.ui.setSelectedIndex(this.comboUploadDocuments, index);
-			}
-			index++;
-		}
-		uploadDocumentChanged(this.comboUploadDocuments);
-	}
-	
 	private void loadBooleanValues() {
 		loadListOptions(this.listBooleanTrue, TextFormsProperties.getBooleanTrueValues());
 		loadListOptions(this.listBooleanFalse, TextFormsProperties.getBooleanFalseValues());
@@ -115,24 +133,14 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 		loadListOptions(this.listRegister, TextFormsProperties.getRegisterKeywords());
 	}
 	
-	public void uploadDocumentChanged(Object comboUploadDocuments) {
-		Object selectedItem = this.ui.getSelectedItem(comboUploadDocuments);
-		DocumentUploader documentUploader = selectedItem != null ? (DocumentUploader)this.ui.getAttachedObject(selectedItem) : null; 
-		this.ui.removeAll(this.panelUploadOptions);
-		if (documentUploader != null) {
-			LOG.debug("uploadDocumentChanged: %s", documentUploader.getTitle());
-			this.ui.add(this.panelUploadOptions, documentUploader.getMainPanel());
-		}
-		else {
-			LOG.debug("uploadDocumentChanged: NULL");
-		}
-		TextFormsProperties.setDocumentUploader(documentUploader);
-	}
-	
 	public void uploadUrlChanged(Object textUploadURL) {
 		String url = this.ui.getText(textUploadURL);
 		LOG.debug("uploadUrlChanged: %s", url);
 		TextFormsProperties.setPublishURL(url);
+	}
+	
+	public void createFieldsClicked(){
+		
 	}
 	
 	//################ DEBUG ################
@@ -214,4 +222,104 @@ public class ManageOptionsPanelHandler implements ThinletUiEventHandler {
 			this.ui.add(list, this.ui.createListItem(option, option));
 		}
 	}
+	
+	public boolean createResourceFinderQuestions() {
+		try {
+			//PLAIN TEXT
+			Question title = createPlainTextQuestion("Hospital Title", "title", "What is the hospital's title?", "title");
+			Question alt = createPlainTextQuestion("Hospital Alternative Title", "alt", "What is the hospital's alternative title?", "alt_title");
+			Question contact = createPlainTextQuestion("Hospital Contact Name", "contact", "What is hospital contact name?", "contact_name");
+			Question phone = createPlainTextQuestion("Hospital Phone", "phone", "What is hospital phone number?", "phone");
+			Question email = createPlainTextQuestion("Hospital Email", "email", "What is hospital email address?", "email");
+			Question department = createPlainTextQuestion("Hospital Department", "department", "What is the hospital department?", "department");
+			Question district = createPlainTextQuestion("Hospital District", "district", "What is the hospital district?", "district");
+			Question commune = createPlainTextQuestion("Hospital Commune", "commune", "What is the hospital commune?", "commune");
+			Question address = createPlainTextQuestion("Hospital Address", "address", "What is hospital address?", "address");
+			Question location = createPlainTextQuestion("Hospital Location", "location", "What is hospital location (latitude,longitude)?", "location");
+			Question accuracy = createPlainTextQuestion("Hospital Location Accuracy", "accuracy", "What is hospital location accuracy?", "accuracy");
+			Question damage = createPlainTextQuestion("Hospital Damage", "damage", "What is the hospital damage?", "damage");
+			Question comments = createPlainTextQuestion("Additional Comments", "comments", "Additional comments?", "comments");
+			//INTEGER
+			Question available = createIntegerQuestion("Available Beds", "available", "How many beds does the hospital have available?", "available_beds");
+			Question beds = createIntegerQuestion("Total Beds", "beds", "The total number of hospital beds?", "total_beds");
+			//BOOLEAN
+			Question reachable = createBooleanQuestion("Hospital Reachable By Road", "reachable", "Is the hospital reachable by road?", "reachable_by_road");
+			Question pickup = createBooleanQuestion("Hospital Can Pick Up Patients", "pickup", "Can the hospital pick up patients?", "can_pick_up_patients");
+			//MULTICHOICE
+			Question type = createMultiChoiceQuestion("Hospital Type", "type", "What is the hospital type?", "organization_type",
+										new String [] {"PUBLIC", "FOR_PROFIT", "UNIVERSITY", "COMMUNITY", "NGO", "FAITH_BASED", "MILITARY", "MIXED"});
+			Question category = createMultiChoiceQuestion("Hospital Category", "category", "What is the hospital category?", "category",
+										new String [] {"HOSPITAL", "CLINIC", "MOBILE_CLINIC", "DISPENSARY"});
+			Question construction = createMultiChoiceQuestion("Hospital Construction", "construction", "What is the hospital construction?", "construction",
+										new String [] {"REINFORCED_CONCRETE", "UNREINFORCED_MASONRY", "WOOD_FRAME", "ADOBE"});
+			Question status = createMultiChoiceQuestion("Hospital Operational Status", "status", "What is the hospital operational status?", "operational_status",
+										new String [] {"OPERATIONAL", "NO_SURGICAL_CAPACITY", "FIELD_HOSPITAL", "FIELD_WITH_HOSPITAL", "CLOSED_OR_CLOSING"});
+			//CHECKLIST
+			Question services = createChecklistQuestion("Hospital Services", "services", "What services does the hospital offer?", "services", 
+									new String [] {"GENERAL_SURGERY", "ORTHOPEDICS", "NEUROSURGERY", "VASCULAR_SURGERY", 
+												   "INTERNAL_MEDICINE", "CARDIOLOGY", "INFECTIOUS_DISEASE", "PEDIATRICS", 
+												   "POSTOPERATIVE_CARE", "REHABILITATION", "OBSTETRICS_GYNECOLOGY", "MENTAL_HEALTH",
+												   "DIALYSIS", "LAB", "X_RAY", "CT_SCAN", "BLOOD_BANK", "MORTUARY_SERVICES"});
+			//TEXTFORM
+			TextForm contactForm = new TextForm("Hospital Contact", "hosp_contact", Arrays.asList(title, contact, phone, email));
+			this.getTextFormDao().saveTextForm(contactForm);
+			
+			TextForm locationForm = new TextForm("Hospital Location", "hosp_location", Arrays.asList(address, district, location, accuracy));
+			this.getTextFormDao().saveTextForm(locationForm);
+			
+			TextForm statusForm = new TextForm("Hospital Status", "hosp_status", Arrays.asList(status, reachable, damage, pickup, beds, available, comments));
+			this.getTextFormDao().saveTextForm(statusForm);
+			
+			TextForm typeForm = new TextForm("Hospital Type", "hosp_type", Arrays.asList(type, category, construction, services));
+			this.getTextFormDao().saveTextForm(typeForm);
+			TextFormsProperties.setResourceFinderQuestionsGenerated(true);
+			ui.setVisible(createFieldsButton, false);
+			ui.setVisible(creationSuccessfulLabel, true);
+			return true;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
+	protected Question createPlainTextQuestion(String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.PLAINTEXT, schema, null);
+	}
+	
+	protected Question createDateQuestion(String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.DATE, schema, null);
+	}
+	
+	protected Question createIntegerQuestion(String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.INTEGER, schema, null);
+	}
+	
+	protected Question createBooleanQuestion(String name, String keyword, String infoSnippet, String schema) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.BOOLEAN, schema, null);
+	}
+	
+	protected Question createMultiChoiceQuestion(String name, String keyword, String infoSnippet, String schema, String [] choices) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.MULTICHOICE, schema, choices);
+	}
+	
+	protected Question createChecklistQuestion(String name, String keyword, String infoSnippet, String schema, String [] choices) {
+		return createQuestion(name, keyword, infoSnippet, QuestionType.CHECKLIST, schema, choices);
+	}
+	
+	protected Question createQuestion(String name, String keyword, String infoSnippet, String type, String schema, String [] choices) {
+		try {
+			List<String> choiceList = choices != null ? Arrays.asList(choices) : null;
+			Question question = QuestionFactory.createQuestion(name, keyword, infoSnippet, type, schema, choiceList);
+			this.getQuestionDao().saveQuestion(question);
+			LOG.debug("Question Created [%s, %s, %s, %s]", question.getName(), question.getKeyword(), question.getType(), question.getSchemaName());
+			return question;
+		} 
+		catch (DuplicateKeyException e) {
+			LOG.error("Question Exists [%s, %s, %s, %s]", name, keyword, type, schema);
+			Question question = this.getQuestionDao().getQuestionForKeyword(keyword);
+			return question;
+		}
+	}
+	
 }

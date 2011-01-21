@@ -176,40 +176,6 @@ public class TextFormsDebug {
 		}
 	}
 	
-	public void createUploadXMLDocument() {
-		LOG.debug("createUploadXMLDocument");
-		DocumentUploader document = new XMLUploader();
-		document.setPhoneNumber(this.getAuthor());
-		document.setOrganizationId(this.getOrganizationId());
-		for (Answer answer : this.answerDao.getAllAnswers()) {
-			document.addAnswer(answer);
-		}
-		
-		LOG.debug(document.toString());
-	}
-	
-	public void createUploadJSONDocument() {
-		LOG.debug("createUploadJSONDocument");
-		DocumentUploader document = new JSONUploader();
-		document.setPhoneNumber(this.getAuthor());
-		document.setOrganizationId(this.getOrganizationId());
-		for (Answer answer : this.answerDao.getAllAnswers()) {
-			document.addAnswer(answer);
-		}
-		LOG.debug(document.toString());
-	}
-	
-	public void createUploadCSVDocument() {
-		LOG.debug("createUploadCSVDocument");
-		DocumentUploader document = new CSVUploader();
-		document.setPhoneNumber(this.getAuthor());
-		document.setOrganizationId(this.getOrganizationId());
-		for (Answer answer : this.answerDao.getAllAnswers()) {
-			document.addAnswer(answer);
-		}
-		LOG.debug(document.toString());
-	}
-	
 	public void createUploadGoogleDocument() {
 		LOG.debug("createUploadGoogleDocument");
 		DocumentUploader document = new ResourceFinderUploader();

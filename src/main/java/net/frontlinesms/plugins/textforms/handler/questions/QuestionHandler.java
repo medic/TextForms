@@ -3,8 +3,6 @@ package net.frontlinesms.plugins.textforms.handler.questions;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import net.frontlinesms.data.DuplicateKeyException;
 import net.frontlinesms.data.domain.Contact;
 import net.frontlinesms.data.domain.FrontlineMessage;
@@ -13,14 +11,15 @@ import net.frontlinesms.plugins.textforms.TextFormsLogger;
 import net.frontlinesms.plugins.textforms.TextFormsMessages;
 import net.frontlinesms.plugins.textforms.TextFormsProperties;
 import net.frontlinesms.plugins.textforms.data.domain.OrganizationDetails;
-import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 import net.frontlinesms.plugins.textforms.data.domain.answers.Answer;
-import net.frontlinesms.plugins.textforms.data.repository.QuestionDao;
+import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
 import net.frontlinesms.plugins.textforms.data.repository.AnswerDao;
 import net.frontlinesms.plugins.textforms.data.repository.AnswerFactory;
+import net.frontlinesms.plugins.textforms.data.repository.QuestionDao;
 import net.frontlinesms.plugins.textforms.handler.MessageHandler;
-import net.frontlinesms.plugins.textforms.upload.DocumentUploader;
-import net.frontlinesms.plugins.textforms.upload.DocumentUploaderFactory;
+import net.frontlinesms.plugins.textforms.upload.ResourceFinderUploader;
+
+import org.springframework.context.ApplicationContext;
 
 /**
  * QuestionHandler
@@ -170,13 +169,11 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 	protected boolean publishAnswer(Answer<Q> answer) {
 		if (answer != null) {
 			LOG.debug("publishAnswer: %s", answer);
-			DocumentUploader documentUploader = DocumentUploaderFactory.createDocumentUploader();
-			if (documentUploader != null) {
-				documentUploader.setPhoneNumber(answer.getContactPhone());
-				documentUploader.setOrganizationId(answer.getContactOrganizationId());
-				documentUploader.addAnswer(answer);
-				return documentUploader.upload();
-			}
+			ResourceFinderUploader rfuploader = new ResourceFinderUploader();
+			rfuploader.setPhoneNumber(answer.getContactPhone());
+			rfuploader.setOrganizationId(answer.getContactOrganizationId());
+			rfuploader.addAnswer(answer);
+			return rfuploader.upload();
 		}
 		else {
 			LOG.error("publishAnswer: NULL");

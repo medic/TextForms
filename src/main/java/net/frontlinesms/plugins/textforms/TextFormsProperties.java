@@ -1,7 +1,5 @@
 package net.frontlinesms.plugins.textforms;
 
-import net.frontlinesms.plugins.textforms.upload.DocumentUploader;
-import net.frontlinesms.plugins.textforms.upload.DocumentUploaderFactory;
 import net.frontlinesms.resources.UserHomeFilePropertySet;
 
 public class TextFormsProperties extends UserHomeFilePropertySet {
@@ -11,8 +9,8 @@ public class TextFormsProperties extends UserHomeFilePropertySet {
 	private static final String DEBUG_MODE = "debug.mode";
 	private static final String BOOLEAN_VALUES_TRUE = "boolean.values.true";
 	private static final String BOOLEAN_VALUES_FALSE = "boolean.values.false";
-	private static final String DOCUMENT_UPLOADER = "document.uploader";
 	private static final String DOCUMENT_UPLOADER_URL = "document.uploader.url";
+	private static final String RESOURCE_FINDER_QUESTIONS_GENERATED = "resourcefinder.fields.generated";
 	private static final String INFO_KEYWORDS = "info.keywords";
 	private static final String REGISTER_KEYWORDS = "register.keywords";
 	private static final String TRUE = "true";
@@ -43,6 +41,20 @@ public class TextFormsProperties extends UserHomeFilePropertySet {
 		}
 		else {
 			getInstance().setProperty(DEBUG_MODE, FALSE);
+		}
+		getInstance().saveToDisk();
+	}
+	
+	public static boolean areResourceFinderQuestionsGenerated() {
+		return TRUE.equalsIgnoreCase(getInstance().getProperty(RESOURCE_FINDER_QUESTIONS_GENERATED));
+	}
+	
+	public static void setResourceFinderQuestionsGenerated(boolean value) {
+		if (value) {
+			getInstance().setProperty(RESOURCE_FINDER_QUESTIONS_GENERATED, TRUE);
+		}
+		else {
+			getInstance().setProperty(RESOURCE_FINDER_QUESTIONS_GENERATED, FALSE);
 		}
 		getInstance().saveToDisk();
 	}
@@ -114,29 +126,5 @@ public class TextFormsProperties extends UserHomeFilePropertySet {
 			getInstance().saveToDisk();
 		}
 		return propertyValue.split(SEPARATOR);
-	}
-	
-	public static DocumentUploader getDocumentUploader() {
-		String documentUploaderTitle = getInstance().getProperty(DOCUMENT_UPLOADER);
-		if (documentUploaderTitle != null && documentUploaderTitle.length() > 0) {
-			for (DocumentUploader documentUploader : DocumentUploaderFactory.getDocumentUploaders()) {
-				if (documentUploaderTitle.equalsIgnoreCase(documentUploader.getTitle())) {
-					return documentUploader;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static void setDocumentUploader(DocumentUploader documentUploader) {
-		if (documentUploader != null) {
-			LOG.debug("setDocumentUploader: %s", documentUploader.getTitle());
-			getInstance().setProperty(DOCUMENT_UPLOADER, documentUploader.getTitle());	
-		}
-		else {
-			LOG.debug("setDocumentUploader: NULL");
-			getInstance().setProperty(DOCUMENT_UPLOADER, null);	
-		}
-		getInstance().saveToDisk();
 	}
 }
