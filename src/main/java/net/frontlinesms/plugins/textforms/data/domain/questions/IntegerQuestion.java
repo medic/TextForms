@@ -50,5 +50,10 @@ public class IntegerQuestion extends Question {
 	public String getChoicesLabel() {
 		return null;
 	}
+	
+	@Override
+	public String toString(boolean includeChoices) {
+		return String.format("%s (%s)- %s", getName(),getTypeLabel(),getInfoSnippet());
+	}
 
 }

@@ -218,6 +218,9 @@ public class ManageQuestionsPanelHandler implements ThinletUiEventHandler, Advan
 	public void sortChanged(String column, boolean ascending) {
 		LOG.debug("sortChanged: column=%s ascending=%s", column, ascending);
 		String searchText = this.ui.getText(this.searchQuestion);
+		if (searchText.equalsIgnoreCase(TextFormsMessages.getMessageSearchQuestions())) {
+			searchText="";
+		}
 		this.queryGenerator.startSearch(searchText, column, ascending);
 	}
 	

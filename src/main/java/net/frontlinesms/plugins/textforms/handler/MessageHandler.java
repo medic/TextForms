@@ -64,7 +64,7 @@ public abstract class MessageHandler {
 			LOG.error("(%s) %s", msisdn, text);
 		}
 		else {
-			LOG.debug("(%s) %s", msisdn, text);
+			LOG.debug("MESSAGE (%s) %s", msisdn, text);
 		}
 		if (this.frontline != null) {
 			this.frontline.sendTextMessage(msisdn, text);

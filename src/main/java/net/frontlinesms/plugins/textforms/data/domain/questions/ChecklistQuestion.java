@@ -30,4 +30,18 @@ public class ChecklistQuestion extends CodedQuestion {
 		return InternationalisationUtils.getI18NString(TextFormsConstants.TYPE_CHECKLIST);
 	}
 	
+	@Override
+	public String toString(boolean includeChoices) {
+		if(!includeChoices){
+			return String.format("%s (%s)- %s", getName(),getTypeLabel(),getInfoSnippet());
+		}else{
+			StringBuilder message = new StringBuilder(getInfoSnippet() + "\n");
+			for(int i = 0; i < getChoices().size(); i++){
+				message.append((i+1) + " "+ getChoices().get(i)+ "\n");
+			}
+			message.append(InternationalisationUtils.getI18NString("plugin.textforms.handler.checklist.instructions"));
+			return message.toString();
+		}
+	}
+	
 }

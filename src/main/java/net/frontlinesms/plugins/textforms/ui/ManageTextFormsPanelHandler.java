@@ -209,6 +209,9 @@ public class ManageTextFormsPanelHandler extends ExtendedThinlet implements Thin
 	public void sortChanged(String column, boolean ascending) {
 		LOG.debug("sortChanged: column=%s ascending=%s", column, ascending);
 		String searchText = this.ui.getText(this.searchTextForms);
+		if (searchText.equalsIgnoreCase(TextFormsMessages.getMessageSearchTextForms())) {
+			searchText="";
+		}
 		this.queryGenerator.startSearch(searchText, column, ascending);
 	}
 	

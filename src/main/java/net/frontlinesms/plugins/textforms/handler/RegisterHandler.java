@@ -59,7 +59,7 @@ public class RegisterHandler extends MessageHandler {
 		String[] words = this.getWords(message.getTextContent(), 2);
 		if (words.length == 2) {
 			Contact contact = this.contactDao.getFromMsisdn(message.getSenderMsisdn());
-			if (contact != null) {
+			if (contact != null) { // if there is a contact already
 				OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
 				if (details != null) {
 					details.setOrganizationId(words[1]);
@@ -67,37 +67,40 @@ public class RegisterHandler extends MessageHandler {
 				else {
 					contact.addDetails(new OrganizationDetails(words[1]));
 				}
-				try {
+				try {//try to update the contact
 					this.contactDao.updateContact(contact);
 					LOG.debug("Contact '%s' Updated: %s", contact.getName(), words[1]);
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(words[1], message.getSenderMsisdn()), true);
+					//send success message
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(words[1], message.getSenderMsisdn()), false);
 					return true;
 				} 
-				catch (DuplicateKeyException ex) {
+				catch (DuplicateKeyException ex) {//unable to save contact
 					LOG.error("DuplicateKeyException: %s", ex);
 					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorUpdateContact(contact.getDisplayName()), true);
 				}
 			}
-			else {
+			else {// this contact has not been registered before
 				Contact newContact = new Contact(null, message.getSenderMsisdn(), null, null, null, true);
 				newContact.addDetails(new OrganizationDetails(words[1]));
 				try {
+					//create a new contact
 					this.contactDao.saveContact(newContact);
 					LOG.debug("Contact '%s' Saved: %s", newContact.getName(), words[1]);
+					//send success message
 					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegisterSuccessful(words[1], message.getSenderMsisdn()), true);
 					return true;
 				} 
-				catch (DuplicateKeyException ex) {
+				catch (DuplicateKeyException ex) { // unable to save contact
 					LOG.error("DuplicateKeyException: %s", ex);
 					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorSaveContact(message.getSenderMsisdn()), true);
 				}
 			}
 		}
-		else if (words.length == 1) {
-			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(words[0]), true);
+		else if (words.length == 1) {// if they are asking for info about the register keyword
+			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), false);
 		}
-		else {
-			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(TextFormsProperties.getRegisterKeywords()), true);
+		else { // if they have some weird number of fields in their message
+			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), true);
 		}
 		return false;
 	}

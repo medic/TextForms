@@ -55,4 +55,9 @@ public class DateQuestion extends Question {
 	public String getFormatLabel() {
 		return "dd/MM/yyyy";
 	}
+	
+	@Override
+	public String toString(boolean includeChoices) {
+		return String.format("%s (%s)- %s", getName(),getTypeLabel(),getInfoSnippet());
+	}
 }

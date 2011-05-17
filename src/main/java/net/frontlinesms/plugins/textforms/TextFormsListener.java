@@ -1,11 +1,11 @@
 package net.frontlinesms.plugins.textforms;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-
-import org.springframework.context.ApplicationContext;
 
 import net.frontlinesms.FrontlineSMS;
 import net.frontlinesms.data.DuplicateKeyException;
@@ -13,15 +13,22 @@ import net.frontlinesms.data.domain.FrontlineMessage;
 import net.frontlinesms.data.domain.FrontlineMessage.Status;
 import net.frontlinesms.data.domain.FrontlineMessage.Type;
 import net.frontlinesms.data.events.EntitySavedNotification;
+import net.frontlinesms.data.repository.ContactDao;
 import net.frontlinesms.events.EventObserver;
 import net.frontlinesms.events.FrontlineEventNotification;
 import net.frontlinesms.plugins.textforms.data.domain.TextFormResponse;
 import net.frontlinesms.plugins.textforms.data.domain.answers.Answer;
 import net.frontlinesms.plugins.textforms.data.domain.questions.Question;
+import net.frontlinesms.plugins.textforms.data.repository.QuestionDao;
 import net.frontlinesms.plugins.textforms.data.repository.TextFormResponseDao;
+import net.frontlinesms.plugins.textforms.data.repository.hibernate.Pair;
 import net.frontlinesms.plugins.textforms.handler.MessageHandler;
 import net.frontlinesms.plugins.textforms.handler.MessageHandlerFactory;
 import net.frontlinesms.plugins.textforms.handler.questions.CallbackHandler;
+
+import org.springframework.context.ApplicationContext;
+
+import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
 /**
  * TextFormsListener
@@ -56,6 +63,8 @@ public class TextFormsListener implements EventObserver {
 	 * TextFormResponseDao
 	 */
 	private final TextFormResponseDao textformResponseDao;
+	private final QuestionDao questionDao;
+	private final ContactDao contactDao;
 	
 	/**
 	 * TextFormsListener
@@ -67,6 +76,8 @@ public class TextFormsListener implements EventObserver {
 		frontlineController.getEventBus().registerObserver(this);
 		this.frontline = frontlineController;
 		this.textformResponseDao = pluginController.getTextFormResponseDao();
+		this.questionDao = (QuestionDao) appContext.getBean("questionDao");
+		this.contactDao = (ContactDao) appContext.getBean("contactDao");
 	}
 	
 	/**
@@ -91,6 +102,12 @@ public class TextFormsListener implements EventObserver {
 					textforms.remove(telephone);
 				}
 			}
+////			//if the contact is unregistered, do nothing
+//			if(contactDao.getFromMsisdn(message.getSenderMsisdn()) == null){
+//				LOG.error(String.format("Unregistered contact attempted to submit a message. Contact: %s | Message:%s",message.getSenderMsisdn(), message.getTextContent()));
+//				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), true);
+//				return;
+//			}
 			
 			//see if there is a handler that wants to handle the message
 			MessageHandler handler = getMessageHandler(message);
@@ -108,10 +125,10 @@ public class TextFormsListener implements EventObserver {
 				//if there is a keyword in the message and the callback handler doesn't seem
 				//to know what to do with it, give the message to the keyword handler as opposed
 				//to the callback handler and remove the callback.
+				unregisterCallback(message.getSenderMsisdn());
 				if(handler.handleMessage(message)) {
 					LOG.error("%s [callback]Handler Successful", handler.getClass().getSimpleName());
 				}
-				unregisterCallback(message.getSenderMsisdn());
 			}
 			else if (callbackHandler != null) {
 				//otherwise, if there is a callback out on the message, pass the message to the callback handler
@@ -154,9 +171,39 @@ public class TextFormsListener implements EventObserver {
 				}
 			}
 			else {
-				LOG.error("No Handler Found For '%s'",  message.getTextContent());
+				handleHandlerlessMessage(message);
 			}
 		}
+	}
+	
+	private void handleHandlerlessMessage(FrontlineMessage message){
+		ArrayList<Pair<Float, String>> keywordsAndRating = new ArrayList<Pair<Float,String>>();
+		Levenshtein lev = new Levenshtein();
+		for(Question q: questionDao.getAllQuestions()){
+			keywordsAndRating.add(new Pair(lev.getSimilarity(message.getTextContent(), q.getKeyword()),q.getKeyword()));
+		}
+		Collections.sort(keywordsAndRating, new Comparator<Pair<Float,String>>() {
+			public int compare(Pair<Float, String> o1, Pair<Float, String> o2) { 
+				if(o1.getA() - o2.getA() > 0F){
+					return -1;
+				}else if(o1.getA() - o2.getA() < 0F){
+					return 1;
+				}else{
+					return 0;
+				}
+			}
+		});
+		StringBuilder closestKeywords = new StringBuilder("");
+		for(int i = 0; i < 3; i++){
+			if(i == 2){
+				closestKeywords.append("and ");
+			}
+			closestKeywords.append(keywordsAndRating.get(i).getB());
+			if(i !=2){
+				closestKeywords.append(", ");
+			}
+		}
+		sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeywordExtended(message.getTextContent(), closestKeywords.toString()), true);
 	}
 	
 	private TextFormResponse getTextFormResponse(FrontlineMessage message) {

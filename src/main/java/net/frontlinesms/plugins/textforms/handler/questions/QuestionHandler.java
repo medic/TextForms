@@ -85,7 +85,8 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 				sendReply(message.getSenderMsisdn(), question.toString(), false);
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
+				LOG.error(String.format("No question found for keyword. Contact: %s | Message:%s",message.getSenderMsisdn(),message.getTextContent()));
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
 			}	
 		}
 		else if (isValidAnswer(words)) {
@@ -119,26 +120,37 @@ public abstract class QuestionHandler<Q extends Question> extends MessageHandler
 						}
 						successful = true;
 					}
-					else {
+					else {// we were unable to create the answer
+						LOG.error(String.format("Unable to save answer. Contact: %s | Question: %s | Message:%s",message.getSenderMsisdn(),question.getName(), message.getTextContent()));
 						sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorSaveAnswer(), true);
 					}
 				}
-				else {
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(TextFormsProperties.getRegisterKeywords()), true);
+				else { // the user is not registered
+					LOG.error(String.format("Unregistered contact attempted to submit a message. Contact: %s | Question: %s | Message:%s",message.getSenderMsisdn(),question.getName(), message.getTextContent()));
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), true);
 				}	
 			}
-			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
+			else { // there was no question associated with the supplied keyword
+				LOG.error(String.format("No question found for keyword. Contact: %s | Message:%s",message.getSenderMsisdn(),message.getTextContent()));
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
 			}
 		}
-		else {
-			Question question = this.questionDao.getQuestionForKeyword(words[0]);
-			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
-			}
-			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);
-			}
+		else { // the message was badly formatted
+				Question question = questionDao.getQuestionForKeyword(words[0]);
+				String response = "";
+				for(int i = 1; i < words.length;i++){
+					response +=words[i];
+					if(i != words.length -1){
+						response+=" ";
+					}
+				}
+				LOG.error(String.format("Message was formatted improperly. Contact: %s | Message: %s",message.getSenderMsisdn(), message.getTextContent()));
+				if (question != null) { // if there is a question associated with the keyword
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswerSpecific(question.getName(), question.getTypeLabel(), response),true);
+				}
+				else { // if there is no question associated with the keyword
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
+				}
 		}
 		return successful;
 	}

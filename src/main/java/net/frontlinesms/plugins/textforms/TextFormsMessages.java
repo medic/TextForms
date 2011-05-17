@@ -13,25 +13,63 @@ public final class TextFormsMessages {
 		return String.format("%s : %s", getI18NString("plugins.textforms.handler.help"), arrayToString(keywords));
 	}
 	
-	public static String getHandlerRegister(String keyword) {
-		return String.format("%s : %s %s", getI18NString("plugins.textforms.handler.register.keyword"), keyword, getI18NString("plugins.textforms.handler.register.organization"));
+	public static String getHandlerRegisterDescription(String keyword) {
+		return String.format(getI18NString("plugins.textforms.handler.register.keyword"),keyword);
 	}
 	
-	public static String getHandlerRegister(String[] keywords) {
-		return String.format("%s : %s", getI18NString("plugins.textforms.handler.register.keywords"), arrayToString(keywords));
+	public static String getHandlerPleaseRegister(String keyword) {
+		return String.format(getI18NString("plugins.textforms.handler.register.keywords"),keyword);
 	}
 	
+	
+	/**
+	 * Sent to the user when they have successfully registered their phone with an organization ID.
+	 * @param organization
+	 * @param phoneNumber
+	 * @return
+	 */
 	public static String getHandlerRegisterSuccessful(String organization, String phoneNumber) {
-		return String.format("%s %s %s", organization, getI18NString("plugins.textforms.handler.register.successful"), phoneNumber);
+		return String.format(getI18NString("plugins.textforms.handler.register.successful"), phoneNumber, organization);
 	}
 	
-	public static String getHandlerInvalidKeyword(String[] keywords) {
-		return String.format("%s : %s", getI18NString("plugins.textforms.handler.invalid.keyword"), arrayToString(keywords));
+	public static String getHandlerInvalidKeyword(String keyword) {
+		return String.format(getI18NString("plugins.textforms.handler.invalid.keyword"),keyword);
 	}
 	
-	public static String getHandlerInvalidAnswer(String questionName, String questionTypeLabel) {
-		return String.format("%s %s (%s %s)", getI18NString("plugins.textforms.handler.invalid.answer"), questionName, 
-											 getI18NString("plugins.textforms.handler.expected.type"), questionTypeLabel);
+	public static String getHandlerInvalidKeywordExtended(String keyword, String keywords) {
+		return String.format(getI18NString("plugins.textforms.handler.invalid.keyword.extended"),keyword, keywords);
+	}
+	
+	public static String getHandlerInvalidAnswer(String questionName, String questionTypeLabel, String invalidResponse) {
+		return String.format(getI18NString("plugin.textforms.handler.error.invalid"), questionName, questionTypeLabel, invalidResponse);
+	}
+	
+	/**
+	 * Returns an "invalid answer" message that contains the question name, type, and the improper response
+	 * @param questionName The name of the question
+	 * @param questionTypeLabel The type of the question
+	 * @param invalidResponse The user-submitted invalid response
+	 * @return
+	 */
+	public static String getHandlerInvalidAnswerSpecific(String questionName, String questionTypeLabel, String invalidResponse) {
+		return String.format(getI18NString("plugin.textforms.handler.error.invalid.answer.specific"), questionName, questionTypeLabel, invalidResponse);
+	}
+	
+	/**
+	 * Returns an "invalid answer" message that contains the question name and type.
+	 * @param questionName The name of the question
+	 * @param questionTypeLabel The type of the question
+	 * @return
+	 */
+	public static String getHandlerInvalidAnswerMedium(String questionName, String questionTypeLabel) {
+		return String.format(getI18NString("plugin.textforms.handler.error.invalid.answer.medium"), questionName, questionTypeLabel);
+	}
+	
+	/**
+	 * Returns an "invalid answer" message that contains no identifying info.
+	 */
+	public static String getHandlerInvalidAnswerGeneral() {
+		return getI18NString("plugin.textforms.handler.error.invalid.answer.general");
 	}
 	
 	public static String getHandlerInvalidCallback() {

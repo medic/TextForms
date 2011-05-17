@@ -36,4 +36,16 @@ public class MultiChoiceQuestion extends CodedQuestion {
 		return InternationalisationUtils.getI18NString(TextFormsConstants.TYPE_MULTICHOICE);
 	}
 	
+	public String toString(boolean includeChoices) {
+		if(!includeChoices){
+			return String.format("%s (%s)- %s", getName(),getTypeLabel(),getInfoSnippet());
+		}else{
+			StringBuilder message = new StringBuilder(getInfoSnippet() + "\n");
+			for(int i = 0; i < getChoices().size(); i++){
+				message.append((i+1) + " "+ getChoices().get(i)+ "\n");
+			}
+			message.append(InternationalisationUtils.getI18NString("plugin.textforms.handler.multichoice.instructions"));
+			return message.toString();
+		}
+	}
 }

@@ -26,7 +26,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 	private static final TextFormsLogger LOG = TextFormsLogger.getLogger(CallbackHandler.class);
 	
 	/**
-	 * Map of callbacks
+	 * Map of callbacks <Phone Number, Question>
 	 */
 	protected final HashMap<String, Question> callbacks = new HashMap<String, Question>();
 	
@@ -51,6 +51,11 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		callbacks.put(msisdn, question);
 	}
 	
+	/**
+	 * This method should return true if the message is formatted properly
+	 * @param m
+	 * @return
+	 */
 	public abstract boolean shouldHandleCallbackMessage(FrontlineMessage m);
 	
 	/**
@@ -59,26 +64,30 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean handleMessage(FrontlineMessage message) {
+		Contact contact = contactDao.getFromMsisdn(message.getSenderMsisdn());
+		if (contact == null) {
+			LOG.error(String.format("Unregistered contact attempted to submit a message. Contact: %s | Message:%s",message.getSenderMsisdn(), message.getTextContent()));
+			sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), true);
+		}
 		boolean successful = false;
 		LOG.debug("handleMessage: %s", message.getTextContent());
 		String[] words = this.getWords(message.getTextContent(), 2);
-		if (words.length == 1) {
+		if (words.length == 1) {// if there is only a keyword in the message
 			Question question = this.questionDao.getQuestionForKeyword(words[0]);
-			if (question != null) {
+			if (question != null) {// if there is a question for the supplied keyword
 				sendReply(message.getSenderMsisdn(), question.toString(true), false);
 				LOG.debug("Register Callback for '%s'", message.getTextContent());
 				TextFormsListener.registerCallback(message.getSenderMsisdn(), this);
 				this.callbacks.put(message.getSenderMsisdn(), this.questionDao.getQuestionForKeyword(message.getTextContent()));
 			}
-			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
+			else {// if there was no question associated with the supplied keyword
+				LOG.error(String.format("No question found for keyword. Contact: %s | Message:%s",message.getSenderMsisdn(),message.getTextContent()));
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
 			}	
 		}
-		else if (isValidAnswer(words)) {
+		else if (isValidAnswer(words)) { //if this is a valid one-message response
 			Question question = questionDao.getQuestionForKeyword(words[0]);
-			if (question != null) {
-				Contact contact = contactDao.getFromMsisdn(message.getSenderMsisdn());
-				if (contact != null) {
+			if (question != null) { //if there is a question for the supplied keyword
 					OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
 					String organizationId = details != null ? details.getOrganizationId() : null;
 					if (details != null) {
@@ -88,7 +97,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 						contact.addDetails(new OrganizationDetails(new Date()));
 					}
 					Answer<Q> answer = AnswerFactory.createAnswer(message, contact, new Date(), organizationId, question);
-					if (answer != null) {
+					if (answer != null) { // if we were able to create the answer
 						answerDao.saveAnswer(answer);
 						LOG.debug("Answer Created: %s", answer);
 						try {
@@ -105,25 +114,31 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 						}
 						successful = true;
 					}
-					else {
+					else {// we were unable to create the answer
+						LOG.error(String.format("Unable to save answer. Contact: %s | Question: %s | Message:%s",message.getSenderMsisdn(),question.getName(), message.getTextContent()));
 						sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorSaveAnswer(), true);
 					}
 				}
-				else {
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(TextFormsProperties.getRegisterKeywords()), true);
-				}	
-			}
-			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(this.getAllKeywords()), true);
+			else { // there was no question associated with the supplied keyword
+				LOG.error(String.format("No question found for keyword. Contact: %s | Message:%s",message.getSenderMsisdn(),message.getTextContent()));
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
 			}
 		}
-		else {
+		else { // the message was badly formatted
 			Question question = questionDao.getQuestionForKeyword(words[0]);
-			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
+			String response = "";
+			for(int i = 1; i < words.length;i++){
+				response +=words[i];
+				if(i != words.length -1){
+					response+=" ";
+				}
 			}
-			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);
+			LOG.error(String.format("Message was formatted improperly. Contact: %s | Message: %s",message.getSenderMsisdn(), message.getTextContent()));
+			if (question != null) { // if there is a question associated with the keyword
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswerSpecific(question.getName(), question.getTypeLabel(), response),true);
+			}
+			else { // if there is no question associated with the keyword
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidKeyword(words[0]), true);
 			}
 		}
 		return successful;
@@ -135,8 +150,10 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 		Answer<Q> answer = null;
 		if (shouldHandleCallbackMessage(message)) {
 			Question question = callbacks.get(message.getSenderMsisdn());
+			//if there was a callback out for this user
 			if (question != null) {
 				Contact contact = contactDao.getFromMsisdn(message.getSenderMsisdn());
+				//if the user is actually a contact
 				if (contact != null) {
 					OrganizationDetails details = contact.getDetails(OrganizationDetails.class);
 					String organizationId = details != null ? details.getOrganizationId() : null;
@@ -147,6 +164,7 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 						contact.addDetails(new OrganizationDetails(new Date()));
 					}
 					answer = AnswerFactory.createAnswer(message, contact, new Date(), organizationId, question);
+					//if we were able to successfully create the proper answer
 					if (answer != null) {
 						answerDao.saveAnswer(answer);
 						LOG.debug("Answer Saved: %s", answer.getClass().getSimpleName());
@@ -163,26 +181,29 @@ public abstract class CallbackHandler<Q extends Question> extends QuestionHandle
 							LOG.error("DuplicateKeyException: %s", ex);
 						}
 					}
-					else {
+					else {// unable to create answer
+						LOG.error(String.format("Unable to save answer. Contact: %s | Question: %s | Message:%s",message.getSenderMsisdn(),question.getName(), message.getTextContent()));
 						sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorSaveAnswer(), true);
 					}
-				}
+				}// unregistered contact
 				else {
-					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerRegister(TextFormsProperties.getRegisterKeywords()), true);
+					LOG.error(String.format("Unregistered contact attempted to submit a message. Contact: %s | Question: %s | Message:%s",message.getSenderMsisdn(),question.getName(), message.getTextContent()));
+					sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerPleaseRegister(TextFormsProperties.getRegisterKeywords()[0]), true);
 				}		
-			}
+			}// no callback found
 			else {
-				LOG.debug("Callback Question is NULL");
+				LOG.error(String.format("System error - callback was null: %s | Message:%s",message.getSenderMsisdn(),message.getTextContent()));
 				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidCallback(), true);
 			}
 		}
-		else {
+		else {// if there was an error with the answer
+			LOG.error(String.format("Message was formatted improperly. Contact: %s | Message: %s",message.getSenderMsisdn(), message.getTextContent()));
 			Question question = this.callbacks.get(message.getSenderMsisdn());
-			if (question != null) {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswer(question.getName(), question.getTypeLabel()), true);
+			if (question != null) {//invalid answer, please try again 
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswerSpecific(question.getName(), question.getTypeLabel(), message.getTextContent()),true);
 			}
 			else {
-				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerErrorAnswer(message.getTextContent()), true);
+				sendReply(message.getSenderMsisdn(), TextFormsMessages.getHandlerInvalidAnswerGeneral(), true);
 			}
 		}
 		TextFormsListener.unregisterCallback(message.getSenderMsisdn());
